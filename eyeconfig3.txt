@@ -1,0 +1,48 @@
+##
+##  Basic setup
+##
+
+gifdir: ./videos/
+
+# Cooldown time in seconds between repeating the same (non-idle) expression
+cooldown: 5
+
+rainbowspeed: 20
+effect: rainbow_h
+
+##
+##  Video list
+##
+##  Must have at least the following lines to set the default video:
+#   idle: myvideo
+#   gif: somevideo.gif
+##
+
+idle: idle1
+	gif: idle.gif
+	drawmode: gradient
+
+random: blink1
+	gif: blink.gif
+	colour: #808080
+	chance: 50
+	after: chain callback
+
+random: redeye
+	gif: idle.gif
+	colour: #ff0000
+	chance: 25
+	before: set_gpio 31
+	after: clear_gpio 31
+
+random: scroller
+	scroll: Kill the humans
+	chance: 5
+
+gpio: startled
+	gif: startled.gif
+	pin: 29
+
+scripted: callback
+	scroll: Fish
+	drawmode: gradient

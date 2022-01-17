@@ -1,0 +1,17 @@
+
+SRC	= syntheyes.cpp config.cpp pi.cpp fakepi.cpp \
+          font.cpp gifload.cpp expression.cpp\
+          drivers/PanelDriver.cpp drivers/display/Unicorn.cpp \
+          drivers/display/SDLPanel.cpp drivers/Timing.cpp \
+          drivers/PosixTiming.cpp
+
+eyes:	syntheyes.o config.o pi.o fakepi.o font.o gifload.o expression.o \
+        drivers/PanelDriver.o drivers/display/Unicorn.o drivers/display/SDLPanel.o \
+        drivers/Timing.o drivers/PosixTiming.o
+	$Q echo [link]
+	$Q $(CC) -o $@ syntheyes.o config.o fakepi.o pi.o font.o gifload.o expression.o \
+        drivers/PanelDriver.o drivers/display/Unicorn.o drivers/display/SDLPanel.o \
+        drivers/Timing.o drivers/PosixTiming.o \
+         $(LDFLAGS) $(LDLIBS)
+
+#

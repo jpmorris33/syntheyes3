@@ -1,0 +1,32 @@
+
+DEBUG	= -g -O0
+#DEBUG	= -O3
+CC	= gcc
+INCLUDE	= -I/usr/local/include -I.
+CFLAGS	= $(DEBUG) -DPLATFORM_LINUX -Wall $(INCLUDE) -Winline -pipe
+
+LDFLAGS	= -L/usr/local/lib
+LDLIBS    = -lpthread -lm -lstdc++ -lSDL2 -lgif
+
+include Makefile.all
+
+OBJ	=	$(SRC:.cpp=.o)
+
+BINS	=	$(SRC:.cpp=)
+
+.cpp.o:
+	$Q echo [CC] $<
+	$Q $(CC) -c $(CFLAGS) $< -o $@
+
+clean:
+	$Q echo "[Clean]"
+	$Q rm -f *.o drivers/*.o drivers/display/*.o *~ core tags eyes
+
+tags:	$(SRC)
+	$Q echo [ctags]
+	$Q ctags $(SRC)
+
+depend:
+	makedepend -Y $(SRC)
+
+# DO NOT DELETE
