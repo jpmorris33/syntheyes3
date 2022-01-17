@@ -58,7 +58,7 @@ void Unicorn::drawMirrored() {
 	int windowwidth = UNICORNPANEL_W * 3;	// 16 RGB triplets
 
 	for(int ctr=0;ctr<UNICORNPANEL_H;ctr++)  {
-		for(int xpos=windowwidth-3;xpos>0;xpos-=3) {
+		for(int xpos=windowwidth-3;xpos>=0;xpos-=3) {
 			memcpy(outptr,&inptr[xpos],3);
 			outptr+=3;
 		}

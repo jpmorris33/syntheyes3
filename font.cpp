@@ -1008,6 +1008,7 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool gradient) {
 			} else {
 				panel->updateRGB(bmp, 16, 16, col);
 			}
+			panel->draw();
 			wait(10,false);
 		}
 	}

@@ -6,11 +6,12 @@
 
 
 extern Expression *nextState;
-
+extern bool transmitter;
 
 extern void wait(int ms, bool interruptable);
 static int compareProb(const void *a, const void *b);
 extern void init_pin(int pin);
+
 
 void Expression::play() {};
 
@@ -111,7 +112,11 @@ int GifExpression::drawFrame(int frame) {
 		break;
 	};
 
-	panel->draw();
+	if(transmitter || (!mirror)) {
+		panel->draw();
+	} else {
+		panel->drawMirrored();
+	}
 
 	return gif->frame[frame].delay;
 }

@@ -63,6 +63,7 @@ Font font;
 ExpressionList expressions;
 uint32_t eyecolour = 0xff8700;
 int cooldown_time = 5;
+bool transmitter = true;
 
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
@@ -85,6 +86,12 @@ set_pattern(PATTERN_V);
 
 
 if(argc > 1) {
+	if(!strcmp(argv[1],"receiver")) {
+		transmitter=false;
+	}
+	if(!strcmp(argv[1],"transmitter")) {
+		transmitter=true;
+	}
 	// Switch off the display (for testing on the Pi)
 	if(!strcmp(argv[1],"off")) {
 		panel->clear(0);
@@ -95,9 +102,7 @@ if(argc > 1) {
 	}
 }
 
-
-
-font.printVersion(VERSION, true, 3000);	// Wait 3 sec
+font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
 
 srandom(time(NULL));
 
@@ -261,8 +266,8 @@ bool check_gpio() {
 void wait(int ms, bool interruptable) {
 	timing->set(ms);
 	while(!timing->elapsed()) {
-		panel->draw();
-		timing->wait_microseconds(50);
+
+		// Drawing is no longer done here since we need to know whether to call draw or drawMirrored()
 
 		update_rainbow();
 
