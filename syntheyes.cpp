@@ -64,6 +64,7 @@ ExpressionList expressions;
 uint32_t eyecolour = 0xff8700;
 int cooldown_time = 5;
 bool transmitter = true;
+bool forcetransmitter = false;
 
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
@@ -79,110 +80,125 @@ ExpressionSet *gpioList = NULL;
 
 
 int main(int argc, char *argv[]){
-FILE *fp=NULL;
+	FILE *fp=NULL;
 
-initPanel();
-set_pattern(PATTERN_V);
+	initPanel();
+	set_pattern(PATTERN_V);
 
 
-if(argc > 1) {
-	if(!strcmp(argv[1],"receiver")) {
-		transmitter=false;
-	}
-	if(!strcmp(argv[1],"transmitter")) {
-		transmitter=true;
-	}
-	// Switch off the display (for testing on the Pi)
-	if(!strcmp(argv[1],"off")) {
-		panel->clear(0);
-		timing->wait_microseconds(100000);
-		panel->draw();
-		timing->wait_microseconds(100000);
-		exit(0);
-	}
-}
-
-font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
-
-srandom(time(NULL));
-
-strcpy(gifDir,"/boot/");
-
-if(argc > 3) {
-	if(!strcasecmp(argv[2], "-config")) {
-		fp=fopen(argv[3],"r");
-		if(!fp) {
-			font.errorMsg("Error: failed to open config file '%s'\n",argv[3]);
+	if(argc > 1) {
+		if(!strcasecmp(argv[1],"receiver")) {
+			transmitter=false;
+		}
+		if(!strcasecmp(argv[1],"transmitter")) {
+			transmitter=true;
+		}
+		// Switch off the display (for testing on the Pi)
+		if(!strcasecmp(argv[1],"off")) {
+			panel->clear(0);
+			timing->wait_microseconds(100000);
+			panel->draw();
+			timing->wait_microseconds(100000);
+			exit(0);
+		}
+		if((!strcasecmp(argv[1],"version")) || (!strcasecmp(argv[1],"-version"))) {
+			font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
+			exit(0);
 		}
 	}
-}
 
-// For development
-if(!fp) {
-	fp=fopen("./eyeconfig3.txt","r");
-}
+	strcpy(gifDir,"/boot/");
 
-if(!fp) {
-	fp=fopen("/boot/eyeconfig3.txt","r");
-	if(!fp) {
-		font.errorMsg("Error: failed to open config file '/boot/eyeconfig3.txt'\n");
+	if(argc > 3) {
+		if(!strcasecmp(argv[2], "-config")) {
+			fp=fopen(argv[3],"r");
+			if(!fp) {
+				font.errorMsg("Error: failed to open config file '%s'\n",argv[3]);
+			}
+		}
 	}
-}
-readConfig(fp);
-fclose(fp);
 
-// Now do some final checks
-idle=expressions.findFirstByTrigger(TRIGGER_IDLE);
-if(!idle) {
-	font.errorMsg("Error: No IDLE animation declared in config file.  Make sure you have something like...  idle: idle.gif");
-}
+	// For development
+	if(!fp) {
+		fp=fopen("./eyeconfig3.txt","r");
+	}
 
-gpioList = expressions.findAllByTrigger(TRIGGER_GPIO);
+	if(!fp) {
+		fp=fopen("/boot/eyeconfig3.txt","r");
+		if(!fp) {
+			font.errorMsg("Error: failed to open config file '/boot/eyeconfig3.txt'\n");
+		}
+	}
+	readConfig(fp);
+	fclose(fp);
+
+	if(forcetransmitter) {
+		printf("Forcing into transmitter mode by config file\n");
+		transmitter=true;
+	}
+
+	font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
+
+	srandom(time(NULL));
+
+	// Now do some final checks
+	idle=expressions.findFirstByTrigger(TRIGGER_IDLE);
+	if(!idle) {
+		font.errorMsg("Error: No IDLE animation declared in config file.  Make sure you have something like...  idle: idle.gif");
+	}
+
+	gpioList = expressions.findAllByTrigger(TRIGGER_GPIO);
 
 
-pi_init();
-expressions.initGPIO();
+	pi_init();
+	if(transmitter) {
+		// We don't want to do this for the receiver as it will probably mess up the ACK light
+		expressions.initGPIO();
+	}
 
-cooldown->set(1); // It'll be elapsed by the time we check
-gradient->set(1); // It'll be elapsed by the time we check
+	cooldown->set(1); // It'll be elapsed by the time we check
+	gradient->set(1); // It'll be elapsed by the time we check
 
-runEyes();
+	runEyes();
 
+	// Shouldn't ever get here
+	return 0;
 }
 
 //
-//  Probably a better design would be to have fixed types, e.g.
-//  IDLE, BLINK, RANDOM, PIN
-//  Maybe even replace video:  with idle: blink: wink etc to make
-//  the syntax clearer.  The number could be pin or random chance
-//  depending on the command used.
-//
-//  Then add a findVideos() function which returns a list of videos
-//  matching that type, which we can then pick from at random.
-//  This will provide for multiple random videos for the same task,
-//  e.g. different idle videos, blinking and winking via BLINK.
-//  We could in fact dispense with BLINK entirely and make that
-//  part of RANDOM...
+//	This is the main loop - it picks the appropriate video, and runs it while waiting for something else to be cued up.
+//	New videos will be polled for during the wait() function, via GPIO or possibly network comms in future
 //
 
 void runEyes() {
-for(;;)  {
-	if(nextState) {
-		printf("Roll animation '%s'\n",nextState->name);
-		lastState=nextState;
-		nextState=NULL;
-		cooldown->set(cooldown_time*1000);	// Prevent immediate retriggering
-		lastState->play();
-	} else {
-		idle->play();
+	for(;;)  {
+		if(nextState) {
+			printf("Roll animation '%s'\n",nextState->name);
+			lastState=nextState;
+			nextState=NULL;
+			cooldown->set(cooldown_time*1000);	// Prevent immediate retriggering
+			lastState->play();
+		} else {
+			// Nothing cued up for playback, play the default
+			idle->play();
+		}
+		// Pick a random video if we don't already have one ready to roll
+		getNextState();
 	}
-	getNextState();
-}
 }
 
+//
+//	Pick a random video, or not as the case may be
+//
+
 void getNextState() {
-	// If we've been given something by the GPIO inputs
+	// If we've already been given something by the GPIO or comms
 	if(nextState) {
+		return;
+	}
+
+	// If we're acting as a receiver only, don't pick any expressions automatically
+	if(!transmitter) {
 		return;
 	}
 
@@ -193,6 +209,10 @@ void getNextState() {
 	nextState=NULL;
 }
 
+//
+//	Cue up the next video.  This also does a check to prevent the same video running twice
+//	in too short a period for debouncing the GPIO and preventing double-blinks
+//
 
 void setNextState(Expression *newState) {
 	// Prevent retriggering
@@ -209,7 +229,7 @@ void setNextState(Expression *newState) {
 }
 
 //
-//	Check for external input from GPIO
+//	Check for external input from GPIO or network comms
 //
 
 bool check_comms() {
@@ -226,18 +246,46 @@ bool check_comms() {
 	return check_gpio();
 }
 
+//
+//	Get serial command
+//
+
 bool check_serial() {
+	if(transmitter) {
+		// You're supposed to send, not listen
+		return false;
+	}
 	return false;
 }
+
+//
+//	Hook for getting commands from an app in future
+//
 
 bool check_network() {
+	if(transmitter) {
+		// You're supposed to send, not listen
+		return false;
+	}
+
+	// If we get a name, use findByName() to try and find it, then cue it immediately, no ifs or buts
+	// And also transmit the name to the receiver
+
 	return false;
 }
 
+//
+//	Check for commands from the GPIO pins
+//
 
 bool check_gpio() {
 	int ctr,len=0;
 	Expression *exp;
+
+	// If we're acting as a receiver only, don't check the GPIO
+	if(!transmitter) {
+		return false;
+	}
 
 	if(nextState) {
 		return false;
@@ -262,12 +310,17 @@ bool check_gpio() {
 	return false;
 }
 
+//
+//	Wait for a few milliseconds and perform various administrative tasks
+//	This is polled during the animation engine
+//
 
 void wait(int ms, bool interruptable) {
 	timing->set(ms);
 	while(!timing->elapsed()) {
 
 		// Drawing is no longer done here since we need to know whether to call draw or drawMirrored()
+		timing->wait_microseconds(50);
 
 		update_rainbow();
 
@@ -278,6 +331,10 @@ void wait(int ms, bool interruptable) {
 	}
 }
 
+//
+//	Update the gradient colour cycling for that draw mode
+//
+
 void update_rainbow() {
 	// Update the rainbow tick
 	if(gradient->elapsed()) {
@@ -286,6 +343,10 @@ void update_rainbow() {
 		rainbowoffset &= 0x0f;
 	}
 }
+
+//
+//	Set the gradient pattern, these are currently hardcoded
+//
 
 void set_pattern(int pattern) {
 	switch(pattern) {

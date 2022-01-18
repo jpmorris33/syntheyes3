@@ -26,24 +26,24 @@ extern int mapPin(int pin);
 extern char gifDir[512];
 extern int cooldown_time;
 extern int rainbowspeed;
+extern bool forcetransmitter;
 
 //
 //  Config reader
 //
 
 void readConfig(FILE *fp) {
-char buf[1024];
+	char buf[1024];
 
-for(;;) {
-	if(feof(fp)) {
-		return;
+	for(;;) {
+		if(feof(fp)) {
+			return;
+		}
+		buf[0]=0;
+		if(fgets(buf,1024,fp)) {
+			parse(buf);
+		}
 	}
-	buf[0]=0;
-	if(fgets(buf,1024,fp)) {
-		parse(buf);
-	}
-}
-
 }
 
 
@@ -140,8 +140,15 @@ void parse(const char *line) {
 		}
 	}
 	if(!strcasecmp(cmd,"rainbowspeed:")) {
+		nextWord(param);
 		rainbowspeed = atoi(param);
 		printf("Set rainbow delay to %d ticks\n",rainbowspeed);
+	}
+	if(!strcasecmp(cmd,"transmitter:")) {
+		nextWord(param);
+		if(!strcasecmp(param,"true")) {
+			forcetransmitter=true;
+		}
 	}
 
 	//
@@ -337,6 +344,9 @@ void parse(const char *line) {
 
 }
 
+//
+//	Add a hook to do something before or after the animation has played
+//
 
 void add_event(ExpressionEvent *slot, const char *input) {
 	char cmd[1024];
@@ -379,6 +389,9 @@ void add_event(ExpressionEvent *slot, const char *input) {
 	}
 }
 
+//
+//  Mostly for debugging, decode the trigger type
+//
 
 const char *videotype(int type) {
 	switch(type) {
@@ -394,22 +407,6 @@ const char *videotype(int type) {
 			return "UNSUPPORTED!";
 	};
 }
-
-#if 0
-const char *parametertype(int type, int parameter) {
-static char val[128];
-switch(type)	{
-	case TRIGGER_RANDOM:
-		sprintf(val,"with chance %d%%",parameter);
-		return val;
-	case TRIGGER_GPIO:
-		sprintf(val,"on GPIO pin %d",parameter);
-		return val;
-	default:
-		return "";
-}
-}
-#endif
 
 //
 // String utils
