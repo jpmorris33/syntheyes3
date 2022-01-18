@@ -70,6 +70,7 @@ int cooldown_time = 5;
 bool transmitter = true;
 bool forcetransmitter = false;
 char serialPort[256];
+int serialRate=19200;
 
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
@@ -406,7 +407,7 @@ void serial_transmit(Expression *exp) {
 	}
 
 	memset(msg,0,sizeof(msg));
-	snprintf(msg,sizeof(msg)-1,"PLAY(%s)",exp->name);
+	snprintf(msg,sizeof(msg)-1,"PLAY: %s",exp->name);
 	len=strlen(msg)+1;
 	
 	ret=serial->write(msg);
@@ -426,7 +427,7 @@ Expression *serial_receive() {
 	}
 
 	ret=serial->read(buffer,sizeof(buffer));
-	if(ret<3) {
+	if(ret<1) {
 		return NULL;
 	}
 
@@ -437,8 +438,8 @@ Expression *serial_receive() {
 		return NULL;
 	}
 	*paramstart++=0;
-	if(strcmp(buffer,"PLAY")) {
-		printf("Warning: Comms '%s' didn't start with PLAY\n", buffer);
+	if(strcmp(buffer,"PLAY:")) {
+		printf("Warning: Comms '%s' didn't start with PLAY:\n", buffer);
 	}
 	paramend = strchr(paramstart,')');
 	if(!paramend) {

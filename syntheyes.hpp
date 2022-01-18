@@ -17,6 +17,7 @@ extern uint32_t eyecolour;
 extern uint32_t rainbow[16]; // Colour table
 extern unsigned char rainbowoffset;
 extern char serialPort[256];
+extern int serialRate;
 
 extern void set_pin(int pin, bool state);
 extern void set_pattern(int pattern);

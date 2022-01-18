@@ -159,6 +159,11 @@ void parse(const char *line) {
 		nextWord(param);
 		SAFE_STRCPY(serialPort,param);
 	}
+	if(!strcasecmp(cmd,"baud:")) {
+		nextWord(param);
+		serialRate = atoi(param);
+		printf("Set baud rate to %d bits/sec\n",serialRate);
+	}
 
 	//
 	//	Expression setup, this is stateful as it spans multiple lines
