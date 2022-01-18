@@ -70,6 +70,7 @@ bool forcetransmitter = false;
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
 int rainbowspeed = 10;
 unsigned char rainbowoffset=0;
+bool flash_state=true;
 
 char gifDir[512];
 Expression *idle=NULL;
@@ -341,6 +342,11 @@ void update_rainbow() {
 		gradient->set(rainbowspeed);
 		rainbowoffset++;
 		rainbowoffset &= 0x0f;
+
+		// Tie to the gradient system
+		if(!rainbowoffset) {
+			flash_state = !flash_state;
+		}
 	}
 }
 

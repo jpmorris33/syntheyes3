@@ -7,6 +7,7 @@
 
 extern Expression *nextState;
 extern bool transmitter;
+extern bool flash_state;
 
 extern void wait(int ms, bool interruptable);
 static int compareProb(const void *a, const void *b);
@@ -106,6 +107,9 @@ int GifExpression::drawFrame(int frame) {
 			break;
 		case DRAWMODE_GRADIENT:
 			panel->updateRGBpattern(gif->frame[frame].imgdata,gif->w,gif->h, rainbowoffset);
+			break;
+		case DRAWMODE_FLASH:
+			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h, flash_state ? colour : 0);
 			break;
 		default:
 			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h);

@@ -31,17 +31,24 @@ random: blink1
 random: redeye
 	gif: idle.gif
 	colour: #ff0000
-	chance: 25
-	before: set_gpio 31
-	after: clear_gpio 31
+	chance: 5
 
 random: scroller
 	scroll: Kill the humans
-	chance: 5
+	colour: #ff0000
+	chance: 1
 
 gpio: startled
 	gif: startled.gif
 	pin: 29
+
+gpio: error
+	gif: error.gif
+	colour: #ff0000
+	drawmode: flash
+	before: set_gpio 35
+	after: clear_gpio 35
+	pin: 36	
 
 scripted: callback
 	scroll: Fish

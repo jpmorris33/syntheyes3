@@ -301,7 +301,9 @@ void parse(const char *line) {
 		nextWord(param);
 		if(parseColour(param)) {
 			curexp->colour = parseColour(param);
-			curexp->drawmode = DRAWMODE_MONOCHROME; // Assume they want to see the colour
+			if(curexp->drawmode == DRAWMODE_COLOUR) {
+				curexp->drawmode = DRAWMODE_MONOCHROME; // Assume they want to see the colour
+			}
 			printf("Set colour to 0x%x for expression '%s'\n",curexp->colour,curexp->name);
 		} else {
 			printf("Not setting the eye colour to black\n");
@@ -332,6 +334,7 @@ void parse(const char *line) {
 		curexp->afterevents++;
 	}
 
+	// By default GIF animations are mirrored for the other eye.  This can disable it for the given animation
 	if(!strcasecmp(cmd,"mirror:")) {
 		if(!curexp) {
 			font.errorMsg("Error: 'mirror:' no expression defined");
@@ -489,6 +492,12 @@ int parseDrawmode(const char *mode) {
 	}
 	if(!strcasecmp(mode, "gradient")) {
 		return DRAWMODE_GRADIENT;
+	}
+	if(!strcasecmp(mode, "flash")) {
+		return DRAWMODE_FLASH;
+	}
+	if(!strcasecmp(mode, "flashing")) {
+		return DRAWMODE_FLASH;
 	}
 	return -1;
 }
