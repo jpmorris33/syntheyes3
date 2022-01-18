@@ -70,8 +70,8 @@ bool check_pin(int pin) {
 		return false;
 	}
 
-	// Otherwise you can fake GPIO with keys 0-9
-	if (keys[SDL_SCANCODE_0 + (pin-21)]) {
+	// Otherwise you can fake GPIO with keys 1-9
+	if (keys[SDL_SCANCODE_1 + (pin-21)]) {
 		return true;
 	}
 

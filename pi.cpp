@@ -9,6 +9,7 @@ extern PanelDriver *panel;
 extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *gradient;
+extern bool transmitter;
 
 void initPanel() {
 	timing = new PosixTiming();
@@ -17,6 +18,14 @@ void initPanel() {
 
 	panel = new Unicorn();
 	panel->init();
+
+	// if pin 29 (BCM5 - 21 in WiringPi) is grounded, we're the transmitter
+	init_pin(21);
+	timing->wait_microseconds(250);
+	if(digitalRead(21)) {
+		transmitter=false;
+	}
+
 }
 
 void pi_init() {
@@ -64,7 +73,12 @@ bool check_pin(int pin) {
 }
 
 void set_pin(int pin, bool state) {
-	digitalWrite(pin, state);
+	// We're already using the GPIO pins on the transmitter for input,
+	// so disable this for safety reasons unless we're the receiver
+	if(!transmitter) {
+		pinMode(pin, OUTPUT);
+		digitalWrite(pin, state);
+	}
 }
 
 #endif
