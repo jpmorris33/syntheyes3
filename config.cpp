@@ -155,6 +155,10 @@ void parse(const char *line) {
 			forcetransmitter=true;
 		}
 	}
+	if(!strcasecmp(cmd,"serial:")) {
+		nextWord(param);
+		SAFE_STRCPY(serialPort,param);
+	}
 
 	//
 	//	Expression setup, this is stateful as it spans multiple lines

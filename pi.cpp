@@ -1,20 +1,26 @@
 #ifdef PLATFORM_PI
 
 #include "syntheyes.hpp"
+#include <string.h>
 #include <wiringPi.h>
 #include "drivers/display/Unicorn.hpp"
+#include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 
 extern PanelDriver *panel;
+extern SerialDriver *serial;
 extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *gradient;
 extern bool transmitter;
 
+void init_pin(int pin);
+
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
 	gradient = new PosixTiming();
+	serial = new PiSerialDriver();
 
 	panel = new Unicorn();
 	panel->init();
@@ -25,6 +31,9 @@ void initPanel() {
 	if(digitalRead(21)) {
 		transmitter=false;
 	}
+
+	// Default serial port for Pi Zero with bluetooth disabled
+	strcpy(serialPort,"/dev/ttyAMA0");
 
 }
 

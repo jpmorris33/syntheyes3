@@ -53,8 +53,12 @@ static bool check_gpio();
 static bool check_serial();
 static bool check_network();
 
+static void serial_init();
+static void serial_transmit(Expression *exp);
+static Expression *serial_receive();
 
 PanelDriver *panel = NULL;
+SerialDriver *serial = NULL;
 Timing *timing = NULL;
 Timing *cooldown = NULL;
 Timing *gradient = NULL;
@@ -65,6 +69,7 @@ uint32_t eyecolour = 0xff8700;
 int cooldown_time = 5;
 bool transmitter = true;
 bool forcetransmitter = false;
+char serialPort[256];
 
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
@@ -160,6 +165,8 @@ int main(int argc, char *argv[]){
 	cooldown->set(1); // It'll be elapsed by the time we check
 	gradient->set(1); // It'll be elapsed by the time we check
 
+	serial_init();
+
 	runEyes();
 
 	// Shouldn't ever get here
@@ -174,6 +181,7 @@ int main(int argc, char *argv[]){
 void runEyes() {
 	for(;;)  {
 		if(nextState) {
+			serial_transmit(nextState);
 			printf("Roll animation '%s'\n",nextState->name);
 			lastState=nextState;
 			nextState=NULL;
@@ -256,6 +264,14 @@ bool check_serial() {
 		// You're supposed to send, not listen
 		return false;
 	}
+
+	Expression *exp = serial_receive();
+	if(exp) {
+		// Set this directly so it plays immediately to avoid sync problems
+		nextState = exp;
+		return true;
+	}
+
 	return false;
 }
 
@@ -366,4 +382,78 @@ void set_pattern(int pattern) {
 			panel->setPattern(pattern_v);
 			break;
 	}
+}
+
+
+void serial_init() {
+	if(transmitter) {
+		if(!serial->open_write(serialPort,19200)) {
+			font.errorMsg("Transmitter: Error opening serial port '%s'\n",serialPort);
+		}
+	} else {
+		if(!serial->open_read(serialPort,19200)) {
+			font.errorMsg("Receiver: Error opening serial port '%s'\n",serialPort);
+		}
+	}
+}
+
+void serial_transmit(Expression *exp) {
+	char msg[1024];
+	int ret,len;
+
+	if(!transmitter) {
+		return;
+	}
+
+	memset(msg,0,sizeof(msg));
+	snprintf(msg,sizeof(msg)-1,"PLAY(%s)",exp->name);
+	len=strlen(msg)+1;
+	
+	ret=serial->write(msg);
+	if(ret != len) {
+		printf("Warning: wrote %d bytes to serial instead of %d\n",ret,len);
+	}
+}
+
+Expression *serial_receive() {
+	char buffer[1024];
+	int ret;
+	char *paramstart,*paramend;
+	memset(buffer,0,sizeof(buffer));
+
+	if(transmitter) {
+		return NULL;
+	}
+
+	ret=serial->read(buffer,sizeof(buffer));
+	if(ret<3) {
+		return NULL;
+	}
+
+	// Got something
+	paramstart = strchr(buffer,'(');
+	if(!paramstart) {
+		printf("Warning: Comms '%s' didn't have opening brace - aborting\n", buffer);
+		return NULL;
+	}
+	*paramstart++=0;
+	if(strcmp(buffer,"PLAY")) {
+		printf("Warning: Comms '%s' didn't start with PLAY\n", buffer);
+	}
+	paramend = strchr(paramstart,')');
+	if(!paramend) {
+		printf("Warning: Comms '%s' didn't have closing brace - aborting\n", paramstart);
+		return NULL;
+	}
+	*paramend=0;
+
+	Expression *exp = expressions.findByName(paramstart);
+	if(!exp) {
+		printf("Warning: did not find video '%s' from Comms command\n", paramstart);
+		return NULL;
+	}
+
+//	printf("Got animation '%s'\n",exp->name);
+
+	return exp;
 }

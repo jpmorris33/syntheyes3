@@ -6,6 +6,7 @@
 
 #include "syntheyes.hpp"
 #include "drivers/display/SDLPanel.hpp"
+#include "drivers/serial/VirtualSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include <SDL2/SDL.h>
 
@@ -13,14 +14,20 @@ extern PanelDriver *panel;
 extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *gradient;
+extern SerialDriver *serial;
 
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
 	gradient = new PosixTiming();
+	serial = new VirtualSerialDriver();
 
 	panel = new SDLPanel();
 	panel->init();
+
+	// Fake serial port file
+	strcpy(serialPort,"/tmp/_eyetmp_");
+
 }
 
 
