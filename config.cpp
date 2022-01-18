@@ -84,7 +84,12 @@ void parse(const char *line) {
 
 	if(!strcasecmp(cmd,"gifdir:")) {
 		nextWord(param);
-		SAFE_STRCPY(gifDir,param);
+		// Only use it if it exists
+		if(!access(param,R_OK|X_OK)) {
+			SAFE_STRCPY(gifDir,param);
+		} else {
+			printf("Warning: gifdir '%s' not present\n",param);
+		}
 	}
 
 	if(!strcasecmp(cmd,"eyecolour:")) {
