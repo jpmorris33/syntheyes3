@@ -407,7 +407,7 @@ void serial_transmit(Expression *exp) {
 	}
 
 	memset(msg,0,sizeof(msg));
-	snprintf(msg,sizeof(msg)-1,"PLAY: %s",exp->name);
+	snprintf(msg,sizeof(msg)-1,"PLAY: (%s)",exp->name);
 	len=strlen(msg)+1;
 	
 	ret=serial->write(msg);
@@ -438,8 +438,8 @@ Expression *serial_receive() {
 		return NULL;
 	}
 	*paramstart++=0;
-	if(strcmp(buffer,"PLAY:")) {
-		printf("Warning: Comms '%s' didn't start with PLAY:\n", buffer);
+	if(strcmp(buffer,"PLAY: ")) {
+		printf("Warning: Comms '%s' didn't start with PLAY: \n", buffer);
 	}
 	paramend = strchr(paramstart,')');
 	if(!paramend) {
@@ -453,8 +453,6 @@ Expression *serial_receive() {
 		printf("Warning: did not find video '%s' from Comms command\n", paramstart);
 		return NULL;
 	}
-
-//	printf("Got animation '%s'\n",exp->name);
 
 	return exp;
 }

@@ -5,8 +5,12 @@
 #include <wiringPi.h>
 #include <wiringSerial.h>
 #include <string.h>
+#include <stdio.h>
+#include "../PosixTiming.hpp"
 
 #define INVALID -1
+
+static PosixTiming timeout;
 
 PiSerialDriver::PiSerialDriver() {
 	fd = INVALID;
@@ -66,21 +70,32 @@ int PiSerialDriver::read(char *buffer, int maxlen) {
 			return 0;
 		}
 
-		while(serialDataAvail(fd) > 0) {
+		timeout.set(15); // You have 15ms to complete the message
+		// TODO: Make actual comms run in a background thread, then
+		// it can take as long as it needs
+
+		while(!timeout.elapsed()) {
+			if(serialDataAvail(fd) < 1) {
+				// prevent serialGetchar from blocking
+				continue;
+			}
 			input[0]=serialGetchar(fd);
 			if(input[0] == '>') {
 				return strlen(buffer);
 			}
 			strcat(buffer,input);
-			if(strlen(buffer) >= maxlen-1) {
+			if(strlen(buffer) >= (size_t)(maxlen-1)) {
+				printf("PiSerial: hit max, now '%s'\n",buffer);
 				return maxlen-1;
 			}
 		};
 
+		printf("PiSerial: Comms timed out, now '%s'\n",buffer);
+
 		return strlen(buffer);
 	}
 
-	return 0;	
+	return 0;
 }
 
 int PiSerialDriver::write(const char *msg) {
