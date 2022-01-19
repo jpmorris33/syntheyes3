@@ -1,0 +1,77 @@
+##
+##  Basic setup
+##
+
+# It will try these in turn and use the last one that's valid
+gifdir: ./videos/xerian/	# for testing
+gifdir: /boot/videos/xerian/	# for release
+
+# Cooldown time in seconds between repeating the same (non-idle) expression
+cooldown: 5
+
+rainbowspeed: 20
+effect: rainbow_h
+
+##
+##  Video list
+##
+##  Must have at least the following lines to set the default video:
+#   idle: myvideo
+#   gif: somevideo.gif
+##
+
+# Do not use pin 29 for GPIO animations.
+# Pin 29 is bridged on the transmitter and will trigger continually
+
+idle: idle1
+	gif: idle.gif
+	drawmode: gradient
+
+random: blink1
+	gif: blink.gif
+	colour: #808080
+	chance: 50
+	after: chain callback
+
+random: redeye
+	gif: idle.gif
+	colour: #ff0000
+	chance: 5
+
+random: scroller
+	scroll: Kill the humans
+	colour: #ff0000
+	chance: 1
+
+gpio: startled
+	gif: startled.gif
+	pin: 40
+	drawmode: monochrome
+
+gpio: eyeroll
+	gif: eyeroll.gif
+	pin: 33
+	drawmode: monochrome
+
+gpio: error
+	gif: error.gif
+	colour: #ff0000
+	drawmode: flash
+	before: set_gpio 35
+	after: clear_gpio 35
+	pin: 36
+
+#gpio: annoyed
+#	gif: annoyed.gif
+#	pin: 32
+#	drawmode: monochrome
+
+#gpio: happy
+#	gif: happy.gif
+#	pin: 38
+#	drawmode: monochrome
+	
+
+scripted: callback
+	scroll: Fish
+	drawmode: gradient

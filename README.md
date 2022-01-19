@@ -52,12 +52,12 @@ and also helps protect the OS from filesystem corruption when the power is cut t
 V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working, serial link WIP so you only get one eye anyway)
 
 # TODO for initial 3.00 release
-* Serial comms between the two Pi Zeroes
 * ACK light on Receiver (with customisable GPIO pin and duration)
 * Port all Xerian artwork from V2 to GIF files
 * Port all Raptor's Den artwork from V2 to GIF files
 
 # TODO for 3.01
+* Background comms thread to stop the timeout glitching the display
 * Redraw Xerian to make the eye image bigger
 * Make a Xerian GIF that shows off multicolour images
 * Looping GIFs so you can lock the expression like a Protogen, will need to be interruptable
