@@ -20,7 +20,7 @@ BINS	=	$(SRC:.cpp=)
 
 clean:
 	$Q echo "[Clean]"
-	$Q rm -f *.o drivers/*.o drivers/display/*.o drivers/serial/*.o *~ core tags eyes
+	$Q rm -f *.o drivers/*.o drivers/display/*.o drivers/serial/*.o platforms/*.o *~ core tags eyes
 
 tags:	$(SRC)
 	$Q echo [ctags]

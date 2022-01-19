@@ -27,6 +27,9 @@ extern char gifDir[512];
 extern int cooldown_time;
 extern int rainbowspeed;
 extern bool forcetransmitter;
+extern int ackPin;
+extern int ackTime;
+
 
 //
 //  Config reader
@@ -164,6 +167,21 @@ void parse(const char *line) {
 		serialRate = atoi(param);
 		printf("Set baud rate to %d bits/sec\n",serialRate);
 	}
+	if((!strcasecmp(cmd,"ackpin:")) || (!strcasecmp(cmd,"ack_pin:"))) {
+		nextWord(param);
+		ackPin = atoi(param);
+		ackPin = mapPin(ackPin);
+		if(ackPin < 0) {
+			font.errorMsg("Error in AckPin: Unsupported GPIO pin %s\n", param);
+		}
+		printf("Set ACK pin to %d (hardware pin '%s')\n",ackPin,param);
+	}
+	if((!strcasecmp(cmd,"acktime:")) || (!strcasecmp(cmd,"ack_time:"))) {
+		nextWord(param);
+		ackTime = atoi(param);
+		printf("Set ACK light duration to %d ms\n",ackTime);
+	}
+
 
 	//
 	//	Expression setup, this is stateful as it spans multiple lines

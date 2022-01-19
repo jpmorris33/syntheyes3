@@ -9,6 +9,8 @@
 #include "../PosixTiming.hpp"
 
 #define INVALID -1
+#define STARTCODE 127
+#define STOPCODE 0
 
 static PosixTiming timeout;
 
@@ -60,13 +62,13 @@ int PiSerialDriver::read(char *buffer, int maxlen) {
 	if(ret > 0) {
 		while(serialDataAvail(fd) > 0) {
 			input[0]=serialGetchar(fd);
-			if(input[0] == '<') {
+			if(input[0] == STARTCODE) {
 				break;
 			}
 		}
 
 		// No luck
-		if(input[0] != '<') {
+		if(input[0] != STARTCODE) {
 			return 0;
 		}
 
@@ -80,7 +82,7 @@ int PiSerialDriver::read(char *buffer, int maxlen) {
 				continue;
 			}
 			input[0]=serialGetchar(fd);
-			if(input[0] == '>') {
+			if(input[0] == STOPCODE) {
 				return strlen(buffer);
 			}
 			strcat(buffer,input);
@@ -106,11 +108,11 @@ int PiSerialDriver::write(const char *msg) {
 		return 0;
 	}
 
-	serialPutchar(fd,'<');
+	serialPutchar(fd,STARTCODE);
 	for(int ctr=0;ctr<len;ctr++) {
 		serialPutchar(fd,msg[ctr]);
 	}
-	serialPutchar(fd,'>');
+	serialPutchar(fd,STOPCODE);
 
 	serialPuts(fd,msg);
 	return strlen(msg)+2; // include start/stop codes

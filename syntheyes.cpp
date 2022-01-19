@@ -52,6 +52,7 @@ static bool check_comms();
 static bool check_gpio();
 static bool check_serial();
 static bool check_network();
+static void update_ack();
 
 static void serial_init();
 static void serial_transmit(Expression *exp);
@@ -62,6 +63,7 @@ SerialDriver *serial = NULL;
 Timing *timing = NULL;
 Timing *cooldown = NULL;
 Timing *gradient = NULL;
+Timing *ack = NULL;
 
 Font font;
 ExpressionList expressions;
@@ -71,6 +73,8 @@ bool transmitter = true;
 bool forcetransmitter = false;
 char serialPort[256];
 int serialRate=19200;
+int ackPin = -1;
+int ackTime = 750;
 
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
@@ -243,7 +247,7 @@ void setNextState(Expression *newState) {
 //
 
 bool check_comms() {
-	// TODO: Handle ACK light here as well
+	update_ack();
 
 	if(check_serial()) {
 		return true;
@@ -328,6 +332,23 @@ bool check_gpio() {
 	return false;
 }
 
+void update_ack() {
+
+	if(transmitter) {
+		// This is not for thee
+		return;
+	}
+
+	if(ackPin >= 0) {
+		if(ack->elapsed()) {
+			set_pin(ackPin,0);
+		} else {
+			set_pin(ackPin,1);
+		}
+	}
+}
+
+
 //
 //	Wait for a few milliseconds and perform various administrative tasks
 //	This is polled during the animation engine
@@ -343,6 +364,8 @@ void wait(int ms, bool interruptable) {
 		update_rainbow();
 
 		if(check_comms() && interruptable) {
+			// Flash the ACK light, if enabled
+			ack->set(ackTime);
 			break;
 		}
 		check_pin(-666);  // Check for ESC on desktop test version

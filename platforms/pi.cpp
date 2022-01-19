@@ -11,6 +11,7 @@ extern PanelDriver *panel;
 extern SerialDriver *serial;
 extern Timing *timing;
 extern Timing *cooldown;
+extern Timing *ack;
 extern Timing *gradient;
 extern bool transmitter;
 
@@ -19,6 +20,7 @@ void init_pin(int pin);
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
+	ack = new PosixTiming();
 	gradient = new PosixTiming();
 	serial = new PiSerialDriver();
 

@@ -1,5 +1,5 @@
 
-SRC	= syntheyes.cpp config.cpp pi.cpp fakepi.cpp \
+SRC	= syntheyes.cpp config.cpp platforms/pi.cpp platforms/linux.cpp \
           font.cpp gifload.cpp expression.cpp\
           drivers/PanelDriver.cpp drivers/display/Unicorn.cpp \
           drivers/display/SDLPanel.cpp \
@@ -7,12 +7,14 @@ SRC	= syntheyes.cpp config.cpp pi.cpp fakepi.cpp \
           drivers/serial/VirtualSerialDriver.cpp \
           drivers/Timing.cpp drivers/PosixTiming.cpp
 
-eyes:	syntheyes.o config.o pi.o fakepi.o font.o gifload.o expression.o \
+eyes:	syntheyes.o config.o font.o gifload.o expression.o \
+        platforms/pi.o platforms/linux.o \
         drivers/PanelDriver.o drivers/display/Unicorn.o drivers/display/SDLPanel.o \
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/Timing.o drivers/PosixTiming.o
 	$Q echo [link]
-	$Q $(CC) -o $@ syntheyes.o config.o fakepi.o pi.o font.o gifload.o expression.o \
+	$Q $(CC) -o $@ syntheyes.o config.o font.o gifload.o expression.o \
+        platforms/pi.o platforms/linux.o \
         drivers/PanelDriver.o drivers/display/Unicorn.o drivers/display/SDLPanel.o \
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/Timing.o drivers/PosixTiming.o \

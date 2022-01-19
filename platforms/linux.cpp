@@ -13,12 +13,14 @@
 extern PanelDriver *panel;
 extern Timing *timing;
 extern Timing *cooldown;
+extern Timing *ack;
 extern Timing *gradient;
 extern SerialDriver *serial;
 
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
+	ack = new PosixTiming();
 	gradient = new PosixTiming();
 	serial = new VirtualSerialDriver();
 

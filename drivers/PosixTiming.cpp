@@ -8,6 +8,12 @@ void PosixTiming::set(int ms) {
 	gettimeofday(&start,NULL);
 
 	memcpy(&end,&start,sizeof(timeval));
+
+	if(ms < 1) {
+		// Don't be silly
+		return;
+	}
+
 	if(ms > 1000) {
 		end.tv_sec += (ms / 1000);
 	} else {
