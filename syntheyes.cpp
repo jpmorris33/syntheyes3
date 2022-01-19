@@ -75,6 +75,7 @@ char serialPort[256];
 int serialRate=19200;
 int ackPin = -1;
 int ackTime = 750;
+int randomChance = 75; // 75 percent chance of picking a random event to space things out
 
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
@@ -192,6 +193,8 @@ void runEyes() {
 			nextState=NULL;
 			cooldown->set(cooldown_time*1000);	// Prevent immediate retriggering
 			lastState->play();
+			// Now run the idle animation
+			idle->play();
 		} else {
 			// Nothing cued up for playback, play the default
 			idle->play();
@@ -215,6 +218,14 @@ void getNextState() {
 	if(!transmitter) {
 		return;
 	}
+
+	// Random chance of picking a random expression.  This is to help prevent it running several animations in succession
+	int chance = random()%100;
+	if(randomChance <= chance) {
+		// You lose, try again
+		return;
+	}
+	
 
 	setNextState(expressions.pick(TRIGGER_RANDOM));
 	if(nextState) {

@@ -29,6 +29,7 @@ extern int rainbowspeed;
 extern bool forcetransmitter;
 extern int ackPin;
 extern int ackTime;
+extern int randomChance;
 
 
 //
@@ -180,6 +181,11 @@ void parse(const char *line) {
 		nextWord(param);
 		ackTime = atoi(param);
 		printf("Set ACK light duration to %d ms\n",ackTime);
+	}
+	if((!strcasecmp(cmd,"randomchance:")) || (!strcasecmp(cmd,"random_chance:"))) {
+		nextWord(param);
+		randomChance = atoi(param);
+		printf("Set random chance to %d percent\n",randomChance);
 	}
 
 
