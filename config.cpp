@@ -383,6 +383,17 @@ void parse(const char *line) {
 		}
 	}
 
+	// By default GIF animations show an ACK light if triggered via GPIO.  This can disable it for the given animation
+	if(!strcasecmp(cmd,"ack:")) {
+		if(!curexp) {
+			font.errorMsg("Error: 'ack:' no expression defined");
+		}
+		nextWord(param);
+		if((!strcasecmp(param, "off")) || (!strcasecmp(param, "false"))) {
+			curexp->ack = false;
+		}
+	}
+
 }
 
 //

@@ -40,22 +40,26 @@ ack_time: 750
 idle: idle
 	gif: idle.gif
 	drawmode: monochrome
+	ack: off
 
 # Random blink
 random: blink
 	gif: blink.gif
 	drawmode: monochrome
 	chance: 50
+	ack: off
 
 random: redeye
 	gif: idle.gif
 	colour: #ff0000
 	chance: 5
+	ack: off
 
 random: scroller
 	scroll: Kill the humans
 	drawmode: gradient
 	chance: 1
+	ack: off
 
 # These expressions are triggered by the GPIO pins
 gpio: startled

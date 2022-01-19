@@ -43,6 +43,7 @@ class Expression {
 		int trigger;	// Idle, Random, GPIO etc
 		bool interruptable;
 		bool mirror;
+		bool ack;
 		int parameter;
 		int drawmode;
 		uint32_t colour;

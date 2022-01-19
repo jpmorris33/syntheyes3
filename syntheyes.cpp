@@ -46,8 +46,8 @@ extern bool check_pin(int pin);
 extern void readConfig(FILE *fp);
 
 static void runEyes();
-static void getNextState();
-static void setNextState(Expression *newState);
+static void getnextExpression();
+static void setnextExpression(Expression *newExpression);
 static bool check_comms();
 static bool check_gpio();
 static bool check_serial();
@@ -85,8 +85,8 @@ bool flash_state=true;
 
 char gifDir[512];
 Expression *idle=NULL;
-Expression *nextState=NULL;
-Expression *lastState=NULL;
+Expression *nextExpression=NULL;
+Expression *lastExpression=NULL;
 ExpressionSet *gpioList = NULL;
 
 
@@ -186,13 +186,13 @@ int main(int argc, char *argv[]){
 
 void runEyes() {
 	for(;;)  {
-		if(nextState) {
-			serial_transmit(nextState);
-			printf("Roll animation '%s'\n",nextState->name);
-			lastState=nextState;
-			nextState=NULL;
+		if(nextExpression) {
+			serial_transmit(nextExpression);
+			printf("Roll animation '%s'\n",nextExpression->name);
+			lastExpression=nextExpression;
+			nextExpression=NULL;
 			cooldown->set(cooldown_time*1000);	// Prevent immediate retriggering
-			lastState->play();
+			lastExpression->play();
 			// Now run the idle animation
 			idle->play();
 		} else {
@@ -200,7 +200,7 @@ void runEyes() {
 			idle->play();
 		}
 		// Pick a random video if we don't already have one ready to roll
-		getNextState();
+		getnextExpression();
 	}
 }
 
@@ -208,9 +208,9 @@ void runEyes() {
 //	Pick a random video, or not as the case may be
 //
 
-void getNextState() {
+void getnextExpression() {
 	// If we've already been given something by the GPIO or comms
-	if(nextState) {
+	if(nextExpression) {
 		return;
 	}
 
@@ -227,11 +227,11 @@ void getNextState() {
 	}
 	
 
-	setNextState(expressions.pick(TRIGGER_RANDOM));
-	if(nextState) {
+	setnextExpression(expressions.pick(TRIGGER_RANDOM));
+	if(nextExpression) {
 		return;
 	}
-	nextState=NULL;
+	nextExpression=NULL;
 }
 
 //
@@ -239,18 +239,18 @@ void getNextState() {
 //	in too short a period for debouncing the GPIO and preventing double-blinks
 //
 
-void setNextState(Expression *newState) {
+void setnextExpression(Expression *newExpression) {
 	// Prevent retriggering
-	if(lastState && newState == lastState) {
+	if(lastExpression && newExpression == lastExpression) {
 		if(!cooldown->elapsed()) {
-			nextState=NULL;
+			nextExpression=NULL;
 			return;
 		}
-		lastState = NULL; // disable cooldown check
+		lastExpression = NULL; // disable cooldown check
 	}
 
 	// Otherwise, do it
-	nextState = newState;
+	nextExpression = newExpression;
 }
 
 //
@@ -284,7 +284,7 @@ bool check_serial() {
 	Expression *exp = serial_receive();
 	if(exp) {
 		// Set this directly so it plays immediately to avoid sync problems
-		nextState = exp;
+		nextExpression = exp;
 		return true;
 	}
 
@@ -320,7 +320,7 @@ bool check_gpio() {
 		return false;
 	}
 
-	if(nextState) {
+	if(nextExpression) {
 		return false;
 	}
 
@@ -334,7 +334,7 @@ bool check_gpio() {
 		if(check_pin(exp->parameter)) {
 			ExpressionSet *videos = expressions.findByGPIO(exp->parameter);
 			if(videos) {
-				setNextState(videos->getRandom());
+				setnextExpression(videos->getRandom());
 				delete videos;
 				return true;
 			}
@@ -376,7 +376,9 @@ void wait(int ms, bool interruptable) {
 
 		if(check_comms() && interruptable) {
 			// Flash the ACK light, if enabled
-			ack->set(ackTime);
+			if(nextExpression && nextExpression->ack) {
+				ack->set(ackTime);
+			}
 			break;
 		}
 		check_pin(-666);  // Check for ESC on desktop test version

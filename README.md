@@ -53,7 +53,6 @@ V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working
 
 # TODO for initial 3.00 release
 * ACK light on Receiver (Needs testing!)
-* Port all Xerian artwork from V2 to GIF files
 * Port all Raptor's Den artwork from V2 to GIF files
 
 # TODO for 3.01

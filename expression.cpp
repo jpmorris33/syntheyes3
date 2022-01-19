@@ -5,7 +5,7 @@
 #include "syntheyes.hpp"
 
 
-extern Expression *nextState;
+extern Expression *nextExpression;
 extern bool transmitter;
 extern bool flash_state;
 
@@ -45,6 +45,7 @@ GifExpression::GifExpression(const char *path) {
 
 	interruptable=true;
 	mirror=true;
+	ack=true;
 	trigger=TRIGGER_NEVER;
 	parameter=0;
 	drawmode = DRAWMODE_COLOUR;
@@ -71,12 +72,16 @@ void GifExpression::play() {
 		for(int ctr2=0;ctr2<delay;ctr2++) {
 			wait(10,interruptable);
 			drawFrame(ctr);
-			if(interruptable && nextState) {
+			// If something has come up and we're interruptable, stop
+			if(interruptable && nextExpression) {
 				break;
 			}
 		}
 
-		if(interruptable && nextState) {
+		if(interruptable && nextExpression) {
+			// Bounce out of the outer loop as well
+			// We still want to run the event hooks in case GPIOs need changing
+			// TODO: May need to prevent chain() events happening in this case
 			break;
 		}
 	}
@@ -133,6 +138,7 @@ ScrollExpression::ScrollExpression(const char *message) {
 
 	interruptable=false;
 	mirror=false; // Mirroring the scrolly doesn't make much sense, but I suppose it could be implemented in future
+	ack=true;
 	trigger=TRIGGER_NEVER;
 	parameter=0;
 	drawmode = DRAWMODE_COLOUR;
