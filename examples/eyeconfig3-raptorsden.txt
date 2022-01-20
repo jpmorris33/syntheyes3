@@ -62,10 +62,10 @@ random: blink
 #	ack: off
 
 # These expressions are triggered by the GPIO pins
-#gpio: startled
-#	gif: startled.gif
-#	pin: 40
-#	drawmode: monochrome
+gpio: startled
+	gif: startled.gif
+	pin: 40
+	drawmode: monochrome
 
 gpio: eyeroll
 	gif: eyeroll.gif
@@ -90,10 +90,10 @@ gpio: happy
 	pin: 38
 	drawmode: monochrome
 
-#gpio: owo
-#	gif: owo.gif
-#	pin: 31
-#	drawmode: monochrome
+gpio: owo
+	gif: owo.gif
+	pin: 31
+	drawmode: monochrome
 
 gpio: blush
 	gif: blush.gif
