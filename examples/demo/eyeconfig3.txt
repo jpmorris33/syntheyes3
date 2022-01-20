@@ -3,14 +3,16 @@
 ##
 
 # It will try these in turn and use the last one that's valid
-gifdir: ./videos/xerian/	# for testing
-gifdir: /boot/videos/xerian/	# for release
+gifdir: ./videos/demo/		# for testing
+gifdir: /boot/videos/demo/	# for release
 
 # Cooldown time in seconds between repeating the same (non-idle) expression
 cooldown: 5
 
 rainbowspeed: 20
 effect: rainbow_h
+
+eyecolour: #ff8000
 
 ##
 ##  Video list
@@ -29,24 +31,39 @@ idle: idle1
 
 random: blink1
 	gif: blink.gif
-	colour: #808080
 	chance: 50
-	after: chain callback
+	drawmode: gradient
 
 random: redeye
 	gif: idle.gif
 	colour: #ff0000
-	chance: 5
+	chance: 20
+	after: chain greeneye
 
 random: scroller
 	scroll: Kill the humans
 	colour: #ff0000
-	chance: 1
+	chance: 33
 
-gpio: startled
-	gif: startled.gif
+gpio: flash
+	gif: flash.gif
 	pin: 40
-	drawmode: monochrome
+	drawmode: colour
+	after: chain flash2
+
+scripted: flash2
+	gif: flash.gif
+	after: chain flash3
+
+scripted: flash3
+	gif: flash.gif
+	
+
+gpio: citadel
+	gif: citadel_guy.gif
+	pin: 38
+	drawmode: colour
+	after: chain callback
 
 gpio: eyeroll
 	gif: eyeroll.gif
@@ -73,5 +90,15 @@ gpio: error
 	
 
 scripted: callback
-	scroll: Fish
+	scroll: Citadel Citadel Citadel   Superior Software Presents Citadel  
 	drawmode: gradient
+
+scripted: greeneye
+	gif: idle.gif
+	colour: #00ff00
+	after: chain blueeye
+
+scripted: blueeye
+	gif: idle.gif
+	colour: #0000ff
+
