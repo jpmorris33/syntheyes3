@@ -167,6 +167,7 @@ int main(int argc, char *argv[]){
 		// We don't want to do this for the receiver as it will probably mess up the ACK light
 		expressions.initGPIO();
 	}
+	expressions.initBackgrounds();
 
 	cooldown->set(1); // It'll be elapsed by the time we check
 	gradient->set(1); // It'll be elapsed by the time we check

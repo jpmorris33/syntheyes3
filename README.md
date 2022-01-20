@@ -52,8 +52,7 @@ and also helps protect the OS from filesystem corruption when the power is cut t
 V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working, serial link WIP so you only get one eye anyway)
 
 # TODO for initial 3.00 release
-* ACK light on Receiver (Needs testing!)
-* Port all Raptor's Den artwork from V2 to GIF files
+* Port remaining Raptor's Den animations (OwO, startled) from V2 to GIF files
 
 # TODO for 3.01
 * Background comms thread to stop the timeout glitching the display

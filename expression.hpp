@@ -37,6 +37,7 @@ struct ExpressionEvent {
 class Expression {
 	public:
 		virtual void play();
+		virtual void drawFirstFrame();
 		void event(ExpressionEvent *ev);
 
 		char name[256];
@@ -44,6 +45,8 @@ class Expression {
 		bool interruptable;
 		bool mirror;
 		bool ack;
+		Expression *background;
+		const char *backgroundname;
 		int parameter;
 		int drawmode;
 		uint32_t colour;
@@ -59,9 +62,10 @@ class GifExpression : public Expression {
 	public:
 		GifExpression(const char *path);
 		void play();
-
+		void drawFirstFrame();
 	private:
 		int drawFrame(int frame);
+		void drawFrameOnly(int frame);
 		GIFANIM *gif;
 };
 
@@ -69,6 +73,7 @@ class ScrollExpression : public Expression {
 	public:
 		ScrollExpression(const char *message);
 		void play();
+		void drawFirstFrame();
 
 		char *text;
 		int speed;
@@ -104,6 +109,7 @@ class ExpressionList {
 		ExpressionSet *findAllByTrigger(int triggertype);
 		ExpressionSet *findByGPIO(int pin);
 		void initGPIO();
+		void initBackgrounds();
 	private:
 		Expression *anchor;
 

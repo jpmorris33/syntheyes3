@@ -81,12 +81,14 @@ void Unicorn::updateRGB(unsigned char *img, int w, int h) {
 		in=&img[(w*3)*y];
 		for(int x=0;x<UNICORNPANEL_W;x++) {
 			if(x<w && y<h) {
-				*out++ = *in++;
-				*out++ = *in++;
-				*out++ = *in++;
-			} else {
-				out+=3;
+				if(in[0]|in[1]|in[2]) {
+					out[0] = in[0];
+					out[1] = in[1];
+					out[2] = in[2];
+				}
+				in +=3;
 			}
+			out+=3;
 		}
 	}
 }

@@ -6,6 +6,7 @@
 
 
 extern Expression *nextExpression;
+extern Expression *idle;
 extern bool transmitter;
 extern bool flash_state;
 
@@ -15,6 +16,8 @@ extern void init_pin(int pin);
 
 
 void Expression::play() {};
+
+void Expression::drawFirstFrame() {};
 
 void Expression::event(ExpressionEvent *ev) {
 	Expression *exp=NULL;
@@ -46,6 +49,8 @@ GifExpression::GifExpression(const char *path) {
 	interruptable=true;
 	mirror=true;
 	ack=true;
+	background=NULL;
+	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
 	parameter=0;
 	drawmode = DRAWMODE_COLOUR;
@@ -92,6 +97,10 @@ void GifExpression::play() {
 
 }
 
+void GifExpression::drawFirstFrame() {
+	drawFrameOnly(0);
+}
+
 
 int GifExpression::drawFrame(int frame) {
 
@@ -103,6 +112,22 @@ int GifExpression::drawFrame(int frame) {
 	}
 
 	panel->clear(0);
+	if(background) {
+		background->drawFirstFrame();
+	}
+
+	drawFrameOnly(frame);
+
+	if(transmitter || (!mirror)) {
+		panel->draw();
+	} else {
+		panel->drawMirrored();
+	}
+
+	return gif->frame[frame].delay;
+}
+
+void GifExpression::drawFrameOnly(int frame) {
 	switch(drawmode) {
 		case DRAWMODE_COLOUR:
 			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h);
@@ -120,14 +145,6 @@ int GifExpression::drawFrame(int frame) {
 			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h);
 		break;
 	};
-
-	if(transmitter || (!mirror)) {
-		panel->draw();
-	} else {
-		panel->drawMirrored();
-	}
-
-	return gif->frame[frame].delay;
 }
 
 
@@ -139,6 +156,8 @@ ScrollExpression::ScrollExpression(const char *message) {
 	interruptable=false;
 	mirror=false; // Mirroring the scrolly doesn't make much sense, but I suppose it could be implemented in future
 	ack=true;
+	background=NULL;
+	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
 	parameter=0;
 	drawmode = DRAWMODE_COLOUR;
@@ -175,6 +194,7 @@ void ScrollExpression::play() {
 
 }
 
+void ScrollExpression::drawFirstFrame() {};
 
 
 
@@ -404,6 +424,21 @@ void ExpressionList::initGPIO() {
 	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
 		if(ptr->trigger == TRIGGER_GPIO) {
 			init_pin(ptr->parameter);
+		}
+	}
+}
+
+void ExpressionList::initBackgrounds() {
+	if(!anchor) {
+		return;
+	}
+
+	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
+		if(ptr->backgroundname) {
+			ptr->background = findByName(ptr->backgroundname);
+			if(!ptr->background) {
+				font.errorMsg("Error: background expression '%s' not found", ptr->backgroundname);
+			}
 		}
 	}
 }

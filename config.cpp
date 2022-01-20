@@ -394,6 +394,14 @@ void parse(const char *line) {
 		}
 	}
 
+	if(!strcasecmp(cmd,"background:")) {
+		if(!curexp) {
+			font.errorMsg("Error: 'background:' no expression defined");
+		}
+		nextWord(param);
+		curexp->backgroundname = strdup(param);
+	}
+
 }
 
 //
