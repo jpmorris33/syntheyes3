@@ -23,7 +23,7 @@ effect: rainbow_h
 # The Receiver board can flash a light to acknowledge an expression
 # was selected by the user.  On Xerian's hardware the LED is on pin 40
 ack_pin: 40
-ack_time: 750
+ack_time: 600
 
 ##
 ##  Video list
@@ -40,22 +40,26 @@ ack_time: 750
 idle: idle
 	gif: idle.gif
 	drawmode: monochrome
+	ack: off
 
 # Random blink
 random: blink
 	gif: blink.gif
 	drawmode: monochrome
 	chance: 50
+	ack: off
 
 random: redeye
 	gif: idle.gif
 	colour: #ff0000
 	chance: 5
+	ack: off
 
 random: scroller
 	scroll: Kill the humans
 	drawmode: gradient
 	chance: 1
+	ack: off
 
 # These expressions are triggered by the GPIO pins
 gpio: startled
@@ -86,7 +90,17 @@ gpio: happy
 	pin: 38
 	drawmode: monochrome
 
+gpio: owo
+	gif: owo.gif
+	pin: 31
+	drawmode: monochrome
+
 gpio: blush
 	gif: blush.gif
 	pin: 37
-	drawmode: colour # Use GIF's own colours
+	drawmode: colour		# Use GIF's own colours
+	background: blush_background	# Draw blush effect on top of this
+
+scripted: blush_background
+	gif: blush_eye.gif
+	drawmode: monochrome
