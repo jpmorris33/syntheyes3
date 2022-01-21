@@ -35,7 +35,7 @@ void Expression::event(ExpressionEvent *ev) {
 				// If you want to set up an infinite loop, that's not my problem
 				exp->play();
 			} else {
-				printf("Did not find animation '%s'\n", ev->strparameter);
+				printf("Warning: CHAIN did not find animation '%s'\n", ev->strparameter);
 			}
 			break;
 		default:

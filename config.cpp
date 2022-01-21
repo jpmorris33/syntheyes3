@@ -13,7 +13,6 @@ void readConfig(FILE *fp);
 void parse(const char *line);
 void makepath(char path[1024], const char *filename);
 
-static const char *videotype(int type);
 static char *nextWord(char *input);
 static const char *nextWordStart(const char *input);
 static const char *nextWordEnd(const char *input);
@@ -21,6 +20,9 @@ static const char *findWord(const char *input, int pos);
 static uint32_t parseColour(const char *hex);
 static int parseDrawmode(const char *mode);
 static void add_event(ExpressionEvent *slot, const char *input);
+#ifdef DEBUGGING
+static const char *videotype(int type);
+#endif
 
 extern int mapPin(int pin);
 extern char gifDir[512];
@@ -30,7 +32,6 @@ extern bool forcetransmitter;
 extern int ackPin;
 extern int ackTime;
 extern int randomChance;
-
 
 //
 //  Config reader
@@ -92,7 +93,7 @@ void parse(const char *line) {
 		if(!access(param,R_OK|X_OK)) {
 			SAFE_STRCPY(gifDir,param);
 		} else {
-			printf("Warning: gifdir '%s' not present\n",param);
+			dbprintf("Warning: gifdir '%s' not present\n",param);
 		}
 	}
 
@@ -115,7 +116,7 @@ void parse(const char *line) {
 	if(!strcasecmp(cmd,"cooldown:")) {
 		nextWord(param);
 		cooldown_time  = atoi(param);
-		printf("Set cooldown timer to %d sec\n", cooldown_time);
+		dbprintf("Set cooldown timer to %d sec\n", cooldown_time);
 	}
 	if(!strcasecmp(cmd,"setrainbow:")) {
 		nextWord(param);
@@ -129,29 +130,29 @@ void parse(const char *line) {
 		nextWord(param);
 
 		rainbow[offset-1] = parseColour(param);		
-		printf("Set rainbow entry %d/16 to #%06x\n", offset, rainbow[offset-1]);
+		dbprintf("Set rainbow entry %d/16 to #%06x\n", offset, rainbow[offset-1]);
 	}
 	if(!strcasecmp(cmd,"effect:")) {
 		nextWord(param);
 		if(!strcasecmp(param,"rainbow_v")) {
-			printf("Eye will have a vertical rainbow effect\n");
+			dbprintf("Eye will have a vertical rainbow effect\n");
 			set_pattern(PATTERN_V);
 		}
 
 		if(!strcasecmp(param,"rainbow_h")) {
-			printf("Eye will have a horizontal rainbow effect\n");
+			dbprintf("Eye will have a horizontal rainbow effect\n");
 			set_pattern(PATTERN_H);
 		}
 
 		if(!strcasecmp(param,"rainbow_o")) {
-			printf("Eye will have a square rainbow effect\n");
+			dbprintf("Eye will have a square rainbow effect\n");
 			set_pattern(PATTERN_O);
 		}
 	}
 	if(!strcasecmp(cmd,"rainbowspeed:")) {
 		nextWord(param);
 		rainbowspeed = atoi(param);
-		printf("Set rainbow delay to %d ticks\n",rainbowspeed);
+		dbprintf("Set rainbow delay to %d ticks\n",rainbowspeed);
 	}
 	if(!strcasecmp(cmd,"transmitter:")) {
 		nextWord(param);
@@ -166,7 +167,7 @@ void parse(const char *line) {
 	if(!strcasecmp(cmd,"baud:")) {
 		nextWord(param);
 		serialRate = atoi(param);
-		printf("Set baud rate to %d bits/sec\n",serialRate);
+		dbprintf("Set baud rate to %d bits/sec\n",serialRate);
 	}
 	if((!strcasecmp(cmd,"ackpin:")) || (!strcasecmp(cmd,"ack_pin:"))) {
 		nextWord(param);
@@ -175,17 +176,17 @@ void parse(const char *line) {
 		if(ackPin < 0) {
 			font.errorMsg("Error in AckPin: Unsupported GPIO pin %s\n", param);
 		}
-		printf("Set ACK pin to %d (hardware pin '%s')\n",ackPin,param);
+		dbprintf("Set ACK pin to %d (hardware pin '%s')\n",ackPin,param);
 	}
 	if((!strcasecmp(cmd,"acktime:")) || (!strcasecmp(cmd,"ack_time:"))) {
 		nextWord(param);
 		ackTime = atoi(param);
-		printf("Set ACK light duration to %d ms\n",ackTime);
+		dbprintf("Set ACK light duration to %d ms\n",ackTime);
 	}
 	if((!strcasecmp(cmd,"randomchance:")) || (!strcasecmp(cmd,"random_chance:"))) {
 		nextWord(param);
 		randomChance = atoi(param);
-		printf("Set random chance to %d percent\n",randomChance);
+		dbprintf("Set random chance to %d percent\n",randomChance);
 	}
 
 
@@ -250,7 +251,7 @@ void parse(const char *line) {
 		if(curtype != TRIGGER_IDLE) {
 			curexp->interruptable=false;
 		}
-		printf("Added type %s gif expression '%s'\n",videotype(curtype),curname);
+		dbprintf("Added type %s gif expression '%s'\n",videotype(curtype),curname);
 
 		// And reset things just to be safe
 		curname[0]=0;
@@ -282,7 +283,7 @@ void parse(const char *line) {
 		if(curtype == TRIGGER_IDLE) {
 			curexp->interruptable=false;
 		}
-		printf("Added type %s scroll expression '%s'\n",videotype(curtype), curname);
+		dbprintf("Added type %s scroll expression '%s'\n",videotype(curtype), curname);
 
 		// And reset things just to be safe
 		curname[0]=0;
@@ -300,7 +301,7 @@ void parse(const char *line) {
 		}
 		nextWord(param);
 		curexp->parameter = atoi(param);
-		printf("Set chance to %d percent for expression '%s'\n",curexp->parameter,curexp->name);
+		dbprintf("Set chance to %d percent for expression '%s'\n",curexp->parameter,curexp->name);
 	}
 	
 	if(!strcasecmp(cmd,"pin:")) {
@@ -317,7 +318,7 @@ void parse(const char *line) {
 		if(curexp->parameter < 0) {
 			font.errorMsg("Error in Pin: Unsupported GPIO pin %s\n", param);
 		}
-		printf("Set gpio pin to %d for expression '%s'\n",curexp->parameter,curexp->name);
+		dbprintf("Set gpio pin to %d for expression '%s'\n",curexp->parameter,curexp->name);
 	}
 
 	if(!strcasecmp(cmd,"drawmode:")) {
@@ -329,7 +330,7 @@ void parse(const char *line) {
 		if(curexp->drawmode < 0) {
 			font.errorMsg("Unknown drawmode '%s'", param);
 		}
-		printf("Set drawmode to %s for expression '%s'\n",param,curexp->name);
+		dbprintf("Set drawmode to %s for expression '%s'\n",param,curexp->name);
 	}
 
 	if((!strcasecmp(cmd,"colour:")) || (!strcasecmp(cmd,"color:"))) {
@@ -342,9 +343,9 @@ void parse(const char *line) {
 			if(curexp->drawmode == DRAWMODE_COLOUR) {
 				curexp->drawmode = DRAWMODE_MONOCHROME; // Assume they want to see the colour
 			}
-			printf("Set colour to 0x%x for expression '%s'\n",curexp->colour,curexp->name);
+			dbprintf("Set colour to 0x%x for expression '%s'\n",curexp->colour,curexp->name);
 		} else {
-			printf("Not setting the eye colour to black\n");
+			dbprintf("Not setting the eye colour to black\n");
 		}
 	}
 
@@ -453,6 +454,7 @@ void add_event(ExpressionEvent *slot, const char *input) {
 //  Mostly for debugging, decode the trigger type
 //
 
+#ifdef DEBUGGING
 const char *videotype(int type) {
 	switch(type) {
 		case TRIGGER_IDLE:
@@ -467,6 +469,7 @@ const char *videotype(int type) {
 			return "UNSUPPORTED!";
 	};
 }
+#endif
 
 //
 // String utils

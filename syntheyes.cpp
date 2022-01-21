@@ -94,6 +94,11 @@ ExpressionSet *gpioList = NULL;
 int main(int argc, char *argv[]){
 	FILE *fp=NULL;
 
+	printf("SynthEyes v%s - (C)2022 IT-HE Software\n",VERSION);
+	puts(  "========================================\n");
+
+	puts("*Panel init...");
+
 	initPanel();
 	set_pattern(PATTERN_V);
 
@@ -118,6 +123,8 @@ int main(int argc, char *argv[]){
 			exit(0);
 		}
 	}
+
+	puts("*Read config...");
 
 	strcpy(gifDir,"/boot/");
 
@@ -153,6 +160,8 @@ int main(int argc, char *argv[]){
 
 	srandom(time(NULL));
 
+	puts("*System setup...");
+
 	// Now do some final checks
 	idle=expressions.findFirstByTrigger(TRIGGER_IDLE);
 	if(!idle) {
@@ -172,7 +181,15 @@ int main(int argc, char *argv[]){
 	cooldown->set(1); // It'll be elapsed by the time we check
 	gradient->set(1); // It'll be elapsed by the time we check
 
+	puts("*Serial comms init...");
+
 	serial_init();
+
+	if(transmitter) {
+		puts("*All OK!  Running as transmitter");
+	} else {
+		puts("*All OK!  Running as receiver");
+	}
 
 	runEyes();
 
@@ -189,7 +206,7 @@ void runEyes() {
 	for(;;)  {
 		if(nextExpression) {
 			serial_transmit(nextExpression);
-			printf("Roll animation '%s'\n",nextExpression->name);
+			dbprintf("Roll animation '%s'\n",nextExpression->name);
 			lastExpression=nextExpression;
 			nextExpression=NULL;
 			cooldown->set(cooldown_time*1000);	// Prevent immediate retriggering

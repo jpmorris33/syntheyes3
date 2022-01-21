@@ -52,20 +52,20 @@ and also helps protect the OS from filesystem corruption when the power is cut t
 V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working, serial link WIP so you only get one eye anyway)
 
 # TODO for initial 3.00 release
-* Port remaining Raptor's Den animations (OwO, startled) from V2 to GIF files
+* Document the config file format, include hardware PDF
+* ZIP a release build and put on github
 
-# TODO for 3.01
+# TODO for 3.0x
 * Background comms thread to stop the timeout glitching the display
-* Redraw Xerian to make the eye image bigger
-* Make a Xerian GIF that shows off multicolour images
+* Smooth scrolling for text
 * Looping GIFs so you can lock the expression like a Protogen, will need to be interruptable
-* Desktop Windows build for testing?
 * Startup animation for user splash screens?
 * Make sure all effects work on scrolling (flashing, mirroring) just in case
 
 # TODO for 3.1x
-* How can we support winking?
-* Smooth scrolling for text
+* Winking support (probably a flag to keep displaying IDLE on one panel)
+* Redraw Xerian to make the eye image bigger
+* Desktop Windows build for testing?  (This looks to be a total PITA)
 * MAX7912 panel driver (monochrome only, obviously - but could support both eyes from a single Pi in Transmitter mode)
 * Neopixel driver (16x16 outputs and horn status lights support)
 

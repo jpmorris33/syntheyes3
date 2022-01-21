@@ -25,6 +25,13 @@ extern void update_rainbow();
 
 #define SAFE_STRCPY(a,b) {strncpy(a,b,sizeof(a));a[sizeof(a)-1]=0;}
 
+#ifdef DEBUGGING
+	#define dbprintf printf
+#else
+	#define dbprintf(...)  ;
+#endif
+
+
 // Rainbow patterns
 
 #define PATTERN_V 0
