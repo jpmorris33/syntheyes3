@@ -371,7 +371,7 @@ void wait(int ms, bool interruptable) {
 	while(!timing->elapsed()) {
 
 		// Drawing is no longer done here since we need to know whether to call draw or drawMirrored()
-		timing->wait_microseconds(50);
+		timing->wait_microseconds(500);
 
 		update_rainbow();
 
