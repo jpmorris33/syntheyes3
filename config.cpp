@@ -20,6 +20,9 @@ static const char *findWord(const char *input, int pos);
 static uint32_t parseColour(const char *hex);
 static int parseDrawmode(const char *mode);
 static void add_event(ExpressionEvent *slot, const char *input);
+static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output);
+static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice);
+
 #ifdef DEBUGGING
 static const char *videotype(int type);
 #endif
@@ -29,7 +32,7 @@ extern char gifDir[512];
 extern int cooldown_time;
 extern int rainbowspeed;
 extern bool forcetransmitter;
-extern int ackPin;
+extern GPIOPin *ackPin;
 extern int ackTime;
 extern int randomChance;
 
@@ -171,12 +174,8 @@ void parse(const char *line) {
 	}
 	if((!strcasecmp(cmd,"ackpin:")) || (!strcasecmp(cmd,"ack_pin:"))) {
 		nextWord(param);
-		ackPin = atoi(param);
-		ackPin = mapPin(ackPin);
-		if(ackPin < 0) {
-			font.errorMsg("Error in AckPin: Unsupported GPIO pin %s\n", param);
-		}
-		dbprintf("Set ACK pin to %d (hardware pin '%s')\n",ackPin,param);
+		ackPin = parseGPIO("AckPin:",param, true, DEVICE_RECEIVER);
+		dbprintf("Set ACK pin to %d\n",ackPin->getPin());
 	}
 	if((!strcasecmp(cmd,"acktime:")) || (!strcasecmp(cmd,"ack_time:"))) {
 		nextWord(param);
@@ -312,12 +311,10 @@ void parse(const char *line) {
 			font.errorMsg("Error: 'pin:' is only for GPIO expressions");
 		}
 		nextWord(param);
-		curexp->parameter = atoi(param);
 
-		curexp->parameter=mapPin(curexp->parameter);
-		if(curexp->parameter < 0) {
-			font.errorMsg("Error in Pin: Unsupported GPIO pin %s\n", param);
-		}
+		// Force the device to be the transmitter for GPIO-triggered expressions
+		curexp->pin = parseGPIO("Pin:", param, false, DEVICE_TRANSMITTER);
+		curexp->parameter = curexp->pin->getPin();
 		dbprintf("Set gpio pin to %d for expression '%s'\n",curexp->parameter,curexp->name);
 	}
 
@@ -427,20 +424,12 @@ void add_event(ExpressionEvent *slot, const char *input) {
 
 	if((!strcasecmp(cmd, "setgpio")) || (!strcasecmp(cmd, "set_gpio"))) {
 		slot->type = EVENT_SETGPIO;
-		slot->parameter = atoi(param);
-		slot->parameter=mapPin(slot->parameter);
-		if(slot->parameter < 0) {
-			font.errorMsg("Error in SetGPIO: Unsupported GPIO pin %s\n", param);
-		}
+		slot->pin = parseGPIO(cmd,param,true);
 	}
 
 	if((!strcasecmp(cmd, "cleargpio")) || (!strcasecmp(cmd, "clear_gpio"))) {
 		slot->type = EVENT_CLEARGPIO;
-		slot->parameter = atoi(param);
-		slot->parameter=mapPin(slot->parameter);
-		if(slot->parameter < 0) {
-			font.errorMsg("Error in ClearGPIO: Unsupported GPIO pin %s\n", param);
-		}
+		slot->pin = parseGPIO(cmd,param,true);
 	}
 
 	if((!strcasecmp(cmd, "chain")) || (!strcasecmp(cmd, "play"))) {
@@ -560,4 +549,47 @@ int parseDrawmode(const char *mode) {
 		return DRAWMODE_FLASH;
 	}
 	return -1;
+}
+
+GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice) {
+
+	char device = forceDevice ? forceDevice : DEVICE_BOTH;
+	int pin=0;
+
+	if(param[0] == 'T' || param[0] == 't') {
+		device = DEVICE_TRANSMITTER;
+		param++;
+	} else {
+		if(param[0] == 'R' || param[0] == 'r') {
+			device = DEVICE_RECEIVER;
+			param++;
+		}
+	}
+
+	int len=strlen(param);
+	for(int ctr=0;ctr<len;ctr++) {
+		if(!isdigit(param[ctr])) {
+			font.errorMsg("Error in %s - GPIO pin '%s' is not a number\n", cmd, param);
+		}
+	}	
+	
+	pin = atoi(param);
+	if(mapPin(pin) < 0) {
+		font.errorMsg("Error in %s - Unsupported GPIO pin %s\n", cmd, param);
+	}
+
+	GPIOPin *ptr = new GPIOPin(pin,device,output);
+	if(!ptr) {
+		font.errorMsg("Error in %s - Error registerimng GPIO pin %s\n", cmd, param);
+	}
+
+	if(ptr->findConflict()) {
+		font.errorMsg("Error in %s - GPIO pin %s cannot be both INPUT and OUTPUT on the same device\n", cmd, param);
+	}
+
+	return ptr;
+}
+
+GPIOPin *parseGPIO(const char *cmd, const char *param, bool output) {
+	return parseGPIO(cmd, param, output, 0);
 }

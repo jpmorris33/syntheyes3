@@ -1037,6 +1037,19 @@ void Font::errorMsg(const char *msg, const char *param) {
 	}
 }
 
+void Font::errorMsg(const char *msg, const char *param1, const char *param2) {
+	char text[2048];
+	snprintf(text,2047,msg,param1,param2);
+	text[2047]=0;
+
+	puts(text);  // To console
+
+
+	for(;;) {
+		scroll(text,4,0xff1010);
+	}
+}
+
 void Font::errorMsg(const char *msg, int param) {
 	char text[2048];
 	snprintf(text,2047,msg,param);

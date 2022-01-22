@@ -42,8 +42,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 extern void pi_init();
 extern void initPanel();
-extern bool check_pin(int pin);
 extern void readConfig(FILE *fp);
+extern void poll_keyboard(); // For ESC to quit on desktop
 
 static void runEyes();
 static void getnextExpression();
@@ -73,7 +73,7 @@ bool transmitter = true;
 bool forcetransmitter = false;
 char serialPort[256];
 int serialRate=19200;
-int ackPin = -1;
+GPIOPin *ackPin = NULL;
 int ackTime = 750;
 int randomChance = 75; // 75 percent chance of picking a random event to space things out
 
@@ -165,17 +165,13 @@ int main(int argc, char *argv[]){
 	// Now do some final checks
 	idle=expressions.findFirstByTrigger(TRIGGER_IDLE);
 	if(!idle) {
-		font.errorMsg("Error: No IDLE animation declared in config file.  Make sure you have something like...  idle: idle.gif");
+		font.errorMsg("Error: No IDLE animation declared in config file.  Make sure you have something like...  idle: idle     gif: idle.gif");
 	}
 
 	gpioList = expressions.findAllByTrigger(TRIGGER_GPIO);
 
 
 	pi_init();
-	if(transmitter) {
-		// We don't want to do this for the receiver as it will probably mess up the ACK light
-		expressions.initGPIO();
-	}
 	expressions.initBackgrounds();
 
 	cooldown->set(1); // It'll be elapsed by the time we check
@@ -349,7 +345,7 @@ bool check_gpio() {
 
 	for(ctr=0;ctr<len;ctr++) {
 		exp = gpioList->get(ctr);
-		if(check_pin(exp->parameter)) {
+		if(exp->pin->check()) {
 			ExpressionSet *videos = expressions.findByGPIO(exp->parameter);
 			if(videos) {
 				setnextExpression(videos->getRandom());
@@ -362,17 +358,11 @@ bool check_gpio() {
 }
 
 void update_ack() {
-
-	if(transmitter) {
-		// This is not for thee
-		return;
-	}
-
-	if(ackPin >= 0) {
+	if(ackPin) {
 		if(ack->elapsed()) {
-			set_pin(ackPin,0);
+			ackPin->write(true);
 		} else {
-			set_pin(ackPin,1);
+			ackPin->write(false);
 		}
 	}
 }
@@ -399,7 +389,7 @@ void wait(int ms, bool interruptable) {
 			}
 			break;
 		}
-		check_pin(-666);  // Check for ESC on desktop test version
+		poll_keyboard();  // Check for ESC on desktop test version
 	}
 }
 
@@ -488,7 +478,9 @@ Expression *serial_receive() {
 	// Got something
 	paramstart = strchr(buffer,'(');
 	if(!paramstart) {
-		printf("Warning: Comms '%s' didn't have opening brace - aborting\n", buffer);
+		if(buffer[0]) {
+			printf("Warning: Comms '%s' didn't have opening brace - aborting\n", buffer);
+		}
 		return NULL;
 	}
 	*paramstart++=0;

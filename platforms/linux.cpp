@@ -64,7 +64,10 @@ int mapPin(int pin) {
 	};
 }
 
-void init_pin(int pin){
+void init_pin_input(int pin) {
+}
+
+void init_pin_output(int pin) {
 }
 
 bool check_pin(int pin) {
@@ -88,7 +91,13 @@ bool check_pin(int pin) {
 }
 
 void set_pin(int pin, bool state) {
-	printf("Set GPIO pin %d to %d\n",pin,state);
+	if(pin != 29) { // No ACK pin spam
+		printf("Set GPIO pin %d to %d\n",pin,state);
+	}
+}
+
+void poll_keyboard() {
+	check_pin(-666);  // Check fake GPIO
 }
 
 #endif

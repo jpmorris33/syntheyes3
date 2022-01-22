@@ -77,8 +77,8 @@ gpio: error
 	pin: 36
 	colour: #ff0000
 	drawmode: flash
-	before: set_gpio 35	# Set horns red (on Xerian's hardware)
-	after: clear_gpio 35    # Set horns normal (Xerian's hardware)
+	before: set_gpio R35	# Set horns red (on Xerian's hardware)
+	after: clear_gpio R35    # Set horns normal (Xerian's hardware)
 
 gpio: annoyed
 	gif: annoyed.gif

@@ -20,6 +20,7 @@
 #define EVENT_CLEARGPIO 2
 #define EVENT_CHAIN 3
 
+#include "gpio.hpp"
 #include "gifload.hpp"
 
 //
@@ -31,6 +32,7 @@
 struct ExpressionEvent {
 	int type;
 	int parameter;
+	GPIOPin *pin;
 	const char *strparameter;
 };
 
@@ -48,6 +50,7 @@ class Expression {
 		Expression *background;
 		const char *backgroundname;
 		int parameter;
+		GPIOPin *pin;
 		int drawmode;
 		uint32_t colour;
 		ExpressionEvent before[MAX_EVENTS];
@@ -108,7 +111,6 @@ class ExpressionList {
 		Expression *findFirstByTrigger(int triggertype);
 		ExpressionSet *findAllByTrigger(int triggertype);
 		ExpressionSet *findByGPIO(int pin);
-		void initGPIO();
 		void initBackgrounds();
 	private:
 		Expression *anchor;

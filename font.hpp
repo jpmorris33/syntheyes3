@@ -15,6 +15,7 @@ class Font {
 		void scroll(const char *msg, int yoffset, uint32_t col, bool gradient);
 		void errorMsg(const char *msg);
 		void errorMsg(const char *msg, const char *param);
+		void errorMsg(const char *msg, const char *param, const char *param2);
 		void errorMsg(const char *msg, int param);
 		void printVersion(const char *version, bool transmitter, int duration);
 

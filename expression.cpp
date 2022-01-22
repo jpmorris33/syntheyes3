@@ -14,7 +14,6 @@ extern void wait(int ms, bool interruptable);
 static int compareProb(const void *a, const void *b);
 extern void init_pin(int pin);
 
-
 void Expression::play() {};
 
 void Expression::drawFirstFrame() {};
@@ -24,10 +23,14 @@ void Expression::event(ExpressionEvent *ev) {
 
 	switch(ev->type) {
 		case EVENT_SETGPIO:
-			set_pin(ev->parameter, true);
+			if(ev->pin) {
+				ev->pin->write(true);
+			}
 			break;
 		case EVENT_CLEARGPIO:
-			set_pin(ev->parameter, false);
+			if(ev->pin) {
+				ev->pin->write(false);
+			}
 			break;
 		case EVENT_CHAIN:
 			exp = expressions.findByName(ev->strparameter);
@@ -392,7 +395,7 @@ ExpressionSet *ExpressionList::findByGPIO(int pin) {
 
 	int total=0;
 	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
-		if(ptr->trigger == TRIGGER_GPIO && ptr->parameter == pin) {
+		if(ptr->trigger == TRIGGER_GPIO && ptr->pin && ptr->parameter == pin) {
 			total++;
 		}
 	}
@@ -408,24 +411,12 @@ ExpressionSet *ExpressionList::findByGPIO(int pin) {
 
 	int ctr=0;
 	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
-		if(ptr->trigger == TRIGGER_GPIO && ptr->parameter == pin) {
+		if(ptr->trigger == TRIGGER_GPIO && ptr->pin && ptr->parameter == pin) {
 			list->put(ctr++, ptr);
 		}
 	}
 
 	return list;
-}
-
-void ExpressionList::initGPIO() {
-	if(!anchor) {
-		return;
-	}
-
-	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
-		if(ptr->trigger == TRIGGER_GPIO) {
-			init_pin(ptr->parameter);
-		}
-	}
 }
 
 void ExpressionList::initBackgrounds() {

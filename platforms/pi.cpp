@@ -6,6 +6,7 @@
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
+#include "gpio.hpp"
 
 extern PanelDriver *panel;
 extern SerialDriver *serial;
@@ -15,7 +16,9 @@ extern Timing *ack;
 extern Timing *gradient;
 extern bool transmitter;
 
-void init_pin(int pin);
+static GPIOPin *deviceId=NULL;
+
+void init_pin_input(int pin);
 
 void initPanel() {
 	timing = new PosixTiming();
@@ -27,10 +30,10 @@ void initPanel() {
 	panel = new Unicorn();
 	panel->init();
 
-	// if pin 29 (BCM5 - 21 in WiringPi) is grounded, we're the transmitter
-	init_pin(21);
+	// If pin 29 (21 in WiringPi) is grounded, we're the transmitter
+	deviceId = new GPIOPin(29, DEVICE_BOTH, false);
 	timing->wait_microseconds(250);
-	if(digitalRead(21)) {
+	if(!deviceId->check()) {
 		transmitter=false;
 	}
 
@@ -73,9 +76,13 @@ int mapPin(int pin) {
 
 }
 
-void init_pin(int pin) {
+void init_pin_input(int pin) {
 	pinMode(pin,INPUT);
 	pullUpDnControl(pin,PUD_UP);
+}
+
+void init_pin_output(int pin) {
+	pinMode(pin, OUTPUT);
 }
 
 // Return true if triggered
@@ -84,12 +91,10 @@ bool check_pin(int pin) {
 }
 
 void set_pin(int pin, bool state) {
-	// We're already using the GPIO pins on the transmitter for input,
-	// so disable this for safety reasons unless we're the receiver
-	if(!transmitter) {
-		pinMode(pin, OUTPUT);
-		digitalWrite(pin, state);
-	}
+	digitalWrite(pin, !state);
+}
+
+void poll_keyboard() {
 }
 
 #endif
