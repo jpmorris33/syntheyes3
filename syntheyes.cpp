@@ -3,7 +3,7 @@ SynthEyes V3 - a programmable eye display for raspberry Pi
 
 BSD 3-Clause License
 
-Copyright (c) 2022, Joseph P Morris
+Copyright (c) 2022, Joseph P Morris, IT-HE SOFTWARE
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -96,6 +96,7 @@ int main(int argc, char *argv[]){
 
 	printf("SynthEyes v%s - (C)2022 IT-HE Software\n",VERSION);
 	puts(  "========================================\n");
+	puts("Software provided under the 3-clause BSD license\n");
 
 	puts("*Panel init...");
 
