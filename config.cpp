@@ -248,7 +248,7 @@ void parse(const char *line) {
 		SAFE_STRCPY(curexp->name, curname);
 		curexp->trigger = curtype;
 		if(curtype != TRIGGER_IDLE) {
-			curexp->interruptable=false;
+			curexp->interruptible=false;
 		}
 		dbprintf("Added type %s gif expression '%s'\n",videotype(curtype),curname);
 
@@ -280,7 +280,7 @@ void parse(const char *line) {
 		SAFE_STRCPY(curexp->name, curname);
 		curexp->trigger = curtype;
 		if(curtype == TRIGGER_IDLE) {
-			curexp->interruptable=false;
+			curexp->interruptible=false;
 		}
 		dbprintf("Added type %s scroll expression '%s'\n",videotype(curtype), curname);
 
@@ -398,6 +398,20 @@ void parse(const char *line) {
 		}
 		nextWord(param);
 		curexp->backgroundname = strdup(param);
+	}
+
+	// By default GIF animations show an ACK light if triggered via GPIO.  This can disable it for the given animation
+	if(!strcasecmp(cmd,"interruptible:")) {
+		if(!curexp) {
+			font.errorMsg("Error: 'interruptible:' no expression defined");
+		}
+		nextWord(param);
+		if((!strcasecmp(param, "off")) || (!strcasecmp(param, "false"))) {
+			curexp->interruptible = false;
+		}
+		if((!strcasecmp(param, "on")) || (!strcasecmp(param, "true"))) {
+			curexp->interruptible = true;
+		}
 	}
 
 }

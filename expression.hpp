@@ -44,7 +44,7 @@ class Expression {
 
 		char name[256];
 		int trigger;	// Idle, Random, GPIO etc
-		bool interruptable;
+		bool interruptible;
 		bool mirror;
 		bool ack;
 		Expression *background;

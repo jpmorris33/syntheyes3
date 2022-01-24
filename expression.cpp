@@ -10,7 +10,7 @@ extern Expression *idle;
 extern bool transmitter;
 extern bool flash_state;
 
-extern void wait(int ms, bool interruptable);
+extern void wait(int ms, bool interruptible);
 static int compareProb(const void *a, const void *b);
 extern void init_pin(int pin);
 
@@ -49,7 +49,7 @@ void Expression::event(ExpressionEvent *ev) {
 
 GifExpression::GifExpression(const char *path) {
 
-	interruptable=true;
+	interruptible=true;
 	mirror=true;
 	ack=true;
 	background=NULL;
@@ -78,15 +78,15 @@ void GifExpression::play() {
 	for(int ctr=0;ctr<gif->frames;ctr++) {
 		delay = drawFrame(ctr)/10;
 		for(int ctr2=0;ctr2<delay;ctr2++) {
-			wait(10,interruptable);
+			wait(10,interruptible);
 			drawFrame(ctr);
-			// If something has come up and we're interruptable, stop
-			if(interruptable && nextExpression) {
+			// If something has come up and we're interruptible, stop
+			if(interruptible && nextExpression) {
 				break;
 			}
 		}
 
-		if(interruptable && nextExpression) {
+		if(interruptible && nextExpression) {
 			// Bounce out of the outer loop as well
 			// We still want to run the event hooks in case GPIOs need changing
 			// TODO: May need to prevent chain() events happening in this case
@@ -156,7 +156,7 @@ void GifExpression::drawFrameOnly(int frame) {
 ScrollExpression::ScrollExpression(const char *message) {
 	text = strdup(message);
 
-	interruptable=false;
+	interruptible=false;
 	mirror=false; // Mirroring the scrolly doesn't make much sense, but I suppose it could be implemented in future
 	ack=true;
 	background=NULL;
