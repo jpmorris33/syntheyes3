@@ -49,17 +49,17 @@ random: blink
 	chance: 50
 	ack: off
 
-random: redeye
-	gif: idle.gif
-	colour: #ff0000
-	chance: 5
-	ack: off
+#random: redeye
+#	gif: idle.gif
+#	colour: #ff0000
+#	chance: 5
+#	ack: off
 
-random: scroller
-	scroll: Kill the humans
-	drawmode: gradient
-	chance: 1
-	ack: off
+#random: scroller
+#	scroll: Kill the humans
+#	drawmode: gradient
+#	chance: 1
+#	ack: off
 
 # These expressions are triggered by the GPIO pins
 gpio: startled

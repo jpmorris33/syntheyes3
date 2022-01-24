@@ -51,10 +51,7 @@ and also helps protect the OS from filesystem corruption when the power is cut t
 
 V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working, serial link WIP so you only get one eye anyway)
 
-# TODO for initial 3.00 release
-* Re-test GPIO on Pi hardware after last-minute bugfix
-* Document the config file format, include hardware PDF
-* ZIP a release build and put on github
+V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 # TODO for 3.0x
 * Background comms thread to stop the timeout glitching the display

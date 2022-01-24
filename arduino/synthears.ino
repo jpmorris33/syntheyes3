@@ -2,7 +2,7 @@
 //  Synth Ears for Arduino (SynthEyes without the eyes, basically)
 // 
 //  V1.0.0 - Drive status lights including red fault mode with voice control
-//  V1.1.0 - Hold fault mode for as long as FAULT_PIN is low instead of timing it
+//  V1.1.0 - Hold fault mode for as long as FAULT_PIN is low instead of timing it, improve brightness
 //
 
 /*
@@ -66,7 +66,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define FAULT_BLUE 0x00
 
 #define STATUSBRIGHT 255
-#define VOICEBRIGHT 100
+#define VOICEBRIGHT 10
 
 #define STATUS_PIN 11    // Neopixels DIN pin for status LEDs
 #define VOICE_PIN A7    // Audio input for flashing the status pins
@@ -150,18 +150,26 @@ void statusCycle(unsigned char r, unsigned char g, unsigned char b) {
   static uint16_t pos=0;
   static int divider=0;
   int maxdiv=STATUS_DIVIDER;
+  static int brightcount=0;
+  int val;
   #ifdef VOICE_DETECTOR
     bool bright = !(analogRead(VOICE_PIN) > ADC_THRESHOLD);
   #else
     bool bright = false;
   #endif
-
   bool faultState = !digitalRead(FAULT_PIN);
+
+  if(bright) {
+    brightcount=2;
+  }
 
   divider++;
   if(divider > maxdiv) {
     pos++;
     divider=0;
+    if(brightcount > 0) {
+      brightcount--;
+    }
   }
   if(pos > maxpos) {
     pos=0;
@@ -174,19 +182,23 @@ void statusCycle(unsigned char r, unsigned char g, unsigned char b) {
     } else {
       statusbuffer[ctr] = CRGB(r,g,b);
     }
-    if(bright) {
+    if(brightcount > 0) {
       statusbuffer[ctr].nscale8(255);
     } else {
       if(faultState) {
         // All blink together
-        statusbuffer[ctr].nscale8(ramp[pos%STEPS]);
+        val = ramp[pos%STEPS] * 2;
+        if(val > 255) val=255;
+        statusbuffer[ctr].nscale8(val);
       }
       else {
         // Fairground effect
-        statusbuffer[ctr].nscale8(ramp[(ctr+pos)%STEPS]);
+        val = ramp[(ctr+pos)%STEPS] * 2;
+        if(val > 255) val=255;
+        statusbuffer[ctr].nscale8(val);
       }
     }
   }
 
-  statusController->showLeds(bright?VOICEBRIGHT:STATUSBRIGHT);
+  statusController->showLeds(brightcount > 0?VOICEBRIGHT:STATUSBRIGHT);
 }
