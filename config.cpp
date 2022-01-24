@@ -22,6 +22,8 @@ static int parseDrawmode(const char *mode);
 static void add_event(ExpressionEvent *slot, const char *input);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice);
+static bool parseTrue(const char *param);
+static bool parseFalse(const char *param);
 
 #ifdef DEBUGGING
 static const char *videotype(int type);
@@ -159,7 +161,7 @@ void parse(const char *line) {
 	}
 	if(!strcasecmp(cmd,"transmitter:")) {
 		nextWord(param);
-		if(!strcasecmp(param,"true")) {
+		if(parseTrue(param)) {
 			forcetransmitter=true;
 		}
 	}
@@ -376,7 +378,7 @@ void parse(const char *line) {
 			font.errorMsg("Error: 'mirror:' no expression defined");
 		}
 		nextWord(param);
-		if((!strcasecmp(param, "off")) || (!strcasecmp(param, "false"))) {
+		if(parseFalse(param)) {
 			curexp->mirror = false;
 		}
 	}
@@ -387,7 +389,7 @@ void parse(const char *line) {
 			font.errorMsg("Error: 'ack:' no expression defined");
 		}
 		nextWord(param);
-		if((!strcasecmp(param, "off")) || (!strcasecmp(param, "false"))) {
+		if(parseFalse(param)) {
 			curexp->ack = false;
 		}
 	}
@@ -406,10 +408,10 @@ void parse(const char *line) {
 			font.errorMsg("Error: 'interruptible:' no expression defined");
 		}
 		nextWord(param);
-		if((!strcasecmp(param, "off")) || (!strcasecmp(param, "false"))) {
+		if(parseFalse(param)) {
 			curexp->interruptible = false;
 		}
-		if((!strcasecmp(param, "on")) || (!strcasecmp(param, "true"))) {
+		if(parseTrue(param)) {
 			curexp->interruptible = true;
 		}
 	}
@@ -606,4 +608,21 @@ GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDe
 
 GPIOPin *parseGPIO(const char *cmd, const char *param, bool output) {
 	return parseGPIO(cmd, param, output, 0);
+}
+
+
+// Return true if the parameter corresponds to 'true', 'on' or 'yes' etc.  Returns false if not recognised.
+bool parseTrue(const char *param) {
+	if((!strcasecmp(param, "on")) || (!strcasecmp(param, "true")) || (!strcasecmp(param, "yes"))) {
+		return true;
+	}
+	return false;
+}
+
+// Return true if the parameter corresponds to 'false', 'off' or 'no' etc.  Returns false if not recognised.
+bool parseFalse(const char *param) {
+	if((!strcasecmp(param, "off")) || (!strcasecmp(param, "false")) || (!strcasecmp(param, "no"))) {
+		return true;
+	}
+	return false;
 }
