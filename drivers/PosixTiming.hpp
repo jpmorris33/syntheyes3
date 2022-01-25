@@ -7,5 +7,6 @@ class PosixTiming : public Timing {
 		bool elapsed();
 		void wait_microseconds(int us);
 	private:
-		struct timeval end;
+		struct timeval start;
+		time_t duration;
 };

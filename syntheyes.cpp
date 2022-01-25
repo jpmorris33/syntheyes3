@@ -83,7 +83,7 @@ uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x
 int rainbowspeed = 10;
 unsigned char rainbowoffset=0;
 bool flash_state=true;
-int scrollspeed = 20;
+int scrollspeed = 40;
 
 char gifDir[512];
 Expression *idle=NULL;

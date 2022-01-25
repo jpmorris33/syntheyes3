@@ -3,44 +3,35 @@
 #include <string.h>
 #include <sys/time.h>
 
+static time_t diff_ms(struct timeval *start, struct timeval *end);
+
 void PosixTiming::set(int ms) {
-	struct timeval start;
 	gettimeofday(&start,NULL);
-
-	memcpy(&end,&start,sizeof(timeval));
-
 	if(ms < 1) {
 		// Don't be silly
 		return;
 	}
 
-	if(ms > 1000) {
-		end.tv_sec += (ms / 1000);
-	} else {
-		end.tv_usec += (ms * 1400); // Dodgy
-	}
+	duration = ms;
 }
 bool PosixTiming::elapsed() {
 	struct timeval now;
 	gettimeofday(&now,NULL);
 
-	// Trip to try and avoid overflow issues
-	if(now.tv_sec > end.tv_sec) {
+	time_t runtime = diff_ms(&start, &now);
+	if(runtime > duration) {
 		return true;
 	}
-
-	if(now.tv_sec == end.tv_sec) {
-		if(now.tv_usec <= end.tv_usec) {
-			return false;
-		}
-	}
-
-	if(now.tv_sec < end.tv_sec) {
-		return false;
-	}
-	return true;
+	return false;
 }
 
 void PosixTiming::wait_microseconds(int us) {
-   usleep(us);
+	usleep(us);
+}
+
+static time_t diff_ms(struct timeval *start, struct timeval *end) {
+	time_t ms = (end->tv_sec - start->tv_sec) * 1000;
+	suseconds_t remainder = end->tv_usec - start->tv_usec;
+	ms += (remainder / 1000);
+	return ms;
 }
