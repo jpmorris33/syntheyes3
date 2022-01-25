@@ -71,34 +71,33 @@ GifExpression::GifExpression(const char *path) {
 
 void GifExpression::play() {
 	int delay;
+	bool stop=false;
 
 	for(int ctr=0;ctr<beforeevents;ctr++) {
 		event(&before[ctr]);
 	}
 
-	for(int ctr=0;ctr<gif->frames;ctr++) {
-		delay = drawFrame(ctr)/10;
-		for(int ctr2=0;ctr2<delay;ctr2++) {
-			wait(10,interruptible);
-			drawFrame(ctr);
-			// If something has come up and we're interruptible, stop
-			if(interruptible && nextExpression) {
+	do {
+		for(int ctr=0;ctr<gif->frames;ctr++) {
+			delay = drawFrame(ctr)/10;
+			for(int ctr2=0;ctr2<delay;ctr2++) {
+				wait(10,interruptible);
+				drawFrame(ctr);
+				// If something has come up and we're interruptible, stop
+				if(interruptible && nextExpression) {
+					stop=true;
+					break;
+				}
+			}
+
+			if(stop) {
+				// Bounce out of the outer loop as well
+				// We still want to run the event hooks in case GPIOs need resetting
+				// TODO: May need to prevent chain() events happening in this case
 				break;
 			}
 		}
-
-		if(interruptible && nextExpression) {
-			// Bounce out of the outer loop as well
-			// We still want to run the event hooks in case GPIOs need changing
-			// TODO: May need to prevent chain() events happening in this case
-			break;
-		}
-
-		// If we're looping, force us back to the start
-		if(loop && ctr == gif->frames-1) {
-			ctr=0;
-		}
-	}
+	} while(loop && (!stop));
 
 	for(int ctr=0;ctr<afterevents;ctr++) {
 		event(&after[ctr]);
@@ -184,18 +183,24 @@ void ScrollExpression::play() {
 		event(&before[ctr]);
 	}
 
-	switch(drawmode) {
-		case DRAWMODE_COLOUR:
-		case DRAWMODE_MONOCHROME:
-			font.scroll(text,4,colour);
+	do {
+		switch(drawmode) {
+			case DRAWMODE_COLOUR:
+			case DRAWMODE_MONOCHROME:
+				font.scroll(text,4,colour, interruptible, false);
+				break;
+			case DRAWMODE_GRADIENT:
+				font.scroll(text,4,colour, interruptible, true);
+				break;
+			default:
+				font.scroll(text,4,colour, interruptible, false);
 			break;
-		case DRAWMODE_GRADIENT:
-			font.scroll(text,4,colour,rainbowoffset);
+		};
+		if(interruptible && nextExpression) {
 			break;
-		default:
-			font.scroll(text,4,colour);
-		break;
-	};
+		}
+
+	} while(loop);
 
 
 	for(int ctr=0;ctr<afterevents;ctr++) {

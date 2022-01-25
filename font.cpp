@@ -5,6 +5,7 @@
 
 extern Timing *timing;
 extern PanelDriver *panel;
+extern class Expression *nextExpression;
 extern bool check_pin(int pin);
 extern void wait(int ms, bool interruptable);
 extern unsigned char rainbowoffset;
@@ -989,7 +990,7 @@ void Font::printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x,
 
 }
 
-void Font::scroll(const char *msg, int yoffset, uint32_t col, bool gradient) {
+void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible, bool gradient) {
 	unsigned char bmp[16*16*3];
 
 	char fullmsg[2048];
@@ -1012,17 +1013,17 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool gradient) {
 			}
 			panel->draw();
 			wait(20,false);
+
+			if(interruptible && nextExpression) {
+				return;
+			}
 		}
 	}
 }
 
-void Font::scroll(const char *msg, int yoffset, uint32_t col) {
-	scroll(msg,yoffset, col, false);
-}
-
 void Font::errorMsg(const char *msg) {
 	for(;;) {
-		scroll(msg,4,0xff1010);
+		scroll(msg,4,0xff1010,false,false);
 	}
 }
 
@@ -1035,7 +1036,7 @@ void Font::errorMsg(const char *msg, const char *param) {
 
 
 	for(;;) {
-		scroll(text,4,0xff1010);
+		scroll(text,4,0xff1010,false,false);
 	}
 }
 
@@ -1048,7 +1049,7 @@ void Font::errorMsg(const char *msg, const char *param1, const char *param2) {
 
 
 	for(;;) {
-		scroll(text,4,0xff1010);
+		scroll(text,4,0xff1010,false,false);
 	}
 }
 
@@ -1061,7 +1062,7 @@ void Font::errorMsg(const char *msg, int param) {
 
 
 	for(;;) {
-		scroll(text,4,0xff1010);
+		scroll(text,4,0xff1010,false,false);
 	}
 }
 
