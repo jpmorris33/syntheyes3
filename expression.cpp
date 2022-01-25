@@ -53,6 +53,7 @@ GifExpression::GifExpression(const char *path) {
 	mirror=true;
 	ack=true;
 	loop=false;
+	scrolltop=0;
 	background=NULL;
 	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
@@ -165,6 +166,7 @@ ScrollExpression::ScrollExpression(const char *message) {
 	mirror=false; // Mirroring the scrolly doesn't make much sense, but I suppose it could be implemented in future
 	ack=true;
 	loop=false;
+	scrolltop=SCROLL_TOP_DEFAULT;
 	background=NULL;
 	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
@@ -187,13 +189,13 @@ void ScrollExpression::play() {
 		switch(drawmode) {
 			case DRAWMODE_COLOUR:
 			case DRAWMODE_MONOCHROME:
-				font.scroll(text,4,colour, interruptible, false);
+				font.scroll(text, scrolltop, colour, interruptible, false);
 				break;
 			case DRAWMODE_GRADIENT:
-				font.scroll(text,4,colour, interruptible, true);
+				font.scroll(text, scrolltop, colour, interruptible, true);
 				break;
 			default:
-				font.scroll(text,4,colour, interruptible, false);
+				font.scroll(text, scrolltop, colour, interruptible, false);
 			break;
 		};
 		if(interruptible && nextExpression) {

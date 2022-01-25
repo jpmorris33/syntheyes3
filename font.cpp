@@ -9,6 +9,7 @@ extern class Expression *nextExpression;
 extern bool check_pin(int pin);
 extern void wait(int ms, bool interruptable);
 extern unsigned char rainbowoffset;
+extern int scrollspeed;
 
 static unsigned char fontimg[][8] = {
 	// 0 - zero
@@ -1012,7 +1013,7 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible
 				panel->updateRGB(bmp, 16, 16, col);
 			}
 			panel->draw();
-			wait(20,false);
+			wait(scrollspeed,interruptible);
 
 			if(interruptible && nextExpression) {
 				return;

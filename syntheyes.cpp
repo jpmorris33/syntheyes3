@@ -69,6 +69,7 @@ Font font;
 ExpressionList expressions;
 uint32_t eyecolour = 0xff8700;
 int cooldown_time = 5;
+bool seamless=false;
 bool transmitter = true;
 bool forcetransmitter = false;
 char serialPort[256];
@@ -82,6 +83,7 @@ uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x
 int rainbowspeed = 10;
 unsigned char rainbowoffset=0;
 bool flash_state=true;
+int scrollspeed = 20;
 
 char gifDir[512];
 Expression *idle=NULL;
@@ -208,8 +210,10 @@ void runEyes() {
 			nextExpression=NULL;
 			cooldown->set(cooldown_time*1000);	// Prevent immediate retriggering
 			lastExpression->play();
-			// Now run the idle animation
-			idle->play();
+			// Now run the idle animation for a bit unless in protogen mode
+			if(!seamless) {
+				idle->play();
+			}
 		} else {
 			// Nothing cued up for playback, play the default
 			idle->play();

@@ -33,7 +33,9 @@ extern int mapPin(int pin);
 extern char gifDir[512];
 extern int cooldown_time;
 extern int rainbowspeed;
+extern int scrollspeed;
 extern bool forcetransmitter;
+extern bool seamless;
 extern GPIOPin *ackPin;
 extern int ackTime;
 extern int randomChance;
@@ -157,7 +159,7 @@ void parse(const char *line) {
 	if(!strcasecmp(cmd,"rainbowspeed:")) {
 		nextWord(param);
 		rainbowspeed = atoi(param);
-		dbprintf("Set rainbow delay to %d ticks\n",rainbowspeed);
+		dbprintf("Set rainbow delay to %d ms\n",rainbowspeed);
 	}
 	if(!strcasecmp(cmd,"transmitter:")) {
 		nextWord(param);
@@ -188,6 +190,20 @@ void parse(const char *line) {
 		nextWord(param);
 		randomChance = atoi(param);
 		dbprintf("Set random chance to %d percent\n",randomChance);
+	}
+	if(!strcasecmp(cmd,"scrollspeed:")) {
+		nextWord(param);
+		scrollspeed = atoi(param);
+		dbprintf("Set scrolling delay to %d ms\n",scrollspeed);
+	}
+	if(!strcasecmp(cmd,"seamless:")) {
+		nextWord(param);
+		if(parseTrue(param)) {
+			seamless=true;
+		}
+		if(parseFalse(param)) {
+			seamless=false;
+		}
 	}
 
 
@@ -428,6 +444,17 @@ void parse(const char *line) {
 		if(parseTrue(param)) {
 			curexp->loop = true;
 			curexp->interruptible = true; // For safety reasons
+		}
+	}
+
+	if((!strcasecmp(cmd,"scrolltop:")) || (!strcasecmp(cmd,"scroll_top:"))) {
+		if(!curexp) {
+			font.errorMsg("Error: 'scroll_top:' no expression defined");
+		}
+		nextWord(param);
+		curexp->scrolltop = atoi(param);
+		if(curexp->scrolltop < 0 || curexp->scrolltop > 15) {
+			curexp->scrolltop = 4;
 		}
 	}
 

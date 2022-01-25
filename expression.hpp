@@ -20,6 +20,8 @@
 #define EVENT_CLEARGPIO 2
 #define EVENT_CHAIN 3
 
+#define SCROLL_TOP_DEFAULT 4
+
 #include "gpio.hpp"
 #include "gifload.hpp"
 
@@ -48,6 +50,7 @@ class Expression {
 		bool mirror;
 		bool ack;
 		bool loop;
+		int scrolltop;
 		Expression *background;
 		const char *backgroundname;
 		int parameter;
