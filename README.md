@@ -54,8 +54,6 @@ V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working
 V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 # TODO for 3.0x
-* Documentation: loop command
-* Looping for scrolling as well?
 * Background comms thread to stop the timeout glitching the display
 * Startup animation for user splash screens?
 * Make sure all effects work on scrolling (flashing, mirroring) just in case
