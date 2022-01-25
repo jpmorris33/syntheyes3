@@ -55,7 +55,6 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 # TODO for 3.0x
 * Background comms thread to stop the timeout glitching the display
-* Smooth scrolling for text
 * Looping GIFs so you can lock the expression like a Protogen, will need to be interruptable
 * Startup animation for user splash screens?
 * Make sure all effects work on scrolling (flashing, mirroring) just in case

@@ -955,10 +955,11 @@ void Font::printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x,
 	unsigned char *outptr = &outbuf[0];
 	unsigned char fontrow;
 
-	int maxlen = w/4;
+	int maxlen = (w/4) + 1; // Add an extra character for smooth scrolling
 	int maxy=8+y;
 	int len = strlen(msg);
 	int index=0;
+	int pos;
 
 	// If it won't fit in the buffer, trim it down
 	if(len > maxlen) {
@@ -968,17 +969,18 @@ void Font::printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x,
 		maxy=h;
 	}
 
-	x=0;  // Implement pixel offsets later
-
 	for(int ctr=0;ctr<len;ctr++) {
 		for(int yctr=y;yctr<maxy;yctr++) {
 			fontrow = fontimg[fontchar[(unsigned char)msg[ctr]&127]][yctr-y];
 			for(int xctr=0;xctr<4;xctr++) {
-				if(fontrow & 0x08) {
-					index = (x + xctr + (ctr<<2) + (yctr*w))*3;
-					outptr[index] = 0xff;
-					outptr[index+1] = 0xff;
-					outptr[index+2] = 0xff;
+				pos=x+xctr+(ctr<<2);
+				if(pos>=0 && pos<w) {
+					if(fontrow & 0x08) {
+						index = (pos + (yctr*w))*3;
+						outptr[index] = 0xff;
+						outptr[index+1] = 0xff;
+						outptr[index+2] = 0xff;
+					}
 				}
 				fontrow<<=1; // Bitshift the character to get the next column
 			}
@@ -999,17 +1001,17 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool gradient) {
 	int len = strlen(fullmsg);
 
 	for(int ctr=0;ctr<len;ctr++) {
-		for(int delay=0;delay<10;delay++) {
+		for(int delay=0;delay<4;delay++) {
 			memset(bmp,0,sizeof(bmp));
 			panel->clear(0);
-			printMsg(&fullmsg[ctr],&bmp[0],16,16,0,yoffset);
+			printMsg(&fullmsg[ctr],&bmp[0],16,16,-delay,yoffset);
 			if(gradient) {
 				panel->updateRGBpattern(bmp, 16, 16, rainbowoffset);
 			} else {
 				panel->updateRGB(bmp, 16, 16, col);
 			}
 			panel->draw();
-			wait(10,false);
+			wait(20,false);
 		}
 	}
 }
