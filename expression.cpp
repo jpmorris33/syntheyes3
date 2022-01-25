@@ -52,6 +52,7 @@ GifExpression::GifExpression(const char *path) {
 	interruptible=true;
 	mirror=true;
 	ack=true;
+	loop=false;
 	background=NULL;
 	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
@@ -91,6 +92,11 @@ void GifExpression::play() {
 			// We still want to run the event hooks in case GPIOs need changing
 			// TODO: May need to prevent chain() events happening in this case
 			break;
+		}
+
+		// If we're looping, force us back to the start
+		if(loop && ctr == gif->frames-1) {
+			ctr=0;
 		}
 	}
 
@@ -159,6 +165,7 @@ ScrollExpression::ScrollExpression(const char *message) {
 	interruptible=false;
 	mirror=false; // Mirroring the scrolly doesn't make much sense, but I suppose it could be implemented in future
 	ack=true;
+	loop=false;
 	background=NULL;
 	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;

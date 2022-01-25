@@ -48,6 +48,7 @@ random: blink
 	drawmode: monochrome
 	chance: 50
 	ack: off
+	loop: true
 
 random: redeye
 	gif: idle.gif

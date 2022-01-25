@@ -47,6 +47,7 @@ class Expression {
 		bool interruptible;
 		bool mirror;
 		bool ack;
+		bool loop;
 		Expression *background;
 		const char *backgroundname;
 		int parameter;

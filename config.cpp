@@ -416,6 +416,21 @@ void parse(const char *line) {
 		}
 	}
 
+	// Enable looping the GIF as a special case since we're deliberately ignoring the NETSCAPE block
+	if(!strcasecmp(cmd,"loop:")) {
+		if(!curexp) {
+			font.errorMsg("Error: 'loop:' no expression defined");
+		}
+		nextWord(param);
+		if(parseFalse(param)) {
+			curexp->loop = false;
+		}
+		if(parseTrue(param)) {
+			curexp->loop = true;
+			curexp->interruptible = true; // For safety reasons
+		}
+	}
+
 }
 
 //
