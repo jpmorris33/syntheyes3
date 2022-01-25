@@ -1,0 +1,87 @@
+##
+##  Basic setup
+##
+
+# It will try these in turn and use the last one that's valid
+gifdir: ./videos/static/	# for testing
+gifdir: /boot/videos/static/	# for release
+
+# Default eye colour (when not using GIF's own colours)
+eyecolour: #ff8000
+
+# Cooldown time in seconds between repeating the same (non-idle) expression
+cooldown: 5
+
+# Gapless playback is needed for static expression switching or it'll glitch
+seamless: true
+
+# The Receiver board can flash a light to acknowledge an expression
+# was selected by the user.  On Xerian's hardware the LED is on pin 40
+ack_pin: 40
+ack_time: 600
+
+##
+##  Video list
+##
+##  Must have at least the following lines to set the default video:
+#   idle: myvideo
+#   gif: somevideo.gif
+##
+
+# Do not use pin 29 for GPIO animations.
+# Pin 29 is bridged on the transmitter and will trigger continually
+
+# Default expression
+idle: idle
+	gif: idle.gif
+	drawmode: monochrome
+	ack: off
+
+# These expressions are triggered by the GPIO pins
+gpio: startled
+	gif: startled.gif
+	pin: 40
+	drawmode: monochrome
+	loop: true
+
+gpio: eyeroll
+	gif: eyeroll.gif
+	pin: 33
+	drawmode: monochrome
+	loop: true
+
+gpio: error
+	gif: error.gif
+	pin: 36
+	colour: #ff0000
+	drawmode: flash
+	before: set_gpio 35	# Set horns red (on Xerian's hardware)
+	after: clear_gpio 35    # Set horns normal (Xerian's hardware)
+
+gpio: annoyed
+	gif: annoyed.gif
+	pin: 32
+	drawmode: monochrome
+	loop: true
+
+gpio: happy
+	gif: happy.gif
+	pin: 38
+	drawmode: monochrome
+	loop: true
+
+gpio: owo
+	gif: owo.gif
+	pin: 31
+	drawmode: monochrome
+	loop: true
+
+gpio: blush
+	gif: blush.gif
+	pin: 37
+	drawmode: colour		# Use GIF's own colours
+	background: blush_background	# Draw blush effect on top of this
+
+scripted: blush_background
+	gif: blush_eye.gif
+	drawmode: monochrome
