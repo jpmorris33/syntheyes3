@@ -5,8 +5,14 @@
 
 static time_t diff_ms(struct timeval *start, struct timeval *end);
 
+PosixTiming::PosixTiming() {
+	gettimeofday(&start,NULL);
+	duration=0;
+}
+
 void PosixTiming::set(int ms) {
 	gettimeofday(&start,NULL);
+	duration=0;
 	if(ms < 1) {
 		// Don't be silly
 		return;
