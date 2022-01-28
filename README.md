@@ -55,6 +55,7 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 # TODO for 3.0x
 * !Timer bugfix has skewed the GIF animation speed, fix this
+* Document procedural blinking and other new commands
 * Background comms thread to stop the timeout glitching the display
 * Startup animation for user splash screens?
 * Make sure all effects work on scrolling (flashing, mirroring) just in case

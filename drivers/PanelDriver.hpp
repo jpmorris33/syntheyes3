@@ -13,6 +13,13 @@ class PanelDriver {
 		virtual void updateRGBpattern(unsigned char *img, int w, int h, int offset);
 		virtual void setPattern(unsigned char pattern[16][16]);
 		virtual void clear(uint32_t colour);
+		virtual void clearH(int y, uint32_t colour);
+		virtual void clearV(int x, uint32_t colour);
+		int getW();
+		int getH();
+	protected:
+		int panelW;
+		int panelH;
 };
 
 #endif

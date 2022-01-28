@@ -32,6 +32,9 @@ static unsigned char rainbowpattern[16][16];
 //
 void SDLPanel::init() {
 
+	panelW = SDLPANEL_W;
+	panelH = SDLPANEL_H;
+
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS);
 
 	win = SDL_CreateWindow("",0,0,160,160,SDL_WINDOW_RESIZABLE);
@@ -68,9 +71,9 @@ void SDLPanel::draw() {
 	unsigned char *inptr = &framebuffer[0];
 	unsigned char *outptr = &outbuf[0];
 
-	int windowwidth = SDLPANEL_W * 3;	// 16 RGB triplets
+	int windowwidth = panelW * 3;	// 16 RGB triplets
 
-	for(int ctr=0;ctr<SDLPANEL_H;ctr++)  {
+	for(int ctr=0;ctr<panelH;ctr++)  {
 		memcpy(outptr,inptr,windowwidth);
 		inptr += windowwidth;
 		outptr += windowwidth;
@@ -90,9 +93,9 @@ void SDLPanel::drawMirrored() {
 	unsigned char *inptr = &framebuffer[0];
 	unsigned char *outptr = &outbuf[0];
 
-	int windowwidth = SDLPANEL_W * 3;	// 16 RGB triplets
+	int windowwidth = panelW * 3;	// 16 RGB triplets
 
-	for(int ctr=0;ctr<SDLPANEL_H;ctr++)  {
+	for(int ctr=0;ctr<panelH;ctr++)  {
 		for(int xpos=windowwidth-3;xpos>=0;xpos-=3) {
 			memcpy(outptr,&inptr[xpos],3);
 			outptr+=3;
@@ -112,9 +115,9 @@ void SDLPanel::updateRGB(unsigned char *img, int w, int h) {
 	unsigned char *out = &framebuffer[0];
 	unsigned char *in = img;
 
-	for(int y=0;y<SDLPANEL_H;y++) {
+	for(int y=0;y<panelH;y++) {
 		in=&img[(w*3)*y];
-		for(int x=0;x<SDLPANEL_W;x++) {
+		for(int x=0;x<panelW;x++) {
 			if(x<w && y<h) {
 				if(in[0]|in[1]|in[2]) {
 					out[0] = in[0];
@@ -137,9 +140,9 @@ void SDLPanel::updateRGB(unsigned char *img, int w, int h, uint32_t colour) {
 	unsigned char g=(colour>>8)&0xff;
 	unsigned char r=(colour>>16)&0xff;
 
-	for(int y=0;y<SDLPANEL_H;y++) {
+	for(int y=0;y<panelH;y++) {
 		in=&img[(w*3)*y];
-		for(int x=0;x<SDLPANEL_W;x++) {
+		for(int x=0;x<panelW;x++) {
 			if(x<w && y<h) {
 				if(in[0]|in[1]|in[2]) {
 					out[0] = r;
@@ -160,10 +163,10 @@ void SDLPanel::updateRGBpattern(unsigned char *img, int w, int h, int offset) {
 	unsigned char r,g,b;
 
 	ypos=0;
-	for(int y=0;y<SDLPANEL_H;y++) {
+	for(int y=0;y<panelH;y++) {
 		in=&img[(w*3)*y];
 		xpos=0;
-		for(int x=0;x<SDLPANEL_W;x++) {
+		for(int x=0;x<panelW;x++) {
 			index = (offset + (rainbowpattern[ypos][xpos]&0x0f))&0x0f;
 			b=rainbow[index]&0xff;
 			g=(rainbow[index]>>8)&0xff;
@@ -196,7 +199,7 @@ void SDLPanel::setPattern(unsigned char pattern[16][16]) {
 }
 
 void SDLPanel::clear(uint32_t colour) {
-	int len=SDLPANEL_W*SDLPANEL_H;
+	int len=panelW*panelH;
 	unsigned char *ptr=&framebuffer[0];
 
 	unsigned char b=colour&0xff;
@@ -209,4 +212,48 @@ void SDLPanel::clear(uint32_t colour) {
 		*ptr++=b;
 	}
 }
+
+void SDLPanel::clearV(int x, uint32_t colour) {
+	unsigned char *ptr=&framebuffer[0];
+
+	unsigned char b=colour&0xff;
+	unsigned char g=(colour>>8)&0xff;
+	unsigned char r=(colour>>16)&0xff;
+
+	int offset = (panelW-1)*3;
+
+	if(x<0 || x >= panelW) {
+		return;
+	}
+
+	ptr += (x*3);  // Find the column
+
+	for(int ctr=0;ctr<panelH;ctr++) {
+		*ptr++=r;
+		*ptr++=g;
+		*ptr++=b;
+		ptr+=offset;
+	}
+}
+
+void SDLPanel::clearH(int y, uint32_t colour) {
+	unsigned char *ptr=&framebuffer[0];
+
+	unsigned char b=colour&0xff;
+	unsigned char g=(colour>>8)&0xff;
+	unsigned char r=(colour>>16)&0xff;
+
+	if(y<0 || y >= panelH) {
+		return;
+	}
+
+	ptr += ((y*panelW)*3);  // Find the row
+
+	for(int ctr=0;ctr<panelW;ctr++) {
+		*ptr++=r;
+		*ptr++=g;
+		*ptr++=b;
+	}
+}
+
 #endif

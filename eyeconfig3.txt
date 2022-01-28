@@ -39,16 +39,18 @@ ack_time: 600
 # Default expression
 idle: idle
 	gif: idle.gif
-	drawmode: monochrome
+#	drawmode: monochrome
+	drawmode: gradient
 	ack: off
 
 # Random blink
 random: blink
-	gif: blink.gif
-	drawmode: monochrome
+	blink: top
+	background: idle
 	chance: 50
 	ack: off
-	loop: true
+#	loop: true
+#	blinkspeed: 7
 
 random: redeye
 	gif: idle.gif

@@ -20,6 +20,14 @@
 #define EVENT_CLEARGPIO 2
 #define EVENT_CHAIN 3
 
+#define BLINK_TOP 	1
+#define BLINK_LEFT	2
+#define BLINK_RIGHT	4
+#define BLINK_BOTTOM	8
+#define BLINK_VERT (BLINK_TOP|BLINK_BOTTOM)
+#define BLINK_HORIZ (BLINK_LEFT|BLINK_RIGHT)
+#define BLINK_ALL (BLINK_TOP|BLINK_BOTTOM|BLINK_LEFT|BLINK_RIGHT)
+
 #define SCROLL_TOP_DEFAULT 4
 
 #include "gpio.hpp"
@@ -50,6 +58,7 @@ class Expression {
 		bool mirror;
 		bool ack;
 		bool loop;
+		int blinkspeed;
 		int scrolltop;
 		Expression *background;
 		const char *backgroundname;
@@ -63,6 +72,8 @@ class Expression {
 		unsigned char afterevents;
 
 		Expression *next;
+	protected:
+		void initDefaults();
 };
 
 class GifExpression : public Expression {
@@ -83,7 +94,15 @@ class ScrollExpression : public Expression {
 		void drawFirstFrame();
 
 		char *text;
-		int speed;
+};
+
+class BlinkExpression : public Expression {
+	public:
+		BlinkExpression(int mode);
+		void play();
+		void drawFirstFrame();
+	private:
+		int blinkmode;
 };
 
 class ExpressionSet {

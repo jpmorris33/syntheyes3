@@ -14,6 +14,8 @@ class SDLPanel : public PanelDriver {
 		void updateRGBpattern(unsigned char *img, int w, int h, int offset);
 		void setPattern(unsigned char pattern[16][16]);
 		void clear(uint32_t colour);
+		void clearV(int x, uint32_t colour);
+		void clearH(int y, uint32_t colour);
 
 	private:
 		unsigned char framebuffer[SDLPANEL_W*SDLPANEL_H*3];

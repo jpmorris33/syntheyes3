@@ -14,6 +14,8 @@ class Unicorn : public PanelDriver {
 		void updateRGBpattern(unsigned char *img, int w, int h, int offset);
 		void setPattern(unsigned char pattern[16][16]);
 		void clear(uint32_t colour);
+		void clearV(int x, uint32_t colour);
+		void clearH(int y, uint32_t colour);
 	private:
 		unsigned char framebuffer[UNICORNPANEL_W*UNICORNPANEL_H*3];
 };

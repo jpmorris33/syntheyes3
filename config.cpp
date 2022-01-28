@@ -24,6 +24,7 @@ static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice);
 static bool parseTrue(const char *param);
 static bool parseFalse(const char *param);
+static int parseBlinkmode(const char *mode);
 
 #ifdef DEBUGGING
 static const char *videotype(int type);
@@ -307,6 +308,41 @@ void parse(const char *line) {
 		curtype=TRIGGER_NEVER;
 	}
 
+	if(!strcasecmp(cmd,"blink:")) {
+		// Check for silliness
+		if(!curname) {
+			font.errorMsg("Error: 'blink:' command must have a type and name first, e.g. idle: my_idle_animation");
+		}
+		if(curexp) {
+			font.errorMsg("Error: 'blink:' command used twice for expression '%s'", curname);
+		}
+		if(expressions.findByName(curname)) {
+			font.errorMsg("Expression name '%s' already used", curname);
+		}
+
+		nextWord(param);
+		int blinkmode = parseBlinkmode(param);
+
+		// Okay, let's go
+		curexp = new BlinkExpression(blinkmode);
+		if(!curexp) {
+			font.errorMsg("Error creating Blink expression '%s'", curname);
+		}
+		expressions.add(curexp);
+
+		// Set up the basic stuff, we can do the rest later
+		SAFE_STRCPY(curexp->name, curname);
+		curexp->trigger = curtype;
+		if(curtype == TRIGGER_IDLE) {
+			curexp->interruptible=false;
+		}
+		dbprintf("Added type %s scroll expression '%s'\n",videotype(curtype), curname);
+
+		// And reset things just to be safe
+		curname[0]=0;
+		curtype=TRIGGER_NEVER;
+	}
+
 	// Now let's deal with the optional(ish) stuff
 
 	if(!strcasecmp(cmd,"chance:")) {
@@ -456,6 +492,14 @@ void parse(const char *line) {
 		if(curexp->scrolltop < 0 || curexp->scrolltop > 15) {
 			curexp->scrolltop = 4;
 		}
+	}
+
+	if((!strcasecmp(cmd,"blinkspeed:")) || (!strcasecmp(cmd,"blink_speed:"))) {
+		if(!curexp) {
+			font.errorMsg("Error: 'blink_speed:' no expression defined");
+		}
+		nextWord(param);
+		curexp->blinkspeed = atoi(param);
 	}
 
 }
@@ -667,4 +711,34 @@ bool parseFalse(const char *param) {
 		return true;
 	}
 	return false;
+}
+
+int parseBlinkmode(const char *mode) {
+	if(!strcasecmp(mode, "default")) {
+		return BLINK_TOP;
+	}
+	if(!strcasecmp(mode, "left")) {
+		return BLINK_LEFT;
+	}
+	if(!strcasecmp(mode, "right")) {
+		return BLINK_RIGHT;
+	}
+	if(!strcasecmp(mode, "top")) {
+		return BLINK_TOP;
+	}
+	if(!strcasecmp(mode, "bottom")) {
+		return BLINK_BOTTOM;
+	}
+	if((!strcasecmp(mode, "vertical")) || (!strcasecmp(mode, "vert"))) {
+		return BLINK_VERT;
+	}
+	if((!strcasecmp(mode, "horizontal")) || (!strcasecmp(mode, "horiz"))) {
+		return BLINK_HORIZ;
+	}
+	if((!strcasecmp(mode, "square")) || (!strcasecmp(mode, "all"))) {
+		return BLINK_ALL;
+	}
+
+	font.errorMsg("Unsupported blink mode '%s'",mode);
+	return 0;
 }

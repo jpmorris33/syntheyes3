@@ -24,6 +24,10 @@ static unsigned char rainbowpattern[16][16];
 //	Init the Unicorn HD driver
 //
 void Unicorn::init() {
+
+	panelW = UNICORNPANEL_W;
+	panelH = UNICORNPANEL_H;
+
 	wiringPiSetup();
 	wiringPiSPISetup(0,9000000);
 	refresh.set(0);
@@ -55,9 +59,9 @@ void Unicorn::drawMirrored() {
 	unsigned char *outptr = &spioutputbuf[0];
 	*outptr++=0x72;   // for addressing multiple panels, it's 0x73 + zero-based panel address
 
-	int windowwidth = UNICORNPANEL_W * 3;	// 16 RGB triplets
+	int windowwidth = panelW * 3;	// 16 RGB triplets
 
-	for(int ctr=0;ctr<UNICORNPANEL_H;ctr++)  {
+	for(int ctr=0;ctr<panelH;ctr++)  {
 		for(int xpos=windowwidth-3;xpos>=0;xpos-=3) {
 			memcpy(outptr,&inptr[xpos],3);
 			outptr+=3;
@@ -77,9 +81,9 @@ void Unicorn::updateRGB(unsigned char *img, int w, int h) {
 	unsigned char *out = &framebuffer[0];
 	unsigned char *in = img;
 
-	for(int y=0;y<UNICORNPANEL_H;y++) {
+	for(int y=0;y<panelH;y++) {
 		in=&img[(w*3)*y];
-		for(int x=0;x<UNICORNPANEL_W;x++) {
+		for(int x=0;x<panelW;x++) {
 			if(x<w && y<h) {
 				if(in[0]|in[1]|in[2]) {
 					out[0] = in[0];
@@ -101,9 +105,9 @@ void Unicorn::updateRGB(unsigned char *img, int w, int h, uint32_t colour) {
 	unsigned char g=(colour>>8)&0xff;
 	unsigned char r=(colour>>16)&0xff;
 
-	for(int y=0;y<UNICORNPANEL_H;y++) {
+	for(int y=0;y<panelH;y++) {
 		in=&img[(w*3)*y];
-		for(int x=0;x<UNICORNPANEL_W;x++) {
+		for(int x=0;x<panelW;x++) {
 			if(x<w && y<h) {
 				if(in[0]|in[1]|in[2]) {
 					out[0] = r;
@@ -124,10 +128,10 @@ void Unicorn::updateRGBpattern(unsigned char *img, int w, int h, int offset) {
 	unsigned char r,g,b;
 
 	ypos=0;
-	for(int y=0;y<UNICORNPANEL_H;y++) {
+	for(int y=0;y<panelH;y++) {
 		in=&img[(w*3)*y];
 		xpos=0;
-		for(int x=0;x<UNICORNPANEL_W;x++) {
+		for(int x=0;x<panelW;x++) {
 			index = (offset + (rainbowpattern[ypos][xpos]&0x0f))&0x0f;
 			b=rainbow[index]&0xff;
 			g=(rainbow[index]>>8)&0xff;
@@ -160,7 +164,7 @@ void Unicorn::setPattern(unsigned char pattern[16][16]) {
 }
 
 void Unicorn::clear(uint32_t colour) {
-	int len=UNICORNPANEL_W*UNICORNPANEL_H;
+	int len=panelW*panelH;
 	unsigned char *ptr=&framebuffer[0];
 
 	unsigned char b=colour&0xff;
@@ -168,6 +172,49 @@ void Unicorn::clear(uint32_t colour) {
 	unsigned char r=(colour>>16)&0xff;
 
 	for(int ctr=0;ctr<len;ctr++) {
+		*ptr++=r;
+		*ptr++=g;
+		*ptr++=b;
+	}
+}
+
+void Unicorn::clearV(int x, uint32_t colour) {
+	unsigned char *ptr=&framebuffer[0];
+
+	unsigned char b=colour&0xff;
+	unsigned char g=(colour>>8)&0xff;
+	unsigned char r=(colour>>16)&0xff;
+
+	int offset = (panelW-1)*3;
+
+	if(x<0 || x >= panelW) {
+		return;
+	}
+
+	ptr += (x*3);  // Find the column
+
+	for(int ctr=0;ctr<panelH;ctr++) {
+		*ptr++=r;
+		*ptr++=g;
+		*ptr++=b;
+		ptr+=offset;
+	}
+}
+
+void Unicorn::clearH(int y, uint32_t colour) {
+	unsigned char *ptr=&framebuffer[0];
+
+	unsigned char b=colour&0xff;
+	unsigned char g=(colour>>8)&0xff;
+	unsigned char r=(colour>>16)&0xff;
+
+	if(y<0 || y >= panelH) {
+		return;
+	}
+
+	ptr += ((y*panelW)*3);  // Find the row
+
+	for(int ctr=0;ctr<panelW;ctr++) {
 		*ptr++=r;
 		*ptr++=g;
 		*ptr++=b;

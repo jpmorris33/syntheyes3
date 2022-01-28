@@ -44,8 +44,8 @@ idle: idle
 
 # Random blink
 random: blink
-	gif: blink.gif
-	drawmode: monochrome
+	blink: default
+	background: idle
 	chance: 50
 	ack: off
 
