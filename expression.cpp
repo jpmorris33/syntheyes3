@@ -194,6 +194,9 @@ void ScrollExpression::play() {
 			case DRAWMODE_GRADIENT:
 				font.scroll(text, scrolltop, colour, interruptible, true);
 				break;
+			case DRAWMODE_FLASH:
+				font.scroll(text, scrolltop, flash_state ? colour : 0, interruptible, false);
+				break;
 			default:
 				font.scroll(text, scrolltop, colour, interruptible, false);
 			break;
