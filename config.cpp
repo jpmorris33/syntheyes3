@@ -650,6 +650,9 @@ int parseDrawmode(const char *mode) {
 	if(!strcasecmp(mode, "flashing")) {
 		return DRAWMODE_FLASH;
 	}
+	if(!strcasecmp(mode, "cycle")) {
+		return DRAWMODE_CYCLE;
+	}
 	return -1;
 }
 

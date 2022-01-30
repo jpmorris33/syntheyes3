@@ -167,6 +167,9 @@ void GifExpression::drawFrameOnly(int frame) {
 		case DRAWMODE_FLASH:
 			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h, flash_state ? colour : 0);
 			break;
+		case DRAWMODE_CYCLE:
+			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h, rainbow[rainbowoffset&0x0f]);
+			break;
 		default:
 			panel->updateRGB(gif->frame[frame].imgdata,gif->w,gif->h);
 		break;
@@ -206,6 +209,9 @@ void ScrollExpression::play() {
 				break;
 			case DRAWMODE_FLASH:
 				font.scroll(text, scrolltop, flash_state ? colour : 0, interruptible, false);
+				break;
+			case DRAWMODE_CYCLE:
+				font.scroll(text, scrolltop, rainbow[rainbowoffset&0x0f], interruptible, false);
 				break;
 			default:
 				font.scroll(text, scrolltop, colour, interruptible, false);
