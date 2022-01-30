@@ -10,6 +10,7 @@ extern bool check_pin(int pin);
 extern void wait(int ms, bool interruptable);
 extern unsigned char rainbowoffset;
 extern int scrollspeed;
+extern bool transmitter;
 
 static unsigned char fontimg[][8] = {
 	// 0 - zero
@@ -991,7 +992,7 @@ void Font::printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x,
 
 }
 
-void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible, bool gradient) {
+void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible, bool gradient, bool mirror) {
 	unsigned char bmp[16*16*3];
 
 	char fullmsg[2048];
@@ -1012,7 +1013,11 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible
 			} else {
 				panel->updateRGB(bmp, 16, 16, col);
 			}
-			panel->draw();
+			if(mirror && (!transmitter)) {
+				panel->drawMirrored();
+			} else {
+				panel->draw();
+			}
 			wait(scrollspeed,interruptible);
 
 			if(interruptible && nextExpression) {
@@ -1024,7 +1029,7 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible
 
 void Font::errorMsg(const char *msg) {
 	for(;;) {
-		scroll(msg,4,0xff1010,false,false);
+		scroll(msg,4,0xff1010,false,false,false);
 	}
 }
 
@@ -1037,7 +1042,7 @@ void Font::errorMsg(const char *msg, const char *param) {
 
 
 	for(;;) {
-		scroll(text,4,0xff1010,false,false);
+		scroll(text,4,0xff1010,false,false,false);
 	}
 }
 
@@ -1050,7 +1055,7 @@ void Font::errorMsg(const char *msg, const char *param1, const char *param2) {
 
 
 	for(;;) {
-		scroll(text,4,0xff1010,false,false);
+		scroll(text,4,0xff1010,false,false,false);
 	}
 }
 
@@ -1063,7 +1068,7 @@ void Font::errorMsg(const char *msg, int param) {
 
 
 	for(;;) {
-		scroll(text,4,0xff1010,false,false);
+		scroll(text,4,0xff1010,false,false,false);
 	}
 }
 

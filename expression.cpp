@@ -202,19 +202,19 @@ void ScrollExpression::play() {
 		switch(drawmode) {
 			case DRAWMODE_COLOUR:
 			case DRAWMODE_MONOCHROME:
-				font.scroll(text, scrolltop, colour, interruptible, false);
+				font.scroll(text, scrolltop, colour, interruptible, false, mirror);
 				break;
 			case DRAWMODE_GRADIENT:
-				font.scroll(text, scrolltop, colour, interruptible, true);
+				font.scroll(text, scrolltop, colour, interruptible, true, mirror);
 				break;
 			case DRAWMODE_FLASH:
-				font.scroll(text, scrolltop, flash_state ? colour : 0, interruptible, false);
+				font.scroll(text, scrolltop, flash_state ? colour : 0, interruptible, false, mirror);
 				break;
 			case DRAWMODE_CYCLE:
-				font.scroll(text, scrolltop, rainbow[rainbowoffset&0x0f], interruptible, false);
+				font.scroll(text, scrolltop, rainbow[rainbowoffset&0x0f], interruptible, false, mirror);
 				break;
 			default:
-				font.scroll(text, scrolltop, colour, interruptible, false);
+				font.scroll(text, scrolltop, colour, interruptible, false, mirror);
 			break;
 		};
 		if(interruptible && nextExpression) {

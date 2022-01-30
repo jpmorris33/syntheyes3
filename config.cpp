@@ -433,6 +433,9 @@ void parse(const char *line) {
 		if(parseFalse(param)) {
 			curexp->mirror = false;
 		}
+		if(parseTrue(param)) {
+			curexp->mirror = true;
+		}
 	}
 
 	// By default GIF animations show an ACK light if triggered via GPIO.  This can disable it for the given animation

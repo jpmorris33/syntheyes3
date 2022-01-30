@@ -11,7 +11,7 @@
 class Font {
 	public:
 		Font();
-		void scroll(const char *msg, int yoffset, uint32_t col, bool interruptible, bool gradient);
+		void scroll(const char *msg, int yoffset, uint32_t col, bool interruptible, bool gradient, bool mirror);
 		void errorMsg(const char *msg);
 		void errorMsg(const char *msg, const char *param);
 		void errorMsg(const char *msg, const char *param, const char *param2);
