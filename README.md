@@ -55,7 +55,7 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 # TODO for 3.01
 * !Timer bugfix has skewed the GIF animation speed, fix the gifs
-* Document procedural blinking and other new commands
+* Document that mirror now works on scrollers
 
 # TODO for 3.0x
 * Background comms thread to stop the timeout glitching the display
