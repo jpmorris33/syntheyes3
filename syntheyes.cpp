@@ -72,7 +72,6 @@ int cooldown_time = 5;
 bool seamless=false;
 bool transmitter = true;
 bool forcetransmitter = false;
-bool drawMirrored;
 char serialPort[256];
 int serialRate=19200;
 GPIOPin *ackPin = NULL;
@@ -92,6 +91,7 @@ Expression *nextExpression=NULL;
 Expression *lastExpression=NULL;
 ExpressionSet *gpioList = NULL;
 
+static bool noMirror=false;
 
 
 int main(int argc, char *argv[]){
@@ -192,9 +192,11 @@ int main(int argc, char *argv[]){
 	}
 
 	// Decide if we need to display the mirrored image
-	drawMirrored=false;
-	if((panel->getCaps() & PANELCAPS_SPLIT) && (!transmitter)) {
-		drawMirrored=true;
+	// If we're on a single system rather than a split (dual Pi) setup, we'll want to call drawMirrored() most of the time
+	// If we're on a split system, we only want to call drawMirrored() for the Receiver unit
+	noMirror=false;
+	if((panel->getCaps() & PANELCAPS_SPLIT) && transmitter) {
+		noMirror=true;
 	}
 
 	runEyes();
@@ -513,4 +515,19 @@ Expression *serial_receive() {
 	}
 
 	return exp;
+}
+
+
+void drawEyes(bool mirror) {
+	// If we're on a split system, but not on the mirrored panel,
+	// Disable the mirror effect
+	if(noMirror) {
+		mirror=false;
+	}
+
+	if(mirror) {
+		panel->drawMirrored();
+	} else {
+		panel->draw();
+	}
 }

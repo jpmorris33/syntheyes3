@@ -23,7 +23,8 @@ class PanelDriver {
 		int panelH;
 };
 
-#define PANELCAPS_SPLIT 0x00000001	// Requires separate Transmitter/Reciver units
-#define PANELCAPS_FIXED 0x00000002	// Display is fixed size
+#define PANELCAPS_SPLIT 	0x00000001	// Requires separate Transmitter/Reciver units
+#define PANELCAPS_FIXED 	0x00000002	// Display is fixed size
+#define PANELCAPS_MONOCHROME	0x00000004	// Display is monochrome
 
 #endif

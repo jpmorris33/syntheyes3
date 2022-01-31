@@ -12,7 +12,6 @@
 extern Expression *nextExpression;
 extern Expression *idle;
 extern bool flash_state;
-extern bool drawMirrored;
 
 extern void wait(int ms, bool interruptible);
 
@@ -144,11 +143,7 @@ int GifExpression::drawFrame(int frame) {
 
 	drawFrameOnly(frame);
 
-	if(drawMirrored && mirror) {
-		panel->drawMirrored();
-	} else {
-		panel->draw();
-	}
+	drawEyes(mirror);
 
 	return gif->frame[frame].delay;
 }
@@ -287,11 +282,7 @@ void BlinkExpression::play() {
 
 				drawEyelid(blinkmode,pos,width,height);
 
-				if(drawMirrored && mirror) {
-					panel->drawMirrored();
-				} else {
-					panel->draw();
-				}
+				drawEyes(mirror);
 			}
 
 			if(stop) {
