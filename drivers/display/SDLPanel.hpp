@@ -16,6 +16,7 @@ class SDLPanel : public PanelDriver {
 		void clear(uint32_t colour);
 		void clearV(int x, uint32_t colour);
 		void clearH(int y, uint32_t colour);
+		uint32_t getCaps();
 
 	private:
 		unsigned char framebuffer[SDLPANEL_W*SDLPANEL_H*3];

@@ -15,11 +15,15 @@ class PanelDriver {
 		virtual void clear(uint32_t colour);
 		virtual void clearH(int y, uint32_t colour);
 		virtual void clearV(int x, uint32_t colour);
+		virtual uint32_t getCaps();
 		int getW();
 		int getH();
 	protected:
 		int panelW;
 		int panelH;
 };
+
+#define PANELCAPS_SPLIT 0x00000001	// Requires separate Transmitter/Reciver units
+#define PANELCAPS_FIXED 0x00000002	// Display is fixed size
 
 #endif

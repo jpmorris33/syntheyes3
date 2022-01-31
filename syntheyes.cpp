@@ -72,6 +72,7 @@ int cooldown_time = 5;
 bool seamless=false;
 bool transmitter = true;
 bool forcetransmitter = false;
+bool drawMirrored;
 char serialPort[256];
 int serialRate=19200;
 GPIOPin *ackPin = NULL;
@@ -188,6 +189,12 @@ int main(int argc, char *argv[]){
 		puts("*All OK!  Running as transmitter");
 	} else {
 		puts("*All OK!  Running as receiver");
+	}
+
+	// Decide if we need to display the mirrored image
+	drawMirrored=false;
+	if((panel->getCaps() & PANELCAPS_SPLIT) && (!transmitter)) {
+		drawMirrored=true;
 	}
 
 	runEyes();

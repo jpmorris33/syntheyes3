@@ -12,3 +12,4 @@ void PanelDriver::clearV(int x, uint32_t colour) {}
 void PanelDriver::clearH(int y, uint32_t colour) {}
 int PanelDriver::getW() {return panelW;}
 int PanelDriver::getH() {return panelH;}
+uint32_t PanelDriver::getCaps() {return 0;};

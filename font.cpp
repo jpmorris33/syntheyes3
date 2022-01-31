@@ -10,7 +10,7 @@ extern bool check_pin(int pin);
 extern void wait(int ms, bool interruptable);
 extern unsigned char rainbowoffset;
 extern int scrollspeed;
-extern bool transmitter;
+extern bool drawMirrored;
 
 static unsigned char fontimg[][8] = {
 	// 0 - zero
@@ -1013,7 +1013,7 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible
 			} else {
 				panel->updateRGB(bmp, 16, 16, col);
 			}
-			if(mirror && (!transmitter)) {
+			if(drawMirrored && mirror) {
 				panel->drawMirrored();
 			} else {
 				panel->draw();

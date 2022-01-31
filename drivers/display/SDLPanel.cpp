@@ -28,7 +28,7 @@ extern uint32_t rainbow[16]; // Colour table
 static unsigned char rainbowpattern[16][16];
 
 //
-//	Init the Unicorn HD driver
+//	Init the Virtual display driver
 //
 void SDLPanel::init() {
 
@@ -59,6 +59,15 @@ void SDLPanel::init() {
 	SDL_SetRenderDrawColor( renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
 	SDL_RenderClear( renderer );
 }
+
+//
+//	Get driver capabilities
+//
+
+uint32_t SDLPanel::getCaps() {
+	return PANELCAPS_SPLIT|PANELCAPS_FIXED;
+}
+
 
 //
 //	Put the framebuffer onto the Unicorn HD panel

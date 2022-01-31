@@ -34,6 +34,14 @@ void Unicorn::init() {
 }
 
 //
+//	Get driver capabilities
+//
+
+uint32_t Unicorn::getCaps() {
+	return PANELCAPS_SPLIT|PANELCAPS_FIXED;
+}
+
+//
 //	Put the framebuffer onto the Unicorn HD panel
 //
 void Unicorn::draw() {
