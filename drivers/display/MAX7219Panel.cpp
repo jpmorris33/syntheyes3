@@ -9,11 +9,12 @@
 #include <stdint.h>
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
-static unsigned char spioutputbuf[16];
 
+#include "../PosixTiming.hpp"
 #include "MAX7219Panel.hpp"
 
-#define CS_PIN 10	// Pin 24 in HW
+#define CS_PIN		10	// Pin 24 in HW
+#define BRIGHTNESS	12	// 12/15
 
 #define CMD_TEST	0x0f
 #define CMD_INTENSITY	0x0a
@@ -31,19 +32,24 @@ static unsigned char spioutputbuf[16];
 #define LPANEL_BL  5
 #define LPANEL_BR  4
 
+#define REFRESH_MS 16	// approximately 1/60 sec
 
 extern uint32_t rainbow[16]; // Colour table
-static unsigned char rainbowpattern[16][16];
 static void sendData(int addr, unsigned char opcode, unsigned char data);
 static unsigned char rgb2bits(unsigned char *rgb);
 static unsigned char rgb2bits_mirror(unsigned char *rgb);
 extern void init_pin_output(int pin);
 
+static unsigned char rainbowpattern[16][16];
+static PosixTiming refresh;
+static unsigned char spioutputbuf[16];
 
 //
 //	Init the Virtual display driver
 //
 void MAX7219Panel::init() {
+
+	printf("Init MAX7219 driver\n");
 
 	panelW = MAXPANEL_W;
 	panelH = MAXPANEL_H;
@@ -52,18 +58,21 @@ void MAX7219Panel::init() {
 
 	// Set up data transfers
 
-	wiringPiSPISetup(0,16000000/2);
+	wiringPiSetup();
+	wiringPiSPISetup(0,16000000);
 	init_pin_output(CS_PIN);
 	digitalWrite(CS_PIN, HIGH);
 
 	// Initialise the panels
 	for(int panel=0;panel<8;panel++) {
 		sendData(panel, CMD_TEST,0);
-		sendData(panel, CMD_DECODE,0);		// Disable BCD decoder so we can sent sprite data instead
-		sendData(panel, CMD_INTENSITY,15);	// Maximum brightness
+		sendData(panel, CMD_DECODE,0);			// Disable BCD decoder so we can sent sprite data instead
+		sendData(panel, CMD_INTENSITY,BRIGHTNESS);	// Maximum brightness
 		sendData(panel, CMD_SCANLIMIT,7);
-		sendData(panel, CMD_SHUTDOWN,1);	// 0 turns it off, 1 turns it on
+		sendData(panel, CMD_SHUTDOWN,1);		// 0 turns it off, 1 turns it on
 	}
+
+	refresh.set(0);
 
 }
 
@@ -83,6 +92,12 @@ uint32_t MAX7219Panel::getCaps() {
 void MAX7219Panel::draw() {
 	unsigned char *inptr = &framebuffer[0];
 	unsigned char outbyte;
+
+	if(!refresh.elapsed()) {
+		// Reduce SPI bus traffic (and thus CPU usage)
+		return;
+	}
+	refresh.set(REFRESH_MS);
 
 	// Currently 16x16 fixed, come up with a more universal solution later
 	
@@ -122,20 +137,26 @@ void MAX7219Panel::drawMirrored() {
 	unsigned char outbyte;
 	unsigned char outbyteM;
 
+	if(!refresh.elapsed()) {
+		// Reduce SPI bus traffic (and thus CPU usage)
+		return;
+	}
+	refresh.set(REFRESH_MS);
+
 	// Currently 16x16 fixed, come up with a more universal solution later
 	
 	// Top row
 	for(int row=0;row<8;row++)  {
 		// Left
 		outbyte = rgb2bits(inptr);
-		outbyteM = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
 		inptr += 24; // 8 RGB triplets
 		sendData(RPANEL_TL,row+1,outbyte);
 		sendData(LPANEL_TR,row+1,outbyteM);
 
 		// Right
 		outbyte = rgb2bits(inptr);
-		outbyteM = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
 		inptr += 24; // 8 RGB triplets
 		sendData(RPANEL_TR,row+1,outbyte);
 		sendData(LPANEL_TL,row+1,outbyteM);
@@ -145,14 +166,14 @@ void MAX7219Panel::drawMirrored() {
 	for(int row=0;row<8;row++)  {
 		// Left
 		outbyte = rgb2bits(inptr);
-		outbyteM = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
 		inptr += 24; // 8 RGB triplets
 		sendData(RPANEL_BL,row+1,outbyte);
 		sendData(LPANEL_BR,row+1,outbyteM);
 
 		// Right
 		outbyte = rgb2bits(inptr);
-		outbyteM = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
 		inptr += 24; // 8 RGB triplets
 		sendData(RPANEL_BR,row+1,outbyte);
 		sendData(LPANEL_BL,row+1,outbyteM);
@@ -329,10 +350,10 @@ unsigned char rgb2bits(unsigned char *rgb) {
 	unsigned char out=0;
 
 	for(int ctr=0;ctr<8;ctr++) {
+		out <<=1;
 		if(rgb[0] || rgb[1] || rgb[2]) {
 			out |= 1;
 		}
-		out <<=1;
 		rgb+=3;
 	}
 	return out;
@@ -342,10 +363,10 @@ unsigned char rgb2bits_mirror(unsigned char *rgb) {
 	unsigned char out=0;
 
 	for(int ctr=0;ctr<8;ctr++) {
+		out >>=1;
 		if(rgb[0] || rgb[1] || rgb[2]) {
 			out |= 128;
 		}
-		out >>=1;
 		rgb+=3;
 	}
 	return out;
