@@ -133,11 +133,6 @@ int main(int argc, char *argv[]){
 	initPanel();
 	set_pattern(PATTERN_V);
 
-	puts("*Read config...");
-
-	readConfig(fp);
-	fclose(fp);
-
 	if(argc > 1) {
 		if(!strcasecmp(argv[1],"receiver")) {
 			transmitter=false;
@@ -163,6 +158,12 @@ int main(int argc, char *argv[]){
 		printf("Forcing into transmitter mode by config file\n");
 		transmitter=true;
 	}
+
+	puts("*Read config...");
+
+	readConfig(fp);
+	fclose(fp);
+
 
 	font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
 
