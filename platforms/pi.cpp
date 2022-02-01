@@ -4,6 +4,7 @@
 #include <string.h>
 #include <wiringPi.h>
 #include "drivers/display/Unicorn.hpp"
+#include "drivers/display/MAX7219Panel.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include "gpio.hpp"
@@ -20,6 +21,17 @@ static GPIOPin *deviceId=NULL;
 
 void init_pin_input(int pin);
 
+void initPanel(const char *driver, const char *params) {
+	if(panel) {
+		return;
+	}
+
+	if(!strcasecmp(driver, "MAX7219")) {
+		panel = new MAX7219Panel();
+		panel->init();
+	}
+}
+
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
@@ -27,8 +39,10 @@ void initPanel() {
 	gradient = new PosixTiming();
 	serial = new PiSerialDriver();
 
-	panel = new Unicorn();
-	panel->init();
+	if(!panel) {
+		panel = new Unicorn();
+		panel->init();
+	}
 
 	// If pin 29 (21 in WiringPi) is grounded, we're the transmitter
 	deviceId = new GPIOPin(29, DEVICE_BOTH, false);

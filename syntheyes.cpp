@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 extern void pi_init();
 extern void initPanel();
+extern void scanConfig(FILE *fp);
 extern void readConfig(FILE *fp);
 extern void poll_keyboard(); // For ESC to quit on desktop
 
@@ -101,34 +102,7 @@ int main(int argc, char *argv[]){
 	puts(  "========================================\n");
 	puts("Software provided under the 3-clause BSD license\n");
 
-	puts("*Panel init...");
-
-	initPanel();
-	set_pattern(PATTERN_V);
-
-
-	if(argc > 1) {
-		if(!strcasecmp(argv[1],"receiver")) {
-			transmitter=false;
-		}
-		if(!strcasecmp(argv[1],"transmitter")) {
-			transmitter=true;
-		}
-		// Switch off the display (for testing on the Pi)
-		if(!strcasecmp(argv[1],"off")) {
-			panel->clear(0);
-			timing->wait_microseconds(100000);
-			panel->draw();
-			timing->wait_microseconds(100000);
-			exit(0);
-		}
-		if((!strcasecmp(argv[1],"version")) || (!strcasecmp(argv[1],"-version"))) {
-			font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
-			exit(0);
-		}
-	}
-
-	puts("*Read config...");
+	puts("*Open config...");
 
 	strcpy(gifDir,"/boot/");
 
@@ -152,8 +126,38 @@ int main(int argc, char *argv[]){
 			font.errorMsg("Error: failed to open config file '/boot/eyeconfig3.txt'\n");
 		}
 	}
+	scanConfig(fp);
+
+	puts("*Panel init...");
+
+	initPanel();
+	set_pattern(PATTERN_V);
+
+	puts("*Read config...");
+
 	readConfig(fp);
 	fclose(fp);
+
+	if(argc > 1) {
+		if(!strcasecmp(argv[1],"receiver")) {
+			transmitter=false;
+		}
+		if(!strcasecmp(argv[1],"transmitter")) {
+			transmitter=true;
+		}
+		// Switch off the display (for testing on the Pi)
+		if(!strcasecmp(argv[1],"off")) {
+			panel->clear(0);
+			timing->wait_microseconds(100000);
+			panel->draw();
+			timing->wait_microseconds(100000);
+			exit(0);
+		}
+		if((!strcasecmp(argv[1],"version")) || (!strcasecmp(argv[1],"-version"))) {
+			font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
+			exit(0);
+		}
+	}
 
 	if(forcetransmitter) {
 		printf("Forcing into transmitter mode by config file\n");

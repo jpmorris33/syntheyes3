@@ -14,7 +14,7 @@
 
 #define REFRESH_MS 16 // approximately 1/60 second
 
-unsigned char spioutputbuf[769];
+static unsigned char spioutputbuf[769];
 extern bool transmitter;
 extern uint32_t rainbow[16]; // Colour table
 static PosixTiming refresh;

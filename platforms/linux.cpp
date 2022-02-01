@@ -17,6 +17,14 @@ extern Timing *ack;
 extern Timing *gradient;
 extern SerialDriver *serial;
 
+void initPanel(const char *driver, const char *params) {
+	if(panel) {
+		return;
+	}
+
+	// Initialise any other drivers here
+}
+
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
@@ -24,8 +32,10 @@ void initPanel() {
 	gradient = new PosixTiming();
 	serial = new VirtualSerialDriver();
 
-	panel = new SDLPanel();
-	panel->init();
+	if(!panel) {
+		panel = new SDLPanel();
+		panel->init();
+	}
 
 	// Fake serial port file
 	strcpy(serialPort,"/tmp/_eyetmp_");

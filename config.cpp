@@ -10,7 +10,8 @@
 #include "syntheyes.hpp"
 
 void readConfig(FILE *fp);
-void parse(const char *line);
+static void preParse(const char *line);
+static void parse(const char *line);
 void makepath(char path[1024], const char *filename);
 
 static char *nextWord(char *input);
@@ -40,13 +41,32 @@ extern bool seamless;
 extern GPIOPin *ackPin;
 extern int ackTime;
 extern int randomChance;
+extern void initPanel(const char *driver, const char *params);
 
 //
 //  Config reader
 //
 
+void scanConfig(FILE *fp) {
+	char buf[1024];
+
+	fseek(fp,0L,SEEK_SET);
+
+	for(;;) {
+		if(feof(fp)) {
+			return;
+		}
+		buf[0]=0;
+		if(fgets(buf,1024,fp)) {
+			preParse(buf);
+		}
+	}
+}
+
 void readConfig(FILE *fp) {
 	char buf[1024];
+
+	fseek(fp,0L,SEEK_SET);
 
 	for(;;) {
 		if(feof(fp)) {
@@ -59,6 +79,50 @@ void readConfig(FILE *fp) {
 	}
 }
 
+//
+//  Pre-parser for display driver etc
+//
+
+
+void preParse(const char *line) {
+	char buf[1024];
+	char cmd[1024];
+	char param[1024];
+	const char *word;
+
+	if(line[0] == '#') {
+		return;
+	}
+
+	SAFE_STRCPY(buf,line);
+
+	word=findWord(buf,1);
+	SAFE_STRCPY(cmd,word);
+	nextWord(cmd);
+
+	word=findWord(buf,2);
+	SAFE_STRCPY(param,word);
+
+	word=findWord(buf,3);
+
+	// Anything there?
+	if(!cmd[0]) {
+		return;
+	}
+	if(!param[0]) {
+		return;
+	}
+
+	if(!strcasecmp(cmd,"display:")) {
+		nextWord(param);
+		initPanel(param, word);
+	}
+}
+
+
+//
+//  Full-detail parses
+//
 
 void parse(const char *line) {
 	char buf[1024];
