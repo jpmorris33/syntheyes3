@@ -1,7 +1,7 @@
 #ifndef __SYNTHEYES_HPP__
 #define __SYNTHEYES_HPP__
 
-#define VERSION "3.01"
+#define VERSION "3.02"
 
 #include "expression.hpp"
 #include "font.hpp"

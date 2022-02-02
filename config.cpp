@@ -117,6 +117,24 @@ void preParse(const char *line) {
 		nextWord(param);
 		initPanel(param, word);
 	}
+
+	if(!strcasecmp(cmd,"include:")) {
+		nextWord(param);
+		char path[2048];
+		strcpy(path,"/boot/");
+		strcat(path,param);
+
+		printf("*Including config file '%s'\n",param);
+		FILE *fp = fopen(path,"r");
+		if(!fp) {
+			fp = fopen(param,"r");
+		}
+		if(fp) {
+			scanConfig(fp);
+			fclose(fp);
+		}
+	}
+
 }
 
 
@@ -156,6 +174,22 @@ void parse(const char *line) {
 		return;
 	}
 
+	// Chain to another config file
+
+	if(!strcasecmp(cmd,"include:")) {
+		nextWord(param);
+		char path[2048];
+		strcpy(path,"/boot/");
+		strcat(path,param);
+		FILE *fp = fopen(path,"r");
+		if(!fp) {
+			fp = fopen(param,"r");
+		}
+		if(fp) {
+			readConfig(fp);
+			fclose(fp);
+		}
+	}
 
 	// Basic setup, these are single-line commands
 
