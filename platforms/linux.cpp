@@ -6,6 +6,7 @@
 
 #include "syntheyes.hpp"
 #include "drivers/display/SDLPanel.hpp"
+#include "drivers/display/SDLSinglePanel.hpp"
 #include "drivers/serial/VirtualSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include <SDL2/SDL.h>
@@ -23,6 +24,12 @@ void initPanel(const char *driver, const char *params) {
 	}
 
 	// Initialise any other drivers here
+
+	if(!strcasecmp(driver, "SDLSingle")) {
+		panel = new SDLSinglePanel();
+		panel->init();
+	}
+
 }
 
 void initPanel() {

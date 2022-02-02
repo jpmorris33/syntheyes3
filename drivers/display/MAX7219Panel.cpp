@@ -13,6 +13,9 @@
 #include "../PosixTiming.hpp"
 #include "MAX7219Panel.hpp"
 
+#define MAXPANEL_W 16
+#define MAXPANEL_H 16
+
 #define CS_PIN		10	// Pin 24 in HW
 #define BRIGHTNESS	12	// 12/15
 
@@ -34,13 +37,11 @@
 
 #define REFRESH_MS 16	// approximately 1/60 sec
 
-extern uint32_t rainbow[16]; // Colour table
 static void sendData(int addr, unsigned char opcode, unsigned char data);
 static unsigned char rgb2bits(unsigned char *rgb);
 static unsigned char rgb2bits_mirror(unsigned char *rgb);
 extern void init_pin_output(int pin);
 
-static unsigned char rainbowpattern[16][16];
 static PosixTiming refresh;
 static unsigned char spioutputbuf[16];
 
@@ -54,9 +55,11 @@ void MAX7219Panel::init() {
 	panelW = MAXPANEL_W;
 	panelH = MAXPANEL_H;
 
-	// Init display
-
-	// Set up data transfers
+	framebuffer = (unsigned char *)calloc(1,panelW*panelH*3);
+	if(!framebuffer) {
+		printf("Failed to allocate framebuffer\n");
+		exit(1);
+	}
 
 	wiringPiSetup();
 	wiringPiSPISetup(0,16000000);
@@ -182,150 +185,6 @@ void MAX7219Panel::drawMirrored() {
 
 
 
-void MAX7219Panel::updateRGB(unsigned char *img, int w, int h) {
-	unsigned char *out = &framebuffer[0];
-	unsigned char *in = img;
-
-	for(int y=0;y<panelH;y++) {
-		in=&img[(w*3)*y];
-		for(int x=0;x<panelW;x++) {
-			if(x<w && y<h) {
-				if(in[0]|in[1]|in[2]) {
-					out[0] = in[0];
-					out[1] = in[1];
-					out[2] = in[2];
-				}
-				in +=3;
-			}
-			out+=3;
-		}
-	}
-}
-
-
-void MAX7219Panel::updateRGB(unsigned char *img, int w, int h, uint32_t colour) {
-	unsigned char *out = &framebuffer[0];
-	unsigned char *in = img;
-
-	unsigned char b=colour&0xff;
-	unsigned char g=(colour>>8)&0xff;
-	unsigned char r=(colour>>16)&0xff;
-
-	for(int y=0;y<panelH;y++) {
-		in=&img[(w*3)*y];
-		for(int x=0;x<panelW;x++) {
-			if(x<w && y<h) {
-				if(in[0]|in[1]|in[2]) {
-					out[0] = r;
-					out[1] = g;
-					out[2] = b;
-				}
-				in +=3;
-			}
-			out+=3;
-		}
-	}
-}
-
-void MAX7219Panel::updateRGBpattern(unsigned char *img, int w, int h, int offset) {
-	unsigned char *out = &framebuffer[0];
-	unsigned char *in = img;
-	int index=0,xpos=0,ypos=0;
-	unsigned char r,g,b;
-
-	ypos=0;
-	for(int y=0;y<panelH;y++) {
-		in=&img[(w*3)*y];
-		xpos=0;
-		for(int x=0;x<panelW;x++) {
-			index = (offset + (rainbowpattern[ypos][xpos]&0x0f))&0x0f;
-			b=rainbow[index]&0xff;
-			g=(rainbow[index]>>8)&0xff;
-			r=(rainbow[index]>>16)&0xff;
-			xpos++;
-			xpos &= 0x0f; // Constrain to 16 pixels
-
-			if(x<w && y<h) {
-				if(in[0]|in[1]|in[2]) {
-					out[0] = r;
-					out[1] = g;
-					out[2] = b;
-				}
-				in +=3;
-			}
-			out+=3;
-		}
-
-		ypos++;
-		ypos &= 0x0f; // Constrain to 16 pixels
-
-	}
-}
-
-//
-//	Set the special effect pattern
-//
-void MAX7219Panel::setPattern(unsigned char pattern[16][16]) {
-	memcpy(rainbowpattern, pattern, 16*16);
-}
-
-void MAX7219Panel::clear(uint32_t colour) {
-	int len=panelW*panelH;
-	unsigned char *ptr=&framebuffer[0];
-
-	unsigned char b=colour&0xff;
-	unsigned char g=(colour>>8)&0xff;
-	unsigned char r=(colour>>16)&0xff;
-
-	for(int ctr=0;ctr<len;ctr++) {
-		*ptr++=r;
-		*ptr++=g;
-		*ptr++=b;
-	}
-}
-
-void MAX7219Panel::clearV(int x, uint32_t colour) {
-	unsigned char *ptr=&framebuffer[0];
-
-	unsigned char b=colour&0xff;
-	unsigned char g=(colour>>8)&0xff;
-	unsigned char r=(colour>>16)&0xff;
-
-	int offset = (panelW-1)*3;
-
-	if(x<0 || x >= panelW) {
-		return;
-	}
-
-	ptr += (x*3);  // Find the column
-
-	for(int ctr=0;ctr<panelH;ctr++) {
-		*ptr++=r;
-		*ptr++=g;
-		*ptr++=b;
-		ptr+=offset;
-	}
-}
-
-void MAX7219Panel::clearH(int y, uint32_t colour) {
-	unsigned char *ptr=&framebuffer[0];
-
-	unsigned char b=colour&0xff;
-	unsigned char g=(colour>>8)&0xff;
-	unsigned char r=(colour>>16)&0xff;
-
-	if(y<0 || y >= panelH) {
-		return;
-	}
-
-	ptr += ((y*panelW)*3);  // Find the row
-
-	for(int ctr=0;ctr<panelW;ctr++) {
-		*ptr++=r;
-		*ptr++=g;
-		*ptr++=b;
-	}
-}
 
 //
 //  Send a command or data to the display chip

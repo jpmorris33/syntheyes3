@@ -21,6 +21,8 @@ class PanelDriver {
 	protected:
 		int panelW;
 		int panelH;
+		unsigned char *framebuffer;
+		unsigned char rainbowpattern[16][16];
 };
 
 #define PANELCAPS_SPLIT 	0x00000001	// Requires separate Transmitter/Reciver units

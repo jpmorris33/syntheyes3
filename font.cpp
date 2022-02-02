@@ -1106,9 +1106,32 @@ void Font::printVersion(const char *version, bool transmitter, int duration) {
 	    0b0000100100101000,
 	    0b0000100110010000,
 	};
-	unsigned short *imgsrc = transmitter ? &splash_transmit[0] : &splash_receive[0];
+	unsigned short splash_single[16] = {
+	    0b1101010110111101,
+	    0b1001010101010101,
+	    0b1101010101010111,
+	    0b0100100101010101,
+	    0b1100100101010101,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	    0b0000000000000000,
+	};
+	unsigned short *imgsrc = &splash_single[0];
 	unsigned char *ptr = &bmp[0];
 	memset(ptr,0,sizeof(bmp));
+
+	// If it's a split system, decide which panel we are
+	if(panel->getCaps() & PANELCAPS_SPLIT) {
+		imgsrc = transmitter ? &splash_transmit[0] : &splash_receive[0];
+	}
 
 	for(int y=0;y<16;y++) {
 		unsigned short imgbit = imgsrc[y];

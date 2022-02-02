@@ -1,7 +1,7 @@
 
 #include "../PanelDriver.hpp"
 
-class SDLPanel : public PanelDriver {
+class SDLSinglePanel : public PanelDriver {
 	public:
 		void init();
 		void draw();

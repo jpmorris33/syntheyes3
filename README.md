@@ -56,8 +56,7 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
 # TODO for 3.02
-* include: other config files
-* Document that mirror now works on scrollers
+* Document that mirror now works on scrollers, include:
 * Refactor panel driver class to reduce redundant code
 * Panel driver options (e.g. brightness)
 * Panel driver should register GPIO pins it uses

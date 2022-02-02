@@ -13,7 +13,7 @@
 //
 #include <SDL2/SDL.h>
 
-#include "SDLPanel.hpp"
+#include "SDLSinglePanel.hpp"
 
 #include <stdio.h>
 #include <string.h>
@@ -29,7 +29,7 @@ static unsigned char outbuf[768];
 //
 //	Init the Virtual display driver
 //
-void SDLPanel::init() {
+void SDLSinglePanel::init() {
 
 	panelW = SDLPANEL_W;
 	panelH = SDLPANEL_H;
@@ -42,7 +42,7 @@ void SDLPanel::init() {
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS);
 
-	win = SDL_CreateWindow("",0,0,panelW*10,panelH*10,SDL_WINDOW_RESIZABLE);
+	win = SDL_CreateWindow("",0,0,panelW*20,panelH*10,SDL_WINDOW_RESIZABLE);
 
 	if (!win){
 		printf("Failed to open window: %s\n", SDL_GetError());
@@ -55,7 +55,7 @@ void SDLPanel::init() {
 		exit(1);
 	}
 
-	texture = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STREAMING,panelW,panelH);
+	texture = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STREAMING,panelW*2,panelH);
 	if (!texture){
 		fprintf(stderr, "Failed to create texture\n");
 		exit(1);
@@ -69,15 +69,15 @@ void SDLPanel::init() {
 //	Get driver capabilities
 //
 
-uint32_t SDLPanel::getCaps() {
-	return PANELCAPS_SPLIT|PANELCAPS_FIXED;
+uint32_t SDLSinglePanel::getCaps() {
+	return PANELCAPS_FIXED;
 }
 
 
 //
 //	Put the framebuffer onto the Unicorn HD panel
 //
-void SDLPanel::draw() {
+void SDLSinglePanel::draw() {
 
 	int w, h;
 	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
@@ -88,18 +88,22 @@ void SDLPanel::draw() {
 	int windowwidth = panelW * 3;	// 16 RGB triplets
 
 	for(int ctr=0;ctr<panelH;ctr++)  {
+		// Left
 		memcpy(outptr,inptr,windowwidth);
-		inptr += windowwidth;
 		outptr += windowwidth;
+		// Right
+		memcpy(outptr,inptr,windowwidth);
+		outptr += windowwidth;
+		inptr += windowwidth;
 	}
 
-	SDL_UpdateTexture(texture, NULL, &outbuf[0], windowwidth);
+	SDL_UpdateTexture(texture, NULL, &outbuf[0], windowwidth*2);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
 
 }
 
-void SDLPanel::drawMirrored() {
+void SDLSinglePanel::drawMirrored() {
 
 	int w, h;
 	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
@@ -110,14 +114,18 @@ void SDLPanel::drawMirrored() {
 	int windowwidth = panelW * 3;	// 16 RGB triplets
 
 	for(int ctr=0;ctr<panelH;ctr++)  {
+		// Left
 		for(int xpos=windowwidth-3;xpos>=0;xpos-=3) {
 			memcpy(outptr,&inptr[xpos],3);
 			outptr+=3;
 		}
+		// Right
+		memcpy(outptr,inptr,windowwidth);
+		outptr += windowwidth;
 		inptr += windowwidth;
 	}
 
-	SDL_UpdateTexture(texture, NULL, &outbuf[0], windowwidth);
+	SDL_UpdateTexture(texture, NULL, &outbuf[0], windowwidth*2);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
 
