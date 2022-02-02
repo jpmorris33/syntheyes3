@@ -54,10 +54,15 @@ V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working
 V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 # TODO for 3.01
-* !Timer bugfix has skewed the GIF animation speed, fix the gifs
+* Test release on Xerian
 * Document that mirror now works on scrollers
 
 # TODO for 3.0x
+* Refactor panel driver class to reduce redundant code
+* Panel driver options (e.g. brightness)
+* Panel driver should register GPIO pins it uses
+* Expand GPIO mapper to cover all RPI pins
+* WS2812 driver for eyes and status lights
 * Background comms thread to stop the timeout glitching the display
 * Startup animation for user splash screens?
 
