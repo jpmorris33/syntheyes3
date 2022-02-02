@@ -53,11 +53,11 @@ V2.99 - Initial PUT, not yet at feature parity with SynthEyes2 (Pi build working
 
 V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
-# TODO for 3.01
-* Test release on Xerian
-* Document that mirror now works on scrollers
+V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
-# TODO for 3.0x
+# TODO for 3.02
+* include: other config files
+* Document that mirror now works on scrollers
 * Refactor panel driver class to reduce redundant code
 * Panel driver options (e.g. brightness)
 * Panel driver should register GPIO pins it uses
