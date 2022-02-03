@@ -29,7 +29,7 @@ static unsigned char outbuf[768];
 //
 //	Init the Virtual display driver
 //
-void SDLPanel::init() {
+void SDLPanel::init(const char *param) {
 
 	panelW = SDLPANEL_W;
 	panelH = SDLPANEL_H;

@@ -2,16 +2,20 @@
 
 #include <string.h>
 
-void PanelDriver::init() {}
+extern uint32_t rainbow[16]; // Colour table for gradients
+
+
+//
+//  Default stubs for the concrete implementations to override
+//
+
+void PanelDriver::init(const char *param) {}
 void PanelDriver::draw() {}
 void PanelDriver::drawMirrored() {}
 int PanelDriver::getW() {return panelW;}
 int PanelDriver::getH() {return panelH;}
 uint32_t PanelDriver::getCaps() {return 0;};
-
-
-extern uint32_t rainbow[16]; // Colour table for gradients
-
+void PanelDriver::setBrightness(int percentage) {}
 
 //
 //  Common code

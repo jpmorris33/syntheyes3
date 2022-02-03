@@ -28,7 +28,7 @@ void initPanel(const char *driver, const char *params) {
 
 	if(!strcasecmp(driver, "MAX7219")) {
 		panel = new MAX7219Panel();
-		panel->init();
+		panel->init(params);
 	}
 }
 
@@ -41,7 +41,7 @@ void initPanel() {
 
 	if(!panel) {
 		panel = new Unicorn();
-		panel->init();
+		panel->init("");
 	}
 
 	// If pin 29 (21 in WiringPi) is grounded, we're the transmitter

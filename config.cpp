@@ -304,6 +304,14 @@ void parse(const char *line) {
 			seamless=false;
 		}
 	}
+	if(!strcasecmp(cmd,"brightness:")) {
+		nextWord(param);
+		int brightness = atoi(param);
+		if(panel) {
+			panel->setBrightness(brightness);
+		}
+		dbprintf("Set panel brightness to %d percent\n",brightness);
+	}
 
 
 	//

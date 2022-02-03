@@ -8,6 +8,7 @@
 #include "../PosixTiming.hpp"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
@@ -24,7 +25,7 @@ static PosixTiming refresh;
 //
 //	Init the Unicorn HD driver
 //
-void Unicorn::init() {
+void Unicorn::init(const char *param) {
 
 	panelW = UNICORNPANEL_W;
 	panelH = UNICORNPANEL_H;

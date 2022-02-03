@@ -5,6 +5,7 @@
 #ifdef PLATFORM_PI
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <wiringPi.h>
@@ -17,7 +18,7 @@
 #define MAXPANEL_H 16
 
 #define CS_PIN		10	// Pin 24 in HW
-#define BRIGHTNESS	12	// 12/15
+#define BRIGHTNESS	2	// 2/15 - default, usually changed later
 
 #define CMD_TEST	0x0f
 #define CMD_INTENSITY	0x0a
@@ -48,7 +49,7 @@ static unsigned char spioutputbuf[16];
 //
 //	Init the Virtual display driver
 //
-void MAX7219Panel::init() {
+void MAX7219Panel::init(const char *param) {
 
 	printf("Init MAX7219 driver\n");
 
@@ -87,6 +88,23 @@ uint32_t MAX7219Panel::getCaps() {
 	return PANELCAPS_FIXED|PANELCAPS_MONOCHROME;
 }
 
+//
+//	Set brightness
+//
+
+void MAX7219Panel::setBrightness(int percentage) {
+	int bright = percentage / 6;
+	if(bright < 0) {
+		bright=0;
+	}
+	if(bright > 15) {
+		bright=15;
+	}
+
+	for(int panel=0;panel<8;panel++) {
+		sendData(panel, CMD_INTENSITY,bright);
+	}
+}
 
 //
 //	Put the framebuffer onto the MAX7219

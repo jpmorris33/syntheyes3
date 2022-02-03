@@ -27,7 +27,7 @@ void initPanel(const char *driver, const char *params) {
 
 	if(!strcasecmp(driver, "SDLSingle")) {
 		panel = new SDLSinglePanel();
-		panel->init();
+		panel->init(params);
 	}
 
 }
@@ -41,7 +41,7 @@ void initPanel() {
 
 	if(!panel) {
 		panel = new SDLPanel();
-		panel->init();
+		panel->init("");
 	}
 
 	// Fake serial port file

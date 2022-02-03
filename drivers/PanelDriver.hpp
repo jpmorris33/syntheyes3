@@ -5,7 +5,7 @@
 
 class PanelDriver {
 	public:
-		virtual void init();
+		virtual void init(const char *param);
 		virtual void draw();
 		virtual void drawMirrored();
 		virtual void updateRGB(unsigned char *img, int w, int h);
@@ -15,6 +15,7 @@ class PanelDriver {
 		virtual void clear(uint32_t colour);
 		virtual void clearH(int y, uint32_t colour);
 		virtual void clearV(int x, uint32_t colour);
+		virtual void setBrightness(int percentage);
 		virtual uint32_t getCaps();
 		int getW();
 		int getH();
