@@ -13,6 +13,8 @@ class GPIOPin {
 		int getPin();
 		char getDevice();
 		bool isOutput();
+		bool isReserved();
+		void reserve();
 		GPIOPin *findConflict();
 
 		GPIOPin *next;
@@ -25,6 +27,10 @@ class GPIOPin {
 		int realpin;
 		char device;
 		bool output;
+		bool reserved;
 };
+
+extern GPIOPin *reserveOutputPin(int pin);
+extern GPIOPin *reserveInputPin(int pin);
 
 #endif

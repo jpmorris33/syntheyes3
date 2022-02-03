@@ -46,6 +46,8 @@ extern void init_pin_output(int pin);
 static PosixTiming refresh;
 static unsigned char spioutputbuf[16];
 
+static GPIOPin *chipSelect;
+
 //
 //	Init the Virtual display driver
 //
@@ -62,10 +64,14 @@ void MAX7219Panel::init(const char *param) {
 		exit(1);
 	}
 
+	// Reserve some of the SPI0 pins
+	reserveOutputPin(19);			// MOSI
+	reserveOutputPin(23);			// CLK
+	chipSelect = reserveOutputPin(24);	// CS
+
 	wiringPiSetup();
 	wiringPiSPISetup(0,16000000);
-	init_pin_output(CS_PIN);
-	digitalWrite(CS_PIN, HIGH);
+	chipSelect->write(false); // Actually sets it high since we use inverse logic
 
 	// Initialise the panels
 	for(int panel=0;panel<8;panel++) {
@@ -218,9 +224,10 @@ void sendData(int addr, unsigned char opcode, unsigned char data) {
 	spioutputbuf[15-offset]=data;
 
 	// Blit it to the display
+	chipSelect->write(true); // LOW
 	digitalWrite(CS_PIN,LOW);
 	wiringPiSPIDataRW(0,spioutputbuf,16);
-	digitalWrite(CS_PIN,HIGH);
+	chipSelect->write(false); // HIGH
 }
 
 unsigned char rgb2bits(unsigned char *rgb) {

@@ -36,6 +36,12 @@ void Unicorn::init(const char *param) {
 		exit(1);
 	}
 
+	// Reserve the SPI0 pins
+	reserveOutputPin(19);	// MOSI
+	reserveInputPin(21);	// MISO
+	reserveOutputPin(23);	// CLK
+	reserveOutputPin(24);	// CS
+
 	wiringPiSetup();
 	wiringPiSPISetup(0,9000000);
 	refresh.set(0);

@@ -76,6 +76,53 @@ int mapPin(int pin) {
 		//   30 is ground
 		case 29:
 			return 21;
+		case 28:
+			return 31;
+		case 27:
+			return 30;
+		case 26:
+			return 11;
+		//   25 is ground
+		case 24:
+			return 10;
+		case 23:
+			return 14;
+		case 22:
+			return 6;
+		case 21:
+			return 13;
+		//   20 is ground
+		case 19:
+			return 12;
+		case 18:
+			return 5;
+		//   17 is +3v
+		case 16:
+			return 4;
+		case 15:
+			return 3;
+		//   14 is ground
+		case 13:
+			return 2;
+		case 12:
+			return 1;
+		case 11:
+			return 0;
+		case 10:
+			return 16;
+		//   9 is ground
+		case 8:
+			return 15;
+		case 7:
+			return 7;
+		//   6 is ground
+		case 5:
+			return 9;
+		//   4 is +5v
+		case 3:
+			return 8;
+		//   2 is +5v
+		//   1 is +3v
 		default:
 			return -1;
 	};

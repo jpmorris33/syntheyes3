@@ -2,6 +2,7 @@
 #define __PANELDRIVER_HPP__
 
 #include <stdint.h>
+#include "../gpio.hpp"
 
 class PanelDriver {
 	public:

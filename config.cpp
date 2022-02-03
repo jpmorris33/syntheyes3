@@ -794,10 +794,14 @@ GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDe
 
 	GPIOPin *ptr = new GPIOPin(pin,device,output);
 	if(!ptr) {
-		font.errorMsg("Error in %s - Error registerimng GPIO pin %s\n", cmd, param);
+		font.errorMsg("Error in %s - Error registering GPIO pin %s\n", cmd, param);
 	}
 
-	if(ptr->findConflict()) {
+	GPIOPin *conflict = ptr->findConflict();
+	if(conflict) {
+		if(conflict->isReserved()) {
+			font.errorMsg("Error in %s - GPIO pin %s reserved by hardware\n", cmd, param);
+		}
 		font.errorMsg("Error in %s - GPIO pin %s cannot be both INPUT and OUTPUT on the same device\n", cmd, param);
 	}
 

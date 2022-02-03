@@ -38,6 +38,7 @@ GPIOPin::GPIOPin(int inpin, char indevice, bool inoutput) {
 	pin=mapPin(inpin);
 	device=indevice;
 	output=inoutput;
+	reserved=false;
 
 	// Set up the GPIO pin
 	if(rightDevice()) {
@@ -111,6 +112,14 @@ bool GPIOPin::isOutput() {
 	return output;
 }
 
+bool GPIOPin::isReserved() {
+	return reserved;
+}
+
+void GPIOPin::reserve() {
+	reserved=true;
+}
+
 
 GPIOPin *GPIOPin::findConflict() {
 	if(!anchor) {
@@ -144,14 +153,14 @@ bool GPIOPin::conflicting(GPIOPin *ptr) {
 	if(!same_device(device, ptr->getDevice())) {
 		return false;
 	}
+	if(ptr->isReserved()) {
+		return true;	// If this pin is taken by the hardware, you're not having it
+	}
 	if(output == ptr->isOutput()) {
 		return false;
 	}
 	return true; // Oh dear
 }
-
-
-
 
 bool same_device(char dev1, char dev2) {
 	if(dev1 == DEVICE_BOTH || dev2 == DEVICE_BOTH) {
@@ -186,3 +195,18 @@ void log_gpio(GPIOPin *gpio) {
 	ptr->next = gpio;
 }
 
+//
+//  Reserve pins for the display drivers
+//
+
+GPIOPin *reserveOutputPin(int pin) {
+	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,true);
+	gpio->reserve();
+	return gpio;
+}
+
+GPIOPin *reserveInputPin(int pin) {
+	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,false);
+	gpio->reserve();
+	return gpio;
+}
