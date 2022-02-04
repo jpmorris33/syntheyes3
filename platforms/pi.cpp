@@ -16,6 +16,7 @@ extern Timing *cooldown;
 extern Timing *ack;
 extern Timing *gradient;
 extern bool transmitter;
+extern bool forcetransmitter;
 
 static GPIOPin *deviceId=NULL;
 
@@ -58,6 +59,8 @@ void initPanel() {
 		// Reserve the serial pins  (Note, we don't know for sure if we're the transmitter or receiver yet so grab both for now)
 		reserveOutputPin(8);
 		reserveInputPin(10);
+	} else {
+		forcetransmitter=true; // Single systems are always the transmitter
 	}
 
 }

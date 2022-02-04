@@ -17,6 +17,7 @@ extern Timing *cooldown;
 extern Timing *ack;
 extern Timing *gradient;
 extern SerialDriver *serial;
+extern bool forcetransmitter;
 
 void initPanel(const char *driver, const char *params) {
 	if(panel) {
@@ -46,6 +47,10 @@ void initPanel() {
 
 	// Fake serial port file
 	strcpy(serialPort,"/tmp/_eyetmp_");
+
+	if(!(panel->getCaps() & PANELCAPS_SPLIT)) {
+		forcetransmitter=true; // Single systems are always the transmitter
+	}
 
 }
 
