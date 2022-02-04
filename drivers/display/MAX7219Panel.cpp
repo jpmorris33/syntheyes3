@@ -64,13 +64,13 @@ void MAX7219Panel::init(const char *param) {
 		exit(1);
 	}
 
-	// Reserve some of the SPI0 pins
-	reserveOutputPin(19);			// MOSI
-	reserveOutputPin(23);			// CLK
-	chipSelect = reserveOutputPin(24);	// CS
-
 	wiringPiSetup();
 	wiringPiSPISetup(0,16000000);
+
+	// Reserve some of the SPI0 pins
+	reserveSpecialPin(19);			// MOSI
+	reserveSpecialPin(23);			// CLK
+	chipSelect = reserveOutputPin(24);	// CS
 	chipSelect->write(false); // Actually sets it high since we use inverse logic
 
 	// Initialise the panels

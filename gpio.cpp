@@ -23,6 +23,7 @@ extern int mapPin(int pin);
 extern bool transmitter;
 
 static bool same_device(char dev1, char dev2);
+static char verify_mode(char mode);
 static void log_gpio(GPIOPin *ptr);
 
 static GPIOPin *anchor = NULL;
@@ -31,22 +32,24 @@ static GPIOPin *anchor = NULL;
 //  Set up the GPIO pin
 //
 
-GPIOPin::GPIOPin(int inpin, char indevice, bool inoutput) {
+GPIOPin::GPIOPin(int inpin, char indevice, char gpiomode) {
 	next = NULL;
 
 	realpin = inpin;
 	pin=mapPin(inpin);
 	device=indevice;
-	output=inoutput;
+	mode = verify_mode(gpiomode);
 	reserved=false;
 
 	// Set up the GPIO pin
 	if(rightDevice()) {
-		if(output) {
+		if(mode == GPIOMODE_OUTPUT) {
 			init_pin_output(pin);
-		} else {
+		}
+		if(mode == GPIOMODE_INPUT) {
 			init_pin_input(pin);
 		}
+		// If it's SPECIAL, don't touch it
 	}
 
 	log_gpio(this);
@@ -75,7 +78,7 @@ bool GPIOPin::rightDevice() {
 //
 
 void GPIOPin::write(bool state) {
-	if((!output) || (!rightDevice())) {
+	if((!isOutput()) || (!rightDevice())) {
 		return;
 	}
 
@@ -89,7 +92,7 @@ void GPIOPin::write(bool state) {
 //
 
 bool GPIOPin::check() {
-	if(output || (!rightDevice())) {
+	if(isOutput() || (!rightDevice())) {
 		return false;
 	}
 
@@ -109,10 +112,13 @@ char GPIOPin::getDevice() {
 }
 
 bool GPIOPin::isOutput() {
-	return output;
+	return (mode == GPIOMODE_OUTPUT);
 }
 
 bool GPIOPin::isReserved() {
+	if(mode == GPIOMODE_SPECIAL) {
+		return true;
+	}
 	return reserved;
 }
 
@@ -156,7 +162,7 @@ bool GPIOPin::conflicting(GPIOPin *ptr) {
 	if(ptr->isReserved()) {
 		return true;	// If this pin is taken by the hardware, you're not having it
 	}
-	if(output == ptr->isOutput()) {
+	if(isOutput() == ptr->isOutput()) {
 		return false;
 	}
 	return true; // Oh dear
@@ -172,6 +178,15 @@ bool same_device(char dev1, char dev2) {
 	return false;
 }
 
+char verify_mode(char mode) {
+	switch(mode) {
+		case GPIOMODE_INPUT:
+		case GPIOMODE_OUTPUT:
+			return mode;
+		default:
+			return GPIOMODE_SPECIAL;
+	}
+}
 
 //
 //  GPIO pin registration
@@ -200,13 +215,23 @@ void log_gpio(GPIOPin *gpio) {
 //
 
 GPIOPin *reserveOutputPin(int pin) {
-	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,true);
+	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,GPIOMODE_OUTPUT);
 	gpio->reserve();
 	return gpio;
 }
 
 GPIOPin *reserveInputPin(int pin) {
-	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,false);
+	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,GPIOMODE_INPUT);
+	gpio->reserve();
+	return gpio;
+}
+
+//
+//	SPI pins on the Pi must NOT be reprogrammed as Output or it'll jam the SPI engine up for good
+//
+
+GPIOPin *reserveSpecialPin(int pin) {
+	GPIOPin *gpio = new GPIOPin(pin,transmitter?DEVICE_TRANSMITTER:DEVICE_RECEIVER,GPIOMODE_SPECIAL);
 	gpio->reserve();
 	return gpio;
 }

@@ -54,7 +54,7 @@ void initPanel() {
 	// Default serial port for Pi Zero with bluetooth disabled
 	strcpy(serialPort,"/dev/ttyAMA0");
 
-	if(panel->getCaps() & PANEL_SPLIT) {
+	if(panel->getCaps() & PANELCAPS_SPLIT) {
 		// Reserve the serial pins  (Note, we don't know for sure if we're the transmitter or receiver yet so grab both for now)
 		reserveOutputPin(8);
 		reserveInputPin(10);

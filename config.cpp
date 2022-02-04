@@ -792,7 +792,7 @@ GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDe
 		font.errorMsg("Error in %s - Unsupported GPIO pin %s\n", cmd, param);
 	}
 
-	GPIOPin *ptr = new GPIOPin(pin,device,output);
+	GPIOPin *ptr = new GPIOPin(pin,device,output?GPIOMODE_OUTPUT:GPIOMODE_INPUT);
 	if(!ptr) {
 		font.errorMsg("Error in %s - Error registering GPIO pin %s\n", cmd, param);
 	}
