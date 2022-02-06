@@ -1,16 +1,13 @@
 #ifdef PLATFORM_LINUX
 
 /**
- * Dummy unicorn panel driver with no SPI transfer
+ * Virtual LED string using SDL
  */
 
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 
-//
-//	Init the SDL driver
-//
 #include <SDL2/SDL.h>
 
 #include "SDLLights.hpp"

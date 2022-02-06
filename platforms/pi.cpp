@@ -47,6 +47,13 @@ void initPanel() {
 		panel->init("");
 	}
 
+#ifdef WS2811_SUPPORT
+	lights = new WS2811Lights();
+	lights->init(8,"");
+	lights->setColour(lightcolour);
+	lights->setPattern(lightpattern_triangle);
+#endif
+
 	// If pin 29 (21 in WiringPi) is grounded, we're the transmitter
 	deviceId = reserveInputPin(29);
 	timing->wait_microseconds(250);

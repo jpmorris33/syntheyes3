@@ -1,7 +1,7 @@
 #ifdef PLATFORM_LINUX
 
 /**
- * Dummy unicorn panel driver with no SPI transfer
+ * Virtual two-head LED display panel using SDL
  */
 
 #include <stdio.h>
