@@ -44,6 +44,7 @@ extern GPIOPin *ackPin;
 extern int ackTime;
 extern int randomChance;
 extern void initPanel(const char *driver, const char *params);
+extern void initLights(const char *driver, int numlights, const char *params);
 
 //
 //  Config reader
@@ -90,6 +91,7 @@ void preParse(const char *line) {
 	char buf[1024];
 	char cmd[1024];
 	char param[1024];
+	char param2[1024];
 	const char *word;
 
 	if(line[0] == '#') {
@@ -106,6 +108,9 @@ void preParse(const char *line) {
 	SAFE_STRCPY(param,word);
 
 	word=findWord(buf,3);
+	SAFE_STRCPY(param2,word);
+
+	word=findWord(buf,4);
 
 	// Anything there?
 	if(!cmd[0]) {
@@ -117,7 +122,17 @@ void preParse(const char *line) {
 
 	if(!strcasecmp(cmd,"display:")) {
 		nextWord(param);
-		initPanel(param, word);
+		initPanel(param, param2);
+	}
+
+	if(!strcasecmp(cmd,"lights:")) {
+		nextWord(param);
+		int numlights=8;
+		if(param2[0]) {
+			nextWord(param2);
+			numlights=atoi(param2);
+		}
+		initLights(param, numlights > 0 ? numlights : 8, word);
 	}
 
 	if(!strcasecmp(cmd,"include:")) {
@@ -340,6 +355,15 @@ void parse(const char *line) {
 		nextWord(param);
 		lightspeed = atoi(param);
 		dbprintf("Set status lights delay to %d ms\n",lightspeed);
+	}
+
+	if(!strcasecmp(cmd,"lightbrightness:")) {
+		nextWord(param);
+		int brightness = atoi(param);
+		if(lights) {
+			lights->setBrightness(brightness);
+		}
+		dbprintf("Set lights brightness to %d percent\n",brightness);
 	}
 
 	//

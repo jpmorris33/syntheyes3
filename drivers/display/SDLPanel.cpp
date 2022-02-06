@@ -29,6 +29,8 @@ void SDLPanel::init(const char *param) {
 	panelW = SDLPANEL_W;
 	panelH = SDLPANEL_H;
 
+	printf("*Init SDL virtual display (split mode)\n");
+
 	framebuffer = (unsigned char *)calloc(1,panelW*panelH*3);
 	if(!framebuffer) {
 		printf("Failed to allocate framebuffer\n");

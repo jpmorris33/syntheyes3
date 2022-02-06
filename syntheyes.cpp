@@ -174,7 +174,6 @@ int main(int argc, char *argv[]){
 	readConfig(fp);
 	fclose(fp);
 
-
 	font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
 
 	srandom(time(NULL));
@@ -193,8 +192,14 @@ int main(int argc, char *argv[]){
 	pi_init();
 	expressions.initBackgrounds();
 
-	cooldown->set(1); // It'll be elapsed by the time we check
-	gradient->set(1); // It'll be elapsed by the time we check
+	// They'll be elapsed by the time we check
+	cooldown->set(1);
+	gradient->set(1);
+	lighttimer->set(1);
+
+	if(lights) {
+		lights->setColour(lightcolour);
+	}
 
 	puts("*Serial comms init...");
 

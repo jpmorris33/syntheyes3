@@ -26,11 +26,13 @@ void SDLLights::init(int ledcount, const char *param) {
 	brightness = 100;
 	lightmode = LIGHTMODE_NORMAL;
 
-	if(leds < 0) {
+	if(leds < 1) {
 		framebuffer=NULL;
 		leds=0;
 		return;
 	}
+
+	printf("*Init SDL lights driver with %d LEDs\n",leds);
 
 	framebuffer = (unsigned char *)calloc(1,leds*3);
 	if(!framebuffer) {

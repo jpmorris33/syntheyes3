@@ -1,10 +1,12 @@
 #ifdef PLATFORM_PI
 
 #include "syntheyes.hpp"
+#include "colourutils.hpp"
 #include <string.h>
 #include <wiringPi.h>
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/display/MAX7219Panel.hpp"
+#include "drivers/lights/WS2811Lights.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include "gpio.hpp"
@@ -34,6 +36,23 @@ void initPanel(const char *driver, const char *params) {
 	}
 }
 
+void initLights(const char *driver, int numlights, const char *params) {
+	if(lights) {
+		return;
+	}
+
+	// Initialise any other drivers here
+#ifdef WS2811_SUPPORT
+	if(!strcasecmp(driver, "WS2811")) {
+		lights = new WS2811Lights();
+		lights->init(numlights,params);
+		lights->setColour(lightcolour);
+		lights->setPattern(lightpattern_triangle);
+	}
+#endif
+
+}
+
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
@@ -46,13 +65,6 @@ void initPanel() {
 		panel = new Unicorn();
 		panel->init("");
 	}
-
-#ifdef WS2811_SUPPORT
-	lights = new WS2811Lights();
-	lights->init(8,"");
-	lights->setColour(lightcolour);
-	lights->setPattern(lightpattern_triangle);
-#endif
 
 	// If pin 29 (21 in WiringPi) is grounded, we're the transmitter
 	deviceId = reserveInputPin(29);

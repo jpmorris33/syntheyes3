@@ -37,6 +37,22 @@ void initPanel(const char *driver, const char *params) {
 
 }
 
+void initLights(const char *driver, int numlights, const char *params) {
+	if(lights) {
+		return;
+	}
+
+	// Initialise any other drivers here
+
+	if(!strcasecmp(driver, "SDLLights")) {
+		lights = new SDLLights();
+		lights->init(numlights,params);
+		lights->setColour(lightcolour);
+		lights->setPattern(lightpattern_triangle);
+	}
+
+}
+
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();
@@ -49,11 +65,6 @@ void initPanel() {
 		panel = new SDLPanel();
 		panel->init("");
 	}
-
-	lights = new SDLLights();
-	lights->init(8,"");
-	lights->setColour(lightcolour);
-	lights->setPattern(lightpattern_triangle);
 
 	// Fake serial port file
 	strcpy(serialPort,"/tmp/_eyetmp_");

@@ -53,7 +53,7 @@ static GPIOPin *chipSelect;
 //
 void MAX7219Panel::init(const char *param) {
 
-	printf("Init MAX7219 driver\n");
+	printf("*Init MAX7219 driver\n");
 
 	panelW = MAXPANEL_W;
 	panelH = MAXPANEL_H;
