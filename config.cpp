@@ -37,6 +37,7 @@ extern char gifDir[512];
 extern int cooldown_time;
 extern int rainbowspeed;
 extern int scrollspeed;
+extern int lightspeed;
 extern bool forcetransmitter;
 extern bool seamless;
 extern GPIOPin *ackPin;
@@ -220,6 +221,14 @@ void parse(const char *line) {
 			eyecolour = col;
 		}
 	}
+	if(!strcasecmp(cmd,"lightcolour:")) {
+		nextWord(param);
+		lightcolour = parseColour(param);
+	}
+	if(!strcasecmp(cmd,"lightcolor:")) {
+		nextWord(param);
+		lightcolour = parseColour(param);
+	}
 	if(!strcasecmp(cmd,"cooldown:")) {
 		nextWord(param);
 		cooldown_time  = atoi(param);
@@ -314,6 +323,24 @@ void parse(const char *line) {
 		dbprintf("Set panel brightness to %d percent\n",brightness);
 	}
 
+	if(!strcasecmp(cmd,"lightpattern:")) {
+		nextWord(param);
+		if(!strcasecmp(param,"triangle")) {
+			dbprintf("Status lights will use a triangle ramp\n");
+			set_lightpattern(LIGHTPATTERN_TRIANGLE);
+		}
+
+		if(!strcasecmp(param,"saw")) {
+			dbprintf("Status lights will use a sawtooth ramp\n");
+			set_lightpattern(LIGHTPATTERN_SAW);
+		}
+	}
+
+	if(!strcasecmp(cmd,"lightspeed:")) {
+		nextWord(param);
+		lightspeed = atoi(param);
+		dbprintf("Set status lights delay to %d ms\n",lightspeed);
+	}
 
 	//
 	//	Expression setup, this is stateful as it spans multiple lines

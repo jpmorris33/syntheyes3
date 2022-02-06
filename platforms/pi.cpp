@@ -15,6 +15,7 @@ extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *ack;
 extern Timing *gradient;
+extern Timing *lighttimer;
 extern bool transmitter;
 extern bool forcetransmitter;
 
@@ -38,6 +39,7 @@ void initPanel() {
 	cooldown = new PosixTiming();
 	ack = new PosixTiming();
 	gradient = new PosixTiming();
+	lighttimer = new PosixTiming();
 	serial = new PiSerialDriver();
 
 	if(!panel) {

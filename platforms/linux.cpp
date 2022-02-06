@@ -5,17 +5,21 @@
 //
 
 #include "syntheyes.hpp"
+#include "colourutils.hpp"
 #include "drivers/display/SDLPanel.hpp"
 #include "drivers/display/SDLSinglePanel.hpp"
+#include "drivers/lights/SDLLights.hpp"
 #include "drivers/serial/VirtualSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include <SDL2/SDL.h>
 
 extern PanelDriver *panel;
+extern LightDriver *lights;
 extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *ack;
 extern Timing *gradient;
+extern Timing *lighttimer;
 extern SerialDriver *serial;
 extern bool forcetransmitter;
 
@@ -38,12 +42,18 @@ void initPanel() {
 	cooldown = new PosixTiming();
 	ack = new PosixTiming();
 	gradient = new PosixTiming();
+	lighttimer = new PosixTiming();
 	serial = new VirtualSerialDriver();
 
 	if(!panel) {
 		panel = new SDLPanel();
 		panel->init("");
 	}
+
+	lights = new SDLLights();
+	lights->init(8,"");
+	lights->setColour(lightcolour);
+	lights->setPattern(lightpattern_triangle);
 
 	// Fake serial port file
 	strcpy(serialPort,"/tmp/_eyetmp_");

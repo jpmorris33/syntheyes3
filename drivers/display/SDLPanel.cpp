@@ -75,7 +75,7 @@ uint32_t SDLPanel::getCaps() {
 
 
 //
-//	Put the framebuffer onto the Unicorn HD panel
+//	Put the framebuffer onto the virtual panel
 //
 void SDLPanel::draw() {
 

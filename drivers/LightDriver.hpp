@@ -19,9 +19,10 @@ class LightDriver {
 	protected:
 		int leds;
 		int ledpos;
-		uint32_t colour;
+		unsigned char r,g,b;
 		int brightness;
 		int lightmode;
+		unsigned char *framebuffer;
 		unsigned char oldpattern[16];
 		unsigned char curpattern[16];
 };

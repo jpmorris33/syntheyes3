@@ -1,8 +1,9 @@
 #include "LightDriver.hpp"
 
+#include <stdio.h>
 #include <string.h>
 
-extern uint32_t rainbow[16]; // Colour table for gradients
+extern char colourscale[256][256];
 
 
 //
@@ -24,19 +25,41 @@ void LightDriver::setPattern(unsigned char pattern[16]) {
 
 void LightDriver::setBrightness(int percentage) {
 	brightness = percentage;
-	// Rescale intensity table
+	memcpy(curpattern,oldpattern,16);  
+
+	// Rescale intensity table to currentl brightness
 }
 
 void LightDriver::setMode(int mode) {
 	lightmode = mode;
 }
 
-void LightDriver::setColour(uint32_t rgb) {
-	colour = rgb;
+void LightDriver::setColour(uint32_t colour) {
+	b=colour&0xff;
+	g=(colour>>8)&0xff;
+	r=(colour>>16)&0xff;
 }
 
 void LightDriver::update() {
+	if(!framebuffer) {
+		return;
+	}
 
-	// Update LED table
+	unsigned char *ptr=framebuffer;
+	unsigned char offset;
+
+	for(int ctr=0;ctr<leds;ctr++)	{
+		if(lightmode == LIGHTMODE_UNISON) {
+			offset = (ledpos & 15);
+		} else {
+			offset = (ctr+ledpos)&15;
+		}
+		*ptr++=colourscale[curpattern[offset]][r];
+		*ptr++=colourscale[curpattern[offset]][g];
+		*ptr++=colourscale[curpattern[offset]][b];
+	}
+
+	ledpos++;
+	ledpos &= 15;
 }
 

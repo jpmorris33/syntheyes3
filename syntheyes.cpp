@@ -38,10 +38,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <time.h>
 
 #include "syntheyes.hpp"
+#include "colourutils.hpp"
 #include "patterns.h"
 
 extern void pi_init();
 extern void initPanel();
+extern void init_colourutils();
 extern void scanConfig(FILE *fp);
 extern void readConfig(FILE *fp);
 extern void poll_keyboard(); // For ESC to quit on desktop
@@ -73,6 +75,7 @@ Timing *ack = NULL;
 Font font;
 ExpressionList expressions;
 uint32_t eyecolour = 0xff8700;
+uint32_t lightcolour = 0xff8700;
 int cooldown_time = 5;
 bool seamless=false;
 bool transmitter = true;
@@ -86,7 +89,7 @@ int randomChance = 75; // 75 percent chance of picking a random event to space t
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
 int rainbowspeed = 10;
-int lightspeed = 10;
+int lightspeed = 25;
 unsigned char rainbowoffset=0;
 bool flash_state=true;
 int scrollspeed = 40;
@@ -102,6 +105,8 @@ static bool noMirror=false;
 
 int main(int argc, char *argv[]){
 	FILE *fp=NULL;
+
+	init_colourutils();
 
 	printf("SynthEyes v%s - (C)2022 IT-HE Software\n",VERSION);
 	puts(  "========================================\n");
@@ -468,6 +473,28 @@ void set_pattern(int pattern) {
 			break;
 		default:
 			panel->setPattern(pattern_v);
+			break;
+	}
+}
+
+//
+//	Set the lighting pattern, these are currently hardcoded
+//
+
+void set_lightpattern(int pattern) {
+	if(!lights) {
+		return;
+	}
+
+	switch(pattern) {
+		case LIGHTPATTERN_SAW:
+			lights->setPattern(lightpattern_saw);
+			break;
+		case LIGHTPATTERN_TRIANGLE:
+			lights->setPattern(lightpattern_triangle);
+			break;
+		default:
+			lights->setPattern(lightpattern_saw);
 			break;
 	}
 }
