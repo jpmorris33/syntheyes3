@@ -8,8 +8,10 @@
 #include "drivers/PanelDriver.hpp"
 #include "drivers/SerialDriver.hpp"
 #include "drivers/Timing.hpp"
+#include "drivers/LightDriver.hpp"
 
 extern PanelDriver *panel;
+extern LightDriver *lights;
 extern Timing *timing;
 extern Font font;
 extern ExpressionList expressions;
@@ -21,7 +23,6 @@ extern int serialRate;
 
 extern void set_pin(int pin, bool state);
 extern void set_pattern(int pattern);
-extern void update_rainbow();
 extern void drawEyes(bool mirror);
 
 #define SAFE_STRCPY(a,b) {strncpy(a,b,sizeof(a));a[sizeof(a)-1]=0;}

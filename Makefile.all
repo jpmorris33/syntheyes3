@@ -6,6 +6,7 @@ SRC	= syntheyes.cpp config.cpp platforms/pi.cpp platforms/linux.cpp \
           drivers/display/SDLSinglePanel.cpp \
           drivers/SerialDriver.cpp drivers/serial/PiSerialDriver.cpp \
           drivers/serial/VirtualSerialDriver.cpp \
+          drivers/LightDriver.cpp \
           drivers/Timing.cpp drivers/PosixTiming.cpp
 
 eyes:	syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
@@ -13,12 +14,14 @@ eyes:	syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o
         drivers/PanelDriver.o drivers/display/Unicorn.o drivers/display/SDLPanel.o drivers/display/MAX7219Panel.o \
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/display/SDLSinglePanel.o \
+        drivers/LightDriver.o \
         drivers/Timing.o drivers/PosixTiming.o
 	$Q echo [link]
 	$Q $(CC) -o $@ syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
         platforms/pi.o platforms/linux.o \
         drivers/PanelDriver.o drivers/display/Unicorn.o drivers/display/SDLPanel.o drivers/display/MAX7219Panel.o \
         drivers/display/SDLSinglePanel.o \
+        drivers/LightDriver.o \
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/Timing.o drivers/PosixTiming.o \
          $(LDFLAGS) $(LDLIBS)

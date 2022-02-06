@@ -67,6 +67,19 @@ void Expression::event(ExpressionEvent *ev) {
 				printf("Warning: CHAIN did not find animation '%s'\n", ev->strparameter);
 			}
 			break;
+		case EVENT_WAIT:
+			wait(ev->parameter,false);
+			break;
+		case EVENT_LIGHTCOLOUR:
+			if(lights) {
+				lights->setColour(ev->parameter);
+			};
+			break;
+		case EVENT_LIGHTMODE:
+			if(lights) {
+				lights->setMode(ev->parameter);
+			};
+			break;
 		default:
 			break;
 	}

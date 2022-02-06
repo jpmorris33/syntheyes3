@@ -54,16 +54,20 @@ static bool check_gpio();
 static bool check_serial();
 static bool check_network();
 static void update_ack();
+static void update_rainbow();
+static void update_lights();
 
 static void serial_init();
 static void serial_transmit(Expression *exp);
 static Expression *serial_receive();
 
 PanelDriver *panel = NULL;
+LightDriver *lights = NULL;
 SerialDriver *serial = NULL;
 Timing *timing = NULL;
 Timing *cooldown = NULL;
 Timing *gradient = NULL;
+Timing *lighttimer = NULL;
 Timing *ack = NULL;
 
 Font font;
@@ -82,6 +86,7 @@ int randomChance = 75; // 75 percent chance of picking a random event to space t
 // Rainbow effect
 uint32_t rainbow[16] = {0xff1700,0xff7200,0xffce00,0xe8ff00,0x79ff00,0x1fff00,0x00ff3d,0x00ff98,0x00fff4,0x00afff,0x0054ff,0x0800ff,0x6300ff,0xbe00ff,0xff00e4,0xff0089};
 int rainbowspeed = 10;
+int lightspeed = 10;
 unsigned char rainbowoffset=0;
 bool flash_state=true;
 int scrollspeed = 40;
@@ -401,6 +406,8 @@ void wait(int ms, bool interruptable) {
 
 		update_rainbow();
 
+		update_lights();
+
 		if(check_comms() && interruptable) {
 			// Flash the ACK light, if enabled
 			if(nextExpression && nextExpression->ack) {
@@ -427,6 +434,23 @@ void update_rainbow() {
 		if(!rainbowoffset) {
 			flash_state = !flash_state;
 		}
+	}
+}
+
+//
+//	Update the status lights (if present)
+//
+
+void update_lights() {
+	if(!lights) {
+		return;
+	}
+
+	// Update the rainbow tick
+	if(lighttimer->elapsed()) {
+		lights->update();
+		lighttimer->set(lightspeed);
+		lights->draw();
 	}
 }
 

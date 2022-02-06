@@ -20,6 +20,7 @@ static const char *nextWordEnd(const char *input);
 static const char *findWord(const char *input, int pos);
 static uint32_t parseColour(const char *hex);
 static int parseDrawmode(const char *mode);
+static int parseLightmode(const char *mode);
 static void add_event(ExpressionEvent *slot, const char *input);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice);
@@ -648,6 +649,25 @@ void add_event(ExpressionEvent *slot, const char *input) {
 		slot->strparameter = strdup(param);
 		// Don't check for correctness as the expression might not exist yet
 	}
+
+	if((!strcasecmp(cmd, "wait")) || (!strcasecmp(cmd, "delay"))) {
+		slot->type = EVENT_WAIT;
+		slot->parameter = atoi(param);
+	}
+
+	if((!strcasecmp(cmd, "lightcolour")) || (!strcasecmp(cmd, "light_colour"))) {
+		slot->type = EVENT_LIGHTCOLOUR;
+		slot->parameter = parseColour(param);
+	}
+	if((!strcasecmp(cmd, "lightcolor")) || (!strcasecmp(cmd, "light_color"))) {
+		slot->type = EVENT_LIGHTCOLOUR;
+		slot->parameter = parseColour(param);
+	}
+
+	if((!strcasecmp(cmd, "lightmode")) || (!strcasecmp(cmd, "light_mode"))) {
+		slot->type = EVENT_LIGHTMODE;
+		slot->parameter = parseLightmode(param);
+	}
 }
 
 //
@@ -763,6 +783,16 @@ int parseDrawmode(const char *mode) {
 		return DRAWMODE_CYCLE;
 	}
 	return -1;
+}
+
+int parseLightmode(const char *mode) {
+	if(!strcasecmp(mode, "normal")) {
+		return LIGHTMODE_NORMAL;
+	}
+	if(!strcasecmp(mode, "unison")) {
+		return LIGHTMODE_UNISON;
+	}
+	return LIGHTMODE_NORMAL;
 }
 
 GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice) {

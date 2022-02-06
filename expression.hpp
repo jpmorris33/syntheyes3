@@ -16,10 +16,13 @@
 #define DRAWMODE_FLASH 3
 #define DRAWMODE_CYCLE 4
 
-#define EVENT_NONE 0
-#define EVENT_SETGPIO 1
-#define EVENT_CLEARGPIO 2
-#define EVENT_CHAIN 3
+#define EVENT_NONE		0
+#define EVENT_SETGPIO		1
+#define EVENT_CLEARGPIO		2
+#define EVENT_CHAIN		3
+#define EVENT_WAIT		4
+#define EVENT_LIGHTCOLOUR	5
+#define EVENT_LIGHTMODE		6
 
 #define BLINK_TOP 	1
 #define BLINK_LEFT	2
