@@ -114,10 +114,7 @@ int mapPin(int pin) {
 		//   30 is ground
 		case 29:
 			return 21;
-		case 28:
-			return 31;
-		case 27:
-			return 30;
+		// 27 and 28 are reserved for EEPROM
 		case 26:
 			return 11;
 		//   25 is ground
