@@ -21,11 +21,6 @@
 #define SDLPANEL_W 16
 #define SDLPANEL_H 16
 
-static SDL_Window *win;
-static SDL_Renderer *renderer;
-static SDL_Texture *texture;
-static unsigned char outbuf[768];
-
 //
 //	Init the Virtual display driver
 //
@@ -37,6 +32,12 @@ void SDLPanel::init(const char *param) {
 	framebuffer = (unsigned char *)calloc(1,panelW*panelH*3);
 	if(!framebuffer) {
 		printf("Failed to allocate framebuffer\n");
+		exit(1);
+	}
+
+	outbuffer = (unsigned char *)calloc(1,panelW*2*panelH*3);
+	if(!outbuffer) {
+		printf("Failed to allocate outbuffer\n");
 		exit(1);
 	}
 
@@ -83,7 +84,7 @@ void SDLPanel::draw() {
 	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 
 	unsigned char *inptr = framebuffer;
-	unsigned char *outptr = &outbuf[0];
+	unsigned char *outptr = outbuffer;
 
 	int windowwidth = panelW * 3;	// 16 RGB triplets
 
@@ -93,7 +94,7 @@ void SDLPanel::draw() {
 		outptr += windowwidth;
 	}
 
-	SDL_UpdateTexture(texture, NULL, &outbuf[0], windowwidth);
+	SDL_UpdateTexture(texture, NULL, outbuffer, windowwidth);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
 
@@ -105,7 +106,7 @@ void SDLPanel::drawMirrored() {
 	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 
 	unsigned char *inptr = framebuffer;
-	unsigned char *outptr = &outbuf[0];
+	unsigned char *outptr = outbuffer;
 
 	int windowwidth = panelW * 3;	// 16 RGB triplets
 
@@ -117,7 +118,7 @@ void SDLPanel::drawMirrored() {
 		inptr += windowwidth;
 	}
 
-	SDL_UpdateTexture(texture, NULL, &outbuf[0], windowwidth);
+	SDL_UpdateTexture(texture, NULL, outbuffer, windowwidth);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
 

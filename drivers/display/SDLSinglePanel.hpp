@@ -7,4 +7,9 @@ class SDLSinglePanel : public PanelDriver {
 		void draw();
 		void drawMirrored();
 		uint32_t getCaps();
+	private:
+		struct SDL_Window *win;
+		struct SDL_Renderer *renderer;
+		struct SDL_Texture *texture;
+		unsigned char *outbuffer;
 };
