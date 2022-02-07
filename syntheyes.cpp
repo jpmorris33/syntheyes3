@@ -83,6 +83,8 @@ bool forcetransmitter = false;
 char serialPort[256];
 int serialRate=19200;
 GPIOPin *ackPin = NULL;
+GPIOPin *mic = NULL;
+bool micInvert=false;
 int ackTime = 750;
 int randomChance = 75; // 75 percent chance of picking a random event to space things out
 
@@ -152,6 +154,11 @@ int main(int argc, char *argv[]){
 		}
 		// Switch off the display (for testing on the Pi)
 		if(!strcasecmp(argv[1],"off")) {
+			if(lights) {
+				lights->force(0);
+				lights->draw();
+			}
+
 			panel->clear(0);
 			timing->wait_microseconds(100000);
 			panel->draw();
@@ -456,7 +463,16 @@ void update_lights() {
 		return;
 	}
 
-	// Update the rainbow tick
+	// If we have a microphone input over GPIO, flash the lights
+	if(mic && (mic->check() != micInvert)) {
+		lights->force(rainbowoffset&3 ? 100 : 10);
+		lights->draw();
+		lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
+		return;
+	}
+
+
+	// Update the status lights
 	if(lighttimer->elapsed()) {
 		lights->update();
 		lighttimer->set(lightspeed);

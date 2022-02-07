@@ -17,7 +17,6 @@
 #define MAXPANEL_W 16
 #define MAXPANEL_H 16
 
-#define CS_PIN		10	// Pin 24 in HW
 #define BRIGHTNESS	2	// 2/15 - default, usually changed later
 
 #define CMD_TEST	0x0f
@@ -52,8 +51,15 @@ static GPIOPin *chipSelect;
 //	Init the Virtual display driver
 //
 void MAX7219Panel::init(const char *param) {
+	int csPin = 24;
 
 	printf("*Init MAX7219 driver\n");
+	const char *p = getDriverParam(param, "cs");
+	if(p) {
+		csPin = getDriverInt(p);
+		printf("*MAX7219 using CS pin %d\n",csPin);
+	}
+
 
 	panelW = MAXPANEL_W;
 	panelH = MAXPANEL_H;
@@ -70,7 +76,7 @@ void MAX7219Panel::init(const char *param) {
 	// Reserve some of the SPI0 pins
 	reserveSpecialPin(19);			// MOSI
 	reserveSpecialPin(23);			// CLK
-	chipSelect = reserveOutputPin(24);	// CS
+	chipSelect = reserveOutputPin(csPin);	// CS
 	chipSelect->write(false); // Actually sets it high since we use inverse logic
 
 	// Initialise the panels
@@ -225,7 +231,6 @@ void sendData(int addr, unsigned char opcode, unsigned char data) {
 
 	// Blit it to the display
 	chipSelect->write(true); // LOW
-	digitalWrite(CS_PIN,LOW);
 	wiringPiSPIDataRW(0,spioutputbuf,16);
 	chipSelect->write(false); // HIGH
 }

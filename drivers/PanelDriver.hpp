@@ -27,6 +27,10 @@ class PanelDriver {
 		unsigned char rainbowpattern[16][16];
 };
 
+extern const char *getDriverParam(const char *string, const char *cmd);
+extern int getDriverInt(const char *param);
+extern const char *getDriverStr(const char *param);
+
 #define PANELCAPS_SPLIT 	0x00000001	// Requires separate Transmitter/Reciver units
 #define PANELCAPS_FIXED 	0x00000002	// Display is fixed size
 #define PANELCAPS_MONOCHROME	0x00000004	// Display is monochrome

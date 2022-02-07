@@ -42,6 +42,8 @@ extern bool forcetransmitter;
 extern bool seamless;
 extern GPIOPin *ackPin;
 extern int ackTime;
+extern GPIOPin *mic;
+extern bool micInvert;
 extern int randomChance;
 extern void initPanel(const char *driver, const char *params);
 extern void initLights(const char *driver, int numlights, const char *params);
@@ -310,6 +312,18 @@ void parse(const char *line) {
 		ackTime = atoi(param);
 		dbprintf("Set ACK light duration to %d ms\n",ackTime);
 	}
+	if((!strcasecmp(cmd,"micpin:")) || (!strcasecmp(cmd,"mic_pin:"))) {
+		nextWord(param);
+		mic = parseGPIO("MicPin:",param, false);
+		dbprintf("Set microphone pin to %d\n",mic->getPin());
+	}
+	if((!strcasecmp(cmd,"micinvert:")) || (!strcasecmp(cmd,"mic_invert:"))) {
+		nextWord(param);
+		if(parseTrue(param)) {
+			micInvert=true;
+		}
+		dbprintf("Microphone inverted = %d\n",micInvert);
+	}
 	if((!strcasecmp(cmd,"randomchance:")) || (!strcasecmp(cmd,"random_chance:"))) {
 		nextWord(param);
 		randomChance = atoi(param);
@@ -362,8 +376,8 @@ void parse(const char *line) {
 		int brightness = atoi(param);
 		if(lights) {
 			lights->setBrightness(brightness);
+			dbprintf("Set lights brightness to %d percent\n",brightness);
 		}
-		dbprintf("Set lights brightness to %d percent\n",brightness);
 	}
 
 	//
@@ -843,6 +857,9 @@ int parseLightmode(const char *mode) {
 	if(!strcasecmp(mode, "unison")) {
 		return LIGHTMODE_UNISON;
 	}
+	if(!strcasecmp(mode, "stop")) {
+		return LIGHTMODE_STOP;
+	}
 	return LIGHTMODE_NORMAL;
 }
 
@@ -939,3 +956,4 @@ int parseBlinkmode(const char *mode) {
 	font.errorMsg("Unsupported blink mode '%s'",mode);
 	return 0;
 }
+

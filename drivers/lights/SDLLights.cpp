@@ -24,6 +24,7 @@ void SDLLights::init(int ledcount, const char *param) {
 	ledpos=0;
 	r=g=b=0x80;
 	brightness = 100;
+	bright256 = 255;
 	lightmode = LIGHTMODE_NORMAL;
 
 	if(leds < 1) {
