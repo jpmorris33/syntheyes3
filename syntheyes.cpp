@@ -71,6 +71,7 @@ Timing *cooldown = NULL;
 Timing *gradient = NULL;
 Timing *lighttimer = NULL;
 Timing *ack = NULL;
+Timing *micwindow = NULL;
 
 Font font;
 ExpressionList expressions;
@@ -203,6 +204,7 @@ int main(int argc, char *argv[]){
 	cooldown->set(1);
 	gradient->set(1);
 	lighttimer->set(1);
+	micwindow->set(1);
 
 	if(lights) {
 		lights->setColour(lightcolour);
@@ -464,13 +466,22 @@ void update_lights() {
 	}
 
 	// If we have a microphone input over GPIO, flash the lights
-	if(mic && (mic->check() != micInvert)) {
-		lights->force(rainbowoffset&3 ? 100 : 10);
-		lights->draw();
-		lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
-		return;
+	if(mic) {
+		if(!micwindow->elapsed()) {
+			lights->force(mic->check() != micInvert ? 100 : 10);
+			lights->draw();
+			lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
+			return;
+		} else {
+			if(mic->check() != micInvert) {
+				lights->force(100);
+				lights->draw();
+				lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
+				micwindow->set(500);	// Open a window during which we output the mic to the lights
+				return;
+			}
+		}
 	}
-
 
 	// Update the status lights
 	if(lighttimer->elapsed()) {
