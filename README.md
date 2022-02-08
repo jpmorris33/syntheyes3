@@ -56,17 +56,17 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
 # TODO for 3.02
-* Document that mirror now works on scrollers, include:, display:, brightness:, new event types, lighting driver
-* Panel & lighting driver options (e.g. spi channel, RGB order)
+* Document that mirror now works on scrollers, include:, display:, brightness:, new event types, lighting driver, mic
+* Panel driver options (e.g. spi channel)
 * Background comms thread to stop the timeout glitching the display
-* Startup animation for user splash screens?
 
 # TODO for 3.1x
+* Startup animation for user splash screens?
 * Winking support (probably a flag to keep displaying IDLE on one panel)
 * Redraw Xerian to make the eye image bigger
 * Desktop Windows build for testing?  (This looks to be a total PITA)
-* Neopixel driver (16x16 outputs and horn status lights support)
+* Neopixel driver (16x16 outputs)
+* Network comms for WIFI control (how did Sofox do this for his Protogen?)
 
 # Future projects
-* Network comms for WIFI control (how did Sofox do this for his Protogen?)
 * Hub75 driver

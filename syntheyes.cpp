@@ -83,9 +83,12 @@ bool transmitter = true;
 bool forcetransmitter = false;
 char serialPort[256];
 int serialRate=19200;
-GPIOPin *ackPin = NULL;
 GPIOPin *mic = NULL;
 bool micInvert=false;
+int micBright=100;
+int micDim=10;
+int micDelay = 500;
+GPIOPin *ackPin = NULL;
 int ackTime = 750;
 int randomChance = 75; // 75 percent chance of picking a random event to space things out
 
@@ -468,16 +471,16 @@ void update_lights() {
 	// If we have a microphone input over GPIO, flash the lights
 	if(mic) {
 		if(!micwindow->elapsed()) {
-			lights->force(mic->check() != micInvert ? 100 : 10);
+			lights->force(mic->check() != micInvert ? micBright : micDim);
 			lights->draw();
 			lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
 			return;
 		} else {
 			if(mic->check() != micInvert) {
-				lights->force(100);
+				lights->force(micBright);
 				lights->draw();
-				lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
-				micwindow->set(500);	// Open a window during which we output the mic to the lights
+				lighttimer->set(lightspeed);	// Reset the timer to stop it immediately being overridden
+				micwindow->set(micDelay);	// Open a window during which we output the mic to the lights
 				return;
 			}
 		}

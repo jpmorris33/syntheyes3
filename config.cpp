@@ -44,6 +44,10 @@ extern GPIOPin *ackPin;
 extern int ackTime;
 extern GPIOPin *mic;
 extern bool micInvert;
+extern int micBright;
+extern int micDim;
+extern int micDelay;
+
 extern int randomChance;
 extern void initPanel(const char *driver, const char *params);
 extern void initLights(const char *driver, int numlights, const char *params);
@@ -324,6 +328,31 @@ void parse(const char *line) {
 		}
 		dbprintf("Microphone inverted = %d\n",micInvert);
 	}
+	if((!strcasecmp(cmd,"micbright:")) || (!strcasecmp(cmd,"mic_bright:"))) {
+		nextWord(param);
+		int brightness = atoi(param);
+		if(brightness >= 0 && brightness <= 100) {
+			micBright=brightness;
+			dbprintf("Set microphone bright mode to %d percent\n",brightness);
+		}
+	}
+	if((!strcasecmp(cmd,"micdim:")) || (!strcasecmp(cmd,"mic_dim:"))) {
+		nextWord(param);
+		int brightness = atoi(param);
+		if(brightness >= 0 && brightness <= 100) {
+			micDim=brightness;
+			dbprintf("Set microphone dim mode to %d percent\n",brightness);
+		}
+	}
+	if((!strcasecmp(cmd,"micdelay:")) || (!strcasecmp(cmd,"mic_delay:"))) {
+		nextWord(param);
+		int delay = atoi(param);
+		if(delay >= 0) {
+			micDelay=delay;
+			dbprintf("Set detection window to %d ms\n",delay);
+		}
+	}
+
 	if((!strcasecmp(cmd,"randomchance:")) || (!strcasecmp(cmd,"random_chance:"))) {
 		nextWord(param);
 		randomChance = atoi(param);
@@ -814,6 +843,17 @@ void makepath(char path[1024], const char *filename) {
 
 uint32_t parseColour(const char *hex) {
 	uint32_t col = 0;
+
+	// Look for variables first
+
+	if((!strcasecmp(hex, "eyecolour")) || (!strcasecmp(hex, "eyecolor"))) {
+		return eyecolour;
+	}
+	if((!strcasecmp(hex, "lightcolour")) || (!strcasecmp(hex, "lightcolor"))) {
+		return lightcolour;
+	}
+
+	// Then try parsing it as an RGB triplet
 
 	if(hex[0] == '#') hex++;
 	if(hex[0] == '0' && hex[1] == 'x') hex+=2;

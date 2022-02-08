@@ -153,6 +153,77 @@ int mapPin(int pin) {
 	};
 }
 
+int mapPinToGPIO(int pin) {
+
+	switch(pin)	{
+		case 40:
+			return 21;
+		//   39 is ground
+		case 38:
+			return 20;
+		case 37:
+			return 26;
+		case 36:
+			return 16;
+		case 35:
+			return 19;
+		//   34 is ground
+		case 33:
+			return 13;
+		case 32:
+			return 12;
+		case 31:
+			return 6;
+		//   30 is ground
+		case 29:
+			return 5;
+		// 27 and 28 are reserved for EEPROM
+		case 26:
+			return 7;
+		//   25 is ground
+		case 24:
+			return 8;
+		case 23:
+			return 11;
+		case 22:
+			return 25;
+		case 21:
+			return 9;
+		//   20 is ground
+		case 19:
+			return 10;
+		case 18:
+			return 24;
+		//   17 is +3v
+		case 16:
+			return 23;
+		case 15:
+			return 22;
+		//   14 is ground
+		case 13:
+			return 27;
+		case 12:
+			return 18;
+		case 11:
+			return 17;
+		//   10 is UART
+		//   9 is ground
+		//   8 is UART
+		case 7:
+			return 4;
+		//   6 is ground
+		case 5:
+			return 3;
+		//   4 is +5v
+		case 3:
+			return 2;
+		//   2 is +5v
+		//   1 is +3v
+		default:
+			return -1;
+	};
+}
+
 void init_pin_input(int pin) {
 }
 
