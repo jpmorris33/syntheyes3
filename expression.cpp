@@ -73,6 +73,7 @@ void Expression::event(ExpressionEvent *ev) {
 		case EVENT_LIGHTCOLOUR:
 			if(lights) {
 				lights->setColour(ev->parameter);
+				lightcolour = ev->parameter;
 			};
 			break;
 		case EVENT_LIGHTMODE:
