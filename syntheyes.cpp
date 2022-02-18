@@ -77,6 +77,7 @@ Font font;
 ExpressionList expressions;
 uint32_t eyecolour = 0xff8700;
 uint32_t lightcolour = 0xff8700;
+uint32_t miccolour = 0;
 int cooldown_time = 5;
 bool seamless=false;
 bool transmitter = true;
@@ -471,12 +472,14 @@ void update_lights() {
 	// If we have a microphone input over GPIO, flash the lights
 	if(mic) {
 		if(!micwindow->elapsed()) {
+			lights->setColour(miccolour ? miccolour : lightcolour);
 			lights->force(mic->check() != micInvert ? micBright : micDim);
 			lights->draw();
 			lighttimer->set(lightspeed); // Reset the timer to stop it immediately being overridden
 			return;
 		} else {
 			if(mic->check() != micInvert) {
+				lights->setColour(miccolour ? miccolour : lightcolour);
 				lights->force(micBright);
 				lights->draw();
 				lighttimer->set(lightspeed);	// Reset the timer to stop it immediately being overridden
@@ -488,6 +491,7 @@ void update_lights() {
 
 	// Update the status lights
 	if(lighttimer->elapsed()) {
+		lights->setColour(lightcolour);
 		lights->update();
 		lighttimer->set(lightspeed);
 		lights->draw();

@@ -17,6 +17,7 @@ extern Font font;
 extern ExpressionList expressions;
 extern uint32_t eyecolour;
 extern uint32_t lightcolour;
+extern uint32_t miccolour;
 extern uint32_t rainbow[16]; // Colour table
 extern unsigned char rainbowoffset;
 extern char serialPort[256];

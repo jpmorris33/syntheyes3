@@ -58,7 +58,10 @@ V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colou
 # TODO for 3.02
 * Document that mirror now works on scrollers, include:, display:, brightness:, new event types, lighting driver, mic
 * Panel driver options (e.g. spi channel)
+
+# TODO for 3.03
 * Background comms thread to stop the timeout glitching the display
+* Gauge expressions where the GIF is used as a status bar by mapping a percentage to the number of frames, e.g. to implement a brightness adjust GUI?
 
 # TODO for 3.1x
 * Startup animation for user splash screens?

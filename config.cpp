@@ -352,6 +352,14 @@ void parse(const char *line) {
 			dbprintf("Set detection window to %d ms\n",delay);
 		}
 	}
+	if(!strcasecmp(cmd,"miccolour:")) {
+		nextWord(param);
+		miccolour = parseColour(param);
+	}
+	if(!strcasecmp(cmd,"miccolor:")) {
+		nextWord(param);
+		miccolour = parseColour(param);
+	}
 
 	if((!strcasecmp(cmd,"randomchance:")) || (!strcasecmp(cmd,"random_chance:"))) {
 		nextWord(param);
