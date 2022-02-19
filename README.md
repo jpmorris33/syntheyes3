@@ -56,10 +56,11 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
 # TODO for 3.02
-* Document that mirror now works on scrollers, include:, display:, brightness:, new event types, lighting driver, mic
-* Panel driver options (e.g. spi channel)
+* Document hardware build for 16x16 MAX7219 and experimental 32x16 MAX7219W
 
 # TODO for 3.03
+* See if we can stop pin 24 from enabling CS for all SPI transfers
+* Maybe more panel driver options (e.g. spi channel)
 * Background comms thread to stop the timeout glitching the display
 * Gauge expressions where the GIF is used as a status bar by mapping a percentage to the number of frames, e.g. to implement a brightness adjust GUI?
 

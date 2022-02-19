@@ -10,8 +10,8 @@ lights: WS2811 8
 lightbrightness: 100
 
 # It will try these in turn and use the last one that's valid
-gifdir: ./videos/xerian/	# for testing
-gifdir: /boot/videos/xerian/	# for release
+gifdir: ./videos/32x16/	# for testing
+gifdir: /boot/videos/32x16/	# for release
 
 # Default eye colour (when not using GIF's own colours)
 eyecolour: #ff8000
@@ -49,7 +49,6 @@ miccolour: #6090c0
 
 # Default expression
 idle: idle
-#	gif: pulse-eye-angry.gif
 	gif: idle.gif
 	drawmode: monochrome
 #	drawmode: gradient
@@ -76,17 +75,6 @@ random: scroller
 	chance: 1
 	ack: off
 
-# These expressions are triggered by the GPIO pins
-#gpio: startled
-#	gif: startled.gif
-#	pin: 40
-#	drawmode: monochrome
-
-gpio: eyeroll
-	gif: eyeroll.gif
-	pin: 33
-	drawmode: monochrome
-
 gpio: error
 	gif: error.gif
 	pin: 36
@@ -98,21 +86,6 @@ gpio: error
 	after: clear_gpio R35		# Set horns normal (Xerian's hardware)
 	after: lightmode normal		# Set horns normal (WS2811)
 	after: lightcolour #ff8000	# Set horns orange (WS2811)
-
-gpio: annoyed
-	gif: annoyed.gif
-	pin: 32
-	drawmode: monochrome
-
-gpio: happy
-	gif: happy.gif
-	pin: 38
-	drawmode: monochrome
-
-#gpio: owo
-#	gif: owo.gif
-#	pin: 31
-#	drawmode: monochrome
 
 gpio: blush
 	gif: blush.gif

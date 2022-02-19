@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 
+//#define SDLPANEL_W 32	// For testing MAX7219W widescreen mode
 #define SDLPANEL_W 16
 #define SDLPANEL_H 16
 

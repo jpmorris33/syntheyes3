@@ -6,6 +6,7 @@
 #include <wiringPi.h>
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/display/MAX7219Panel.hpp"
+#include "drivers/display/MAX7219WPanel.hpp"
 #include "drivers/lights/WS2811Lights.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
@@ -33,6 +34,10 @@ void initPanel(const char *driver, const char *params) {
 
 	if(!strcasecmp(driver, "MAX7219")) {
 		panel = new MAX7219Panel();
+		panel->init(params);
+	}
+	if(!strcasecmp(driver, "MAX7219W")) {
+		panel = new MAX7219WPanel();
 		panel->init(params);
 	}
 }
