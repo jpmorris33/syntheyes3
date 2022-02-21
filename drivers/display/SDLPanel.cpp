@@ -31,6 +31,24 @@ void SDLPanel::init(const char *param) {
 
 	printf("*Init SDL virtual display (split mode)\n");
 
+	const char *p = getDriverParam(param, "w");
+	if(p) {
+		int w = getDriverInt(p);
+		if(w == 16 || w == 32 || w == 64) {
+			panelW = w;
+		}
+		printf("*SDL virtual display set width to %d\n",panelW);
+	}
+	p = getDriverParam(param, "h");
+	if(p) {
+		int h = getDriverInt(p);
+		if(h == 16 || h == 32 || h == 64) {
+			panelH = h;
+		}
+		printf("*SDL virtual display set height to %d\n",panelH);
+	}
+
+
 	framebuffer = (unsigned char *)calloc(1,panelW*panelH*3);
 	if(!framebuffer) {
 		printf("Failed to allocate framebuffer\n");

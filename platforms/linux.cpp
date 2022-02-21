@@ -31,6 +31,11 @@ void initPanel(const char *driver, const char *params) {
 
 	// Initialise any other drivers here
 
+	if(!strcasecmp(driver, "SDL")) {
+		panel = new SDLPanel();
+		panel->init(params);	// To support driver options
+	}
+
 	if(!strcasecmp(driver, "SDLSingle")) {
 		panel = new SDLSinglePanel();
 		panel->init(params);

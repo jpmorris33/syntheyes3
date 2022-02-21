@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//#define SDLPANEL_W 32	// For testing MAX7219W widescreen mode
 #define SDLPANEL_W 16
 #define SDLPANEL_H 16
 
@@ -31,6 +30,23 @@ void SDLSinglePanel::init(const char *param) {
 	panelH = SDLPANEL_H;
 
 	printf("*Init SDL combined panel driver\n");
+
+	const char *p = getDriverParam(param, "w");
+	if(p) {
+		int w = getDriverInt(p);
+		if(w == 16 || w == 32 || w == 64) {
+			panelW = w;
+		}
+		printf("*SDL virtual display set width to %d\n",panelW);
+	}
+	p = getDriverParam(param, "h");
+	if(p) {
+		int h = getDriverInt(p);
+		if(h == 16 || h == 32 || h == 64) {
+			panelH = h;
+		}
+		printf("*SDL virtual display set height to %d\n",panelH);
+	}
 
 	framebuffer = (unsigned char *)calloc(1,panelW*panelH*3);
 	if(!framebuffer) {
