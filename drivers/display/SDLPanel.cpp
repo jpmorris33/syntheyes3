@@ -100,9 +100,6 @@ uint32_t SDLPanel::getCaps() {
 //
 void SDLPanel::draw() {
 
-	int w, h;
-	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-
 	unsigned char *inptr = framebuffer;
 	unsigned char *outptr = outbuffer;
 
@@ -121,9 +118,6 @@ void SDLPanel::draw() {
 }
 
 void SDLPanel::drawMirrored() {
-
-	int w, h;
-	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 
 	unsigned char *inptr = framebuffer;
 	unsigned char *outptr = outbuffer;
