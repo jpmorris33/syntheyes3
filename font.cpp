@@ -975,7 +975,7 @@ void Font::printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x,
 	for(int ctr=0;ctr<len;ctr++) {
 		for(int yctr=y;yctr<maxy;yctr++) {
 			fontrow = fontimg[fontchar[(unsigned char)msg[ctr]&127]][yctr-y];
-			for(int xctr=0;xctr<4;xctr++) {
+			for(int xctr=0;xctr<maxlen;xctr++) {
 				pos=x+xctr+(ctr<<2);
 				if(pos>=0 && pos<w) {
 					if(fontrow & 0x08) {
@@ -993,13 +993,27 @@ void Font::printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x,
 }
 
 void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible, bool gradient, bool mirror) {
-	unsigned char bmp[16*16*3];
+	unsigned char bmp[32*16*3];
+
+	int w=panel->getW();
+	int h=panel->getH();
+
+	if(w>32) {
+		w=32;
+	}
+	if(h>16) {
+		h=16;
+	}
 
 	char fullmsg[2048];
 	memset(fullmsg,0,sizeof(fullmsg));
-	strcpy(fullmsg,"    ");
+	for(int ctr=0;ctr<w/4;ctr++) {
+		strcat(fullmsg," ");
+	}
 	strncat(fullmsg,msg,2040);
-	strcat(fullmsg,"    ");
+	for(int ctr=0;ctr<w/4;ctr++) {
+		strcat(fullmsg," ");
+	}
 
 	int len = strlen(fullmsg);
 
@@ -1007,11 +1021,11 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible
 		for(int delay=0;delay<4;delay++) {
 			memset(bmp,0,sizeof(bmp));
 			panel->clear(0);
-			printMsg(&fullmsg[ctr],&bmp[0],16,16,-delay,yoffset);
+			printMsg(&fullmsg[ctr],&bmp[0],w,h,-delay,yoffset);
 			if(gradient) {
-				panel->updateRGBpattern(bmp, 16, 16, rainbowoffset);
+				panel->updateRGBpattern(bmp, w, h, rainbowoffset);
 			} else {
-				panel->updateRGB(bmp, 16, 16, col);
+				panel->updateRGB(bmp, w, h, col);
 			}
 			drawEyes(mirror);
 			wait(scrollspeed,interruptible);
@@ -1069,6 +1083,41 @@ void Font::errorMsg(const char *msg, int param) {
 }
 
 void Font::printVersion(const char *version, bool transmitter, int duration) {
+
+	unsigned char bmp[32*16*3];
+	unsigned char *ptr = &bmp[0];
+	memset(ptr,0,sizeof(bmp));
+
+	int w=panel->getW();
+	int h=panel->getH();
+	if(w>32) {
+		w=32;
+	}
+	if(h>16) {
+		h=16;
+	}
+
+	if(w<32) {
+		printVersion16(version,transmitter,duration);
+		return;
+	}
+
+	printMsg("SYNTHOS", ptr, w, h, 0, 0);
+	printMsg(version, ptr, w, h, 0, 8);
+
+	// If it's a split system, decide which panel we are
+	if(panel->getCaps() & PANELCAPS_SPLIT) {
+		printMsg(transmitter ? "TX" : "RX", ptr, w, h, w-9, 8);
+	}
+	panel->updateRGB(bmp, w, h, 0x808080);
+
+	for(int ctr=0;ctr<duration;ctr++) {
+		panel->draw();
+		timing->wait_microseconds(1000);
+	}
+}
+
+void Font::printVersion16(const char *version, bool transmitter, int duration) {
 	unsigned char bmp[16*16*3];
 	unsigned short splash_transmit[16] = {
 	    0b1101010110111101, 

@@ -20,6 +20,7 @@ class Font {
 
 	private:
 		void printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x, int y);
+		void printVersion16(const char *version, bool transmitter, int duration);
 		unsigned char fontchar[128];
 };
 
