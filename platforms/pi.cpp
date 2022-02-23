@@ -8,12 +8,14 @@
 #include "drivers/display/MAX7219Panel.hpp"
 #include "drivers/display/MAX7219WPanel.hpp"
 #include "drivers/lights/WS2811Lights.hpp"
+#include "drivers/servo/PiServo.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include "gpio.hpp"
 
 extern PanelDriver *panel;
 extern SerialDriver *serial;
+extern ServoDriver *servo;
 extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *ack;
@@ -57,6 +59,18 @@ void initLights(const char *driver, int numlights, const char *params) {
 	}
 #endif
 
+}
+
+void initServo(const char *driver, int angle, const char *params) {
+	if(servo) {
+		return;
+	}
+
+	// Initialise any other drivers here
+	if(!strcasecmp(driver, "PISERVO")) {
+		servo = new PiServo();
+		servo->init(angle,params);
+	}
 }
 
 void initPanel() {

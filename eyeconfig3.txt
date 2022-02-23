@@ -2,12 +2,14 @@
 ##  Basic setup
 ##
 
-display: SDLSingle gpio1=666,gpio9=616,msg=fish
+#display: SDLSingle gpio1=666,gpio9=616,msg=fish
+display: SDL w=32,h=16
 display: MAX7219W csl=22,csr=18
 
 lights: SDLLights 8
 lights: WS2811 8
 lightbrightness: 100
+servo: piservo
 
 # It will try these in turn and use the last one that's valid
 gifdir: ./videos/xerian/	# for testing
@@ -103,6 +105,9 @@ gpio: annoyed
 	gif: annoyed.gif
 	pin: 32
 	drawmode: monochrome
+	before: servospeed 1
+	before: seek_servo 45
+	after: seek_servo 350
 
 gpio: happy
 	gif: happy.gif

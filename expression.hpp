@@ -23,6 +23,9 @@
 #define EVENT_WAIT		4
 #define EVENT_LIGHTCOLOUR	5
 #define EVENT_LIGHTMODE		6
+#define EVENT_SETSERVO		7
+#define EVENT_SERVOSPEED	8
+#define EVENT_SEEKSERVO		9
 
 #define BLINK_TOP 	1
 #define BLINK_LEFT	2
@@ -41,7 +44,7 @@
 //	Supported expression types
 //
 
-#define MAX_EVENTS 4
+#define MAX_EVENTS 8
 
 struct ExpressionEvent {
 	int type;

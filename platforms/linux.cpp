@@ -9,12 +9,14 @@
 #include "drivers/display/SDLPanel.hpp"
 #include "drivers/display/SDLSinglePanel.hpp"
 #include "drivers/lights/SDLLights.hpp"
+#include "drivers/servo/TestServo.hpp"
 #include "drivers/serial/VirtualSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include <SDL2/SDL.h>
 
 extern PanelDriver *panel;
 extern LightDriver *lights;
+extern ServoDriver *servo;
 extern Timing *timing;
 extern Timing *cooldown;
 extern Timing *ack;
@@ -57,6 +59,18 @@ void initLights(const char *driver, int numlights, const char *params) {
 		lights->setPattern(lightpattern_triangle);
 	}
 
+}
+
+void initServo(const char *driver, int angle, const char *params) {
+	if(servo) {
+		return;
+	}
+
+	// Initialise any other drivers here
+	if(!strcasecmp(driver, "TESTSERVO")) {
+		servo = new TestServo();
+		servo->init(angle,params);
+	}
 }
 
 void initPanel() {

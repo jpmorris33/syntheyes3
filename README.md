@@ -56,6 +56,7 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
 # TODO for 3.02
+* Document servo support system (or not if it's still experimental)
 * Document hardware build for 16x16 MAX7219 and experimental 32x16 MAX7219W
 
 # TODO for 3.03

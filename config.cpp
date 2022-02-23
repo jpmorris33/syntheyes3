@@ -51,6 +51,7 @@ extern int micDelay;
 extern int randomChance;
 extern void initPanel(const char *driver, const char *params);
 extern void initLights(const char *driver, int numlights, const char *params);
+extern void initServo(const char *driver, int angle, const char *params);
 
 //
 //  Config reader
@@ -139,6 +140,16 @@ void preParse(const char *line) {
 			numlights=atoi(param2);
 		}
 		initLights(param, numlights > 0 ? numlights : 8, word);
+	}
+
+	if(!strcasecmp(cmd,"servo:")) {
+		nextWord(param);
+		int angle=0;
+		if(param2[0]) {
+			nextWord(param2);
+			angle=atoi(param2);
+		}
+		initServo(param, angle, word);
 	}
 
 	if(!strcasecmp(cmd,"include:")) {
@@ -769,6 +780,26 @@ void add_event(ExpressionEvent *slot, const char *input) {
 	if((!strcasecmp(cmd, "lightmode")) || (!strcasecmp(cmd, "light_mode"))) {
 		slot->type = EVENT_LIGHTMODE;
 		slot->parameter = parseLightmode(param);
+	}
+
+	if((!strcasecmp(cmd, "setservo")) || (!strcasecmp(cmd, "set_servo"))) {
+		slot->type = EVENT_SETSERVO;
+		slot->parameter = atoi(param);
+	}
+
+	if((!strcasecmp(cmd, "servospeed")) || (!strcasecmp(cmd, "servo_speed"))) {
+		slot->type = EVENT_SERVOSPEED;
+		slot->parameter = atoi(param);
+	}
+
+	if((!strcasecmp(cmd, "servodelay")) || (!strcasecmp(cmd, "servo_delay"))) {
+		slot->type = EVENT_SERVOSPEED;
+		slot->parameter = atoi(param);
+	}
+
+	if((!strcasecmp(cmd, "seekservo")) || (!strcasecmp(cmd, "seek_servo"))) {
+		slot->type = EVENT_SEEKSERVO;
+		slot->parameter = atoi(param);
 	}
 }
 

@@ -17,7 +17,6 @@ extern void wait(int ms, bool interruptible);
 
 static void drawEyelid(int mode, int pos, int width, int height);
 
-
 //
 //  Base class
 //
@@ -79,6 +78,21 @@ void Expression::event(ExpressionEvent *ev) {
 		case EVENT_LIGHTMODE:
 			if(lights) {
 				lights->setMode(ev->parameter);
+			};
+			break;
+		case EVENT_SETSERVO:
+			if(servo) {
+				servo->setAngle(ev->parameter);
+			};
+			break;
+		case EVENT_SERVOSPEED:
+			if(servo) {
+				servo->setDelay(ev->parameter);
+			};
+			break;
+		case EVENT_SEEKSERVO:
+			if(servo) {
+				servo->seekAngle(ev->parameter);
 			};
 			break;
 		default:

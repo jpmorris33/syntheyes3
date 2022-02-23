@@ -9,9 +9,11 @@
 #include "drivers/SerialDriver.hpp"
 #include "drivers/Timing.hpp"
 #include "drivers/LightDriver.hpp"
+#include "drivers/ServoDriver.hpp"
 
 extern PanelDriver *panel;
 extern LightDriver *lights;
+extern ServoDriver *servo;
 extern Timing *timing;
 extern Font font;
 extern ExpressionList expressions;

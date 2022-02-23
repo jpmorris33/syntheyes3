@@ -8,9 +8,10 @@ SRC	= syntheyes.cpp config.cpp platforms/pi.cpp platforms/linux.cpp \
           drivers/SerialDriver.cpp drivers/serial/PiSerialDriver.cpp \
           drivers/serial/VirtualSerialDriver.cpp \
           drivers/LightDriver.cpp drivers/lights/SDLLights.cpp drivers/lights/WS2811Lights.cpp \
+          drivers/ServoDriver.cpp drivers/servo/PiServo.cpp drivers/servo/TestServo.cpp \
           drivers/Timing.cpp drivers/PosixTiming.cpp
 
-eyes:	syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
+OBJCODE = syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
         platforms/pi.o platforms/linux.o \
         colourutils.o drivers/driverutils.o \
         drivers/PanelDriver.o drivers/display/Unicorn.o \
@@ -18,17 +19,11 @@ eyes:	syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o
         drivers/display/MAX7219Panel.o drivers/display/MAX7219WPanel.o \
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/LightDriver.o drivers/lights/SDLLights.o drivers/lights/WS2811Lights.o \
+        drivers/ServoDriver.o drivers/servo/PiServo.o drivers/servo/TestServo.o \
         drivers/Timing.o drivers/PosixTiming.o
+
+eyes:	$(OBJCODE)
 	$Q echo [link]
-	$Q $(CC) -o $@ syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
-        platforms/pi.o platforms/linux.o \
-        colourutils.o drivers/driverutils.o \
-        drivers/PanelDriver.o drivers/display/Unicorn.o \
-        drivers/display/SDLPanel.o drivers/display/SDLSinglePanel.o \
-        drivers/display/MAX7219Panel.o drivers/display/MAX7219WPanel.o \
-        drivers/LightDriver.o drivers/lights/SDLLights.o drivers/lights/WS2811Lights.o \
-        drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
-        drivers/Timing.o drivers/PosixTiming.o \
-         $(LDFLAGS) $(LDLIBS)
+	$Q $(CC) -o $@ $(OBJCODE) $(LDFLAGS) $(LDLIBS)
 
 #

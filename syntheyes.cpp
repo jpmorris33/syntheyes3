@@ -58,6 +58,7 @@ static bool check_network();
 static void update_ack();
 static void update_rainbow();
 static void update_lights();
+static void update_servo();
 
 static void serial_init();
 static void serial_transmit(Expression *exp);
@@ -66,6 +67,7 @@ static Expression *serial_receive();
 PanelDriver *panel = NULL;
 LightDriver *lights = NULL;
 SerialDriver *serial = NULL;
+ServoDriver *servo = NULL;
 Timing *timing = NULL;
 Timing *cooldown = NULL;
 Timing *gradient = NULL;
@@ -414,6 +416,12 @@ void update_ack() {
 	}
 }
 
+void update_servo() {
+	if(servo) {
+		servo->update();
+	}
+}
+
 
 //
 //	Wait for a few milliseconds and perform various administrative tasks
@@ -430,6 +438,8 @@ void wait(int ms, bool interruptable) {
 		update_rainbow();
 
 		update_lights();
+
+		update_servo();
 
 		if(check_comms() && interruptable) {
 			// Flash the ACK light, if enabled
