@@ -99,8 +99,8 @@ void initPanel() {
 
 	if(panel->getCaps() & PANELCAPS_SPLIT) {
 		// Reserve the serial pins  (Note, we don't know for sure if we're the transmitter or receiver yet so grab both for now)
-		reserveOutputPin(8);
-		reserveInputPin(10);
+		reserveSpecialPin(8);		// Must be Special - otherwise we'll break the serial comms as they run in ALT0 mode
+		reserveSpecialPin(10);
 	} else {
 		forcetransmitter=true; // Single systems are always the transmitter
 	}
