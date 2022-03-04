@@ -16,16 +16,16 @@
 #define DRAWMODE_FLASH 3
 #define DRAWMODE_CYCLE 4
 
-#define EVENT_NONE		0
-#define EVENT_SETGPIO		1
-#define EVENT_CLEARGPIO		2
-#define EVENT_CHAIN		3
-#define EVENT_WAIT		4
-#define EVENT_LIGHTCOLOUR	5
-#define EVENT_LIGHTMODE		6
-#define EVENT_SETSERVO		7
-#define EVENT_SERVOSPEED	8
-#define EVENT_SEEKSERVO		9
+#define ACTION_NONE		0
+#define ACTION_SETGPIO		1
+#define ACTION_CLEARGPIO	2
+#define ACTION_CHAIN		3
+#define ACTION_WAIT		4
+#define ACTION_LIGHTCOLOUR	5
+#define ACTION_LIGHTMODE	6
+#define ACTION_SETSERVO		7
+#define ACTION_SERVOSPEED	8
+#define ACTION_SEEKSERVO	9
 
 #define BLINK_TOP 	1
 #define BLINK_LEFT	2
@@ -44,9 +44,9 @@
 //	Supported expression types
 //
 
-#define MAX_EVENTS 8
+#define MAX_ACTIONS 8
 
-struct ExpressionEvent {
+struct ExpressionAction {
 	int type;
 	int parameter;
 	GPIOPin *pin;
@@ -57,7 +57,7 @@ class Expression {
 	public:
 		virtual void play();
 		virtual void drawFirstFrame();
-		void event(ExpressionEvent *ev);
+		void action(ExpressionAction *ev);
 
 		char name[256];
 		int trigger;	// Idle, Random, GPIO etc
@@ -73,10 +73,10 @@ class Expression {
 		GPIOPin *pin;
 		int drawmode;
 		uint32_t colour;
-		ExpressionEvent before[MAX_EVENTS];
-		ExpressionEvent after[MAX_EVENTS];
-		unsigned char beforeevents;
-		unsigned char afterevents;
+		ExpressionAction before[MAX_ACTIONS];
+		ExpressionAction after[MAX_ACTIONS];
+		unsigned char beforeactions;
+		unsigned char afteractions;
 
 		Expression *next;
 	protected:

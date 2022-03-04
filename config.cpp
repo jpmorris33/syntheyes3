@@ -21,7 +21,7 @@ static const char *findWord(const char *input, int pos);
 static uint32_t parseColour(const char *hex);
 static int parseDrawmode(const char *mode);
 static int parseLightmode(const char *mode);
-static void add_event(ExpressionEvent *slot, const char *input);
+static void add_action(ExpressionAction *slot, const char *input);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice);
 static bool parseTrue(const char *param);
@@ -624,24 +624,24 @@ void parse(const char *line) {
 		if(!curexp) {
 			font.errorMsg("Error: 'before:' no expression defined");
 		}
-		if(curexp->beforeevents >= MAX_EVENTS) {
-			font.errorMsg("Error: expression '%s' has too many before events", curexp->name);
+		if(curexp->beforeactions >= MAX_ACTIONS) {
+			font.errorMsg("Error: expression '%s' has too many before actions", curexp->name);
 		}
 
-		add_event(&curexp->before[curexp->beforeevents], param);
-		curexp->beforeevents++;
+		add_action(&curexp->before[curexp->beforeactions], param);
+		curexp->beforeactions++;
 	}
 
 	if(!strcasecmp(cmd,"after:")) {
 		if(!curexp) {
 			font.errorMsg("Error: 'after:' no expression defined");
 		}
-		if(curexp->afterevents >= MAX_EVENTS) {
-			font.errorMsg("Error: expression '%s' has too many before events", curexp->name);
+		if(curexp->afteractions >= MAX_ACTIONS) {
+			font.errorMsg("Error: expression '%s' has too many before actions", curexp->name);
 		}
 
-		add_event(&curexp->after[curexp->afterevents], param);
-		curexp->afterevents++;
+		add_action(&curexp->after[curexp->afteractions], param);
+		curexp->afteractions++;
 	}
 
 	// By default GIF animations are mirrored for the other eye.  This can disable it for the given animation
@@ -731,7 +731,7 @@ void parse(const char *line) {
 //	Add a hook to do something before or after the animation has played
 //
 
-void add_event(ExpressionEvent *slot, const char *input) {
+void add_action(ExpressionAction *slot, const char *input) {
 	char cmd[1024];
 	const char *word;
 	char param[1024];
@@ -748,57 +748,57 @@ void add_event(ExpressionEvent *slot, const char *input) {
 	nextWord(param);
 
 	if((!strcasecmp(cmd, "setgpio")) || (!strcasecmp(cmd, "set_gpio"))) {
-		slot->type = EVENT_SETGPIO;
+		slot->type = ACTION_SETGPIO;
 		slot->pin = parseGPIO(cmd,param,true);
 	}
 
 	if((!strcasecmp(cmd, "cleargpio")) || (!strcasecmp(cmd, "clear_gpio"))) {
-		slot->type = EVENT_CLEARGPIO;
+		slot->type = ACTION_CLEARGPIO;
 		slot->pin = parseGPIO(cmd,param,true);
 	}
 
 	if((!strcasecmp(cmd, "chain")) || (!strcasecmp(cmd, "play"))) {
-		slot->type = EVENT_CHAIN;
+		slot->type = ACTION_CHAIN;
 		slot->strparameter = strdup(param);
 		// Don't check for correctness as the expression might not exist yet
 	}
 
 	if((!strcasecmp(cmd, "wait")) || (!strcasecmp(cmd, "delay"))) {
-		slot->type = EVENT_WAIT;
+		slot->type = ACTION_WAIT;
 		slot->parameter = atoi(param);
 	}
 
 	if((!strcasecmp(cmd, "lightcolour")) || (!strcasecmp(cmd, "light_colour"))) {
-		slot->type = EVENT_LIGHTCOLOUR;
+		slot->type = ACTION_LIGHTCOLOUR;
 		slot->parameter = parseColour(param);
 	}
 	if((!strcasecmp(cmd, "lightcolor")) || (!strcasecmp(cmd, "light_color"))) {
-		slot->type = EVENT_LIGHTCOLOUR;
+		slot->type = ACTION_LIGHTCOLOUR;
 		slot->parameter = parseColour(param);
 	}
 
 	if((!strcasecmp(cmd, "lightmode")) || (!strcasecmp(cmd, "light_mode"))) {
-		slot->type = EVENT_LIGHTMODE;
+		slot->type = ACTION_LIGHTMODE;
 		slot->parameter = parseLightmode(param);
 	}
 
 	if((!strcasecmp(cmd, "setservo")) || (!strcasecmp(cmd, "set_servo"))) {
-		slot->type = EVENT_SETSERVO;
+		slot->type = ACTION_SETSERVO;
 		slot->parameter = atoi(param);
 	}
 
 	if((!strcasecmp(cmd, "servospeed")) || (!strcasecmp(cmd, "servo_speed"))) {
-		slot->type = EVENT_SERVOSPEED;
+		slot->type = ACTION_SERVOSPEED;
 		slot->parameter = atoi(param);
 	}
 
 	if((!strcasecmp(cmd, "servodelay")) || (!strcasecmp(cmd, "servo_delay"))) {
-		slot->type = EVENT_SERVOSPEED;
+		slot->type = ACTION_SERVOSPEED;
 		slot->parameter = atoi(param);
 	}
 
 	if((!strcasecmp(cmd, "seekservo")) || (!strcasecmp(cmd, "seek_servo"))) {
-		slot->type = EVENT_SEEKSERVO;
+		slot->type = ACTION_SEEKSERVO;
 		slot->parameter = atoi(param);
 	}
 }

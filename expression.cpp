@@ -38,61 +38,61 @@ void Expression::initDefaults() {
 	parameter=0;
 	drawmode = DRAWMODE_COLOUR;
 	colour = eyecolour;
-	beforeevents=0;
-	afterevents=0;
+	beforeactions=0;
+	afteractions=0;
 	next = NULL;
 }
 
-void Expression::event(ExpressionEvent *ev) {
+void Expression::action(ExpressionAction *act) {
 	Expression *exp=NULL;
 
-	switch(ev->type) {
-		case EVENT_SETGPIO:
-			if(ev->pin) {
-				ev->pin->write(true);
+	switch(act->type) {
+		case ACTION_SETGPIO:
+			if(act->pin) {
+				act->pin->write(true);
 			}
 			break;
-		case EVENT_CLEARGPIO:
-			if(ev->pin) {
-				ev->pin->write(false);
+		case ACTION_CLEARGPIO:
+			if(act->pin) {
+				act->pin->write(false);
 			}
 			break;
-		case EVENT_CHAIN:
-			exp = expressions.findByName(ev->strparameter);
+		case ACTION_CHAIN:
+			exp = expressions.findByName(act->strparameter);
 			if(exp) {
 				// If you want to set up an infinite loop, that's not my problem
 				exp->play();
 			} else {
-				printf("Warning: CHAIN did not find animation '%s'\n", ev->strparameter);
+				printf("Warning: CHAIN did not find animation '%s'\n", act->strparameter);
 			}
 			break;
-		case EVENT_WAIT:
-			wait(ev->parameter,false);
+		case ACTION_WAIT:
+			wait(act->parameter,false);
 			break;
-		case EVENT_LIGHTCOLOUR:
+		case ACTION_LIGHTCOLOUR:
 			if(lights) {
-				lights->setColour(ev->parameter);
-				lightcolour = ev->parameter;
+				lights->setColour(act->parameter);
+				lightcolour = act->parameter;
 			};
 			break;
-		case EVENT_LIGHTMODE:
+		case ACTION_LIGHTMODE:
 			if(lights) {
-				lights->setMode(ev->parameter);
+				lights->setMode(act->parameter);
 			};
 			break;
-		case EVENT_SETSERVO:
+		case ACTION_SETSERVO:
 			if(servo) {
-				servo->setAngle(ev->parameter);
+				servo->setAngle(act->parameter);
 			};
 			break;
-		case EVENT_SERVOSPEED:
+		case ACTION_SERVOSPEED:
 			if(servo) {
-				servo->setDelay(ev->parameter);
+				servo->setDelay(act->parameter);
 			};
 			break;
-		case EVENT_SEEKSERVO:
+		case ACTION_SEEKSERVO:
 			if(servo) {
-				servo->seekAngle(ev->parameter);
+				servo->seekAngle(act->parameter);
 			};
 			break;
 		default:
@@ -118,8 +118,8 @@ void GifExpression::play() {
 	int delay;
 	bool stop=false;
 
-	for(int ctr=0;ctr<beforeevents;ctr++) {
-		event(&before[ctr]);
+	for(int ctr=0;ctr<beforeactions;ctr++) {
+		action(&before[ctr]);
 	}
 
 	do {
@@ -137,15 +137,15 @@ void GifExpression::play() {
 
 			if(stop) {
 				// Bounce out of the outer loop as well
-				// We still want to run the event hooks in case GPIOs need resetting
-				// TODO: May need to prevent chain() events happening in this case
+				// We still want to run the action hooks in case GPIOs need resetting
+				// TODO: May need to prevent chain() actions happening in this case
 				break;
 			}
 		}
 	} while(loop && (!stop));
 
-	for(int ctr=0;ctr<afterevents;ctr++) {
-		event(&after[ctr]);
+	for(int ctr=0;ctr<afteractions;ctr++) {
+		action(&after[ctr]);
 	}
 
 }
@@ -217,8 +217,8 @@ ScrollExpression::ScrollExpression(const char *message) {
 
 void ScrollExpression::play() {
 
-	for(int ctr=0;ctr<beforeevents;ctr++) {
-		event(&before[ctr]);
+	for(int ctr=0;ctr<beforeactions;ctr++) {
+		action(&before[ctr]);
 	}
 
 	do {
@@ -247,8 +247,8 @@ void ScrollExpression::play() {
 	} while(loop);
 
 
-	for(int ctr=0;ctr<afterevents;ctr++) {
-		event(&after[ctr]);
+	for(int ctr=0;ctr<afteractions;ctr++) {
+		action(&after[ctr]);
 	}
 
 }
@@ -288,8 +288,8 @@ void BlinkExpression::play() {
 	maxpos += frames/4;	// Add some extra for a delay when shut
 	halfway = maxpos/2;
 
-	for(int ctr=0;ctr<beforeevents;ctr++) {
-		event(&before[ctr]);
+	for(int ctr=0;ctr<beforeactions;ctr++) {
+		action(&before[ctr]);
 	}
 
 	do {
@@ -315,7 +315,7 @@ void BlinkExpression::play() {
 
 			if(stop) {
 				// Bounce out of the outer loop as well
-				// We still want to run the event hooks in case GPIOs need resetting
+				// We still want to run the action hooks in case GPIOs need resetting
 				break;
 			}
 
@@ -329,8 +329,8 @@ void BlinkExpression::play() {
 		}
 	} while(loop);
 
-	for(int ctr=0;ctr<afterevents;ctr++) {
-		event(&after[ctr]);
+	for(int ctr=0;ctr<afteractions;ctr++) {
+		action(&after[ctr]);
 	}
 }
 

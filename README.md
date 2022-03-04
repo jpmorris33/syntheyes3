@@ -7,7 +7,7 @@ A customisable eye display for Raspberry Pi, using animated GIF files
 * Far more scriptable - can define random or triggered animations with percentage chances
 * Animations can be multicoloured (using colours from the GIF) or monochrome with a colour of your choice
 * Special effects such as rainbow cycling can be enabled for specific animations
-* Events can be run before and after animations, e.g. set/clear GPIO lines, or even chaining several animations together in sequence
+* Actions can be run before and after animations, e.g. set/clear GPIO lines, or even chaining several animations together in sequence
 * Desktop linux build for testing without a raspberry Pi using SDL virtual display
 * Gradient colours now configurable
 
@@ -56,7 +56,6 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
 # TODO for 3.02
-* Document servo support system (or not if it's still experimental)
 * Document hardware build for 16x16 MAX7219 and experimental 32x16 MAX7219W
 
 # TODO for 3.03
