@@ -441,12 +441,14 @@ void wait(int ms, bool interruptable) {
 
 		update_servo();
 
-		if(check_comms() && interruptable) {
+		if(check_comms()) {
 			// Flash the ACK light, if enabled
 			if(nextExpression && nextExpression->ack) {
 				ack->set(ackTime);
 			}
-			break;
+			if(interruptable) {
+				break;
+			}
 		}
 		poll_keyboard();  // Check for ESC on desktop test version
 	}

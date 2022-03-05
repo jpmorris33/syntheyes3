@@ -92,7 +92,7 @@ void GPIOPin::write(bool state) {
 //
 
 bool GPIOPin::check() {
-	if(isOutput() || (!rightDevice())) {
+	if((!isInput()) || (!rightDevice())) {
 		return false;
 	}
 
@@ -109,6 +109,10 @@ int GPIOPin::getPin() {
 
 char GPIOPin::getDevice() {
 	return device;
+}
+
+bool GPIOPin::isInput() {
+	return (mode == GPIOMODE_INPUT);
 }
 
 bool GPIOPin::isOutput() {

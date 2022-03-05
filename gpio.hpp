@@ -17,6 +17,7 @@ class GPIOPin {
 		int getPin();
 		char getDevice();
 		bool isOutput();
+		bool isInput();
 		bool isReserved();
 		void reserve();
 		GPIOPin *findConflict();
