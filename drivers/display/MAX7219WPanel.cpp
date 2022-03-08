@@ -14,6 +14,8 @@
 #include "../PosixTiming.hpp"
 #include "MAX7219WPanel.hpp"
 
+#define FLIP_BOTTOM_ROW		// This makes wiring them up easier
+
 #define MAXPANEL_W 32
 #define MAXPANEL_H 16
 
@@ -145,7 +147,7 @@ void MAX7219WPanel::draw() {
 	}
 	refresh.set(REFRESH_MS);
 
-	// Currently 16x16 fixed, come up with a more universal solution later
+	// Currently 32x16 fixed, come up with a more universal solution later
 	
 	// Top row
 	for(int row=0;row<8;row++)  {
@@ -166,7 +168,27 @@ void MAX7219WPanel::draw() {
 		sendData(PANEL_TD,row+1,outbyte);
 	}
 
-	// Bottom row
+#ifdef FLIP_BOTTOM_ROW
+	// Bottom row - rotated for easier wiring
+	for(int row=0;row<8;row++)  {
+		outbyte = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendData(PANEL_BD,(7-row)+1,outbyte);
+
+		outbyte = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendData(PANEL_BC,(7-row)+1,outbyte);
+
+		outbyte = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendData(PANEL_BB,(7-row)+1,outbyte);
+
+		outbyte = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendData(PANEL_BA,(7-row)+1,outbyte);
+	}
+#else
+	// Bottom row - original panel order
 	for(int row=0;row<8;row++)  {
 		outbyte = rgb2bits(inptr);
 		inptr += 24; // 8 RGB triplets
@@ -184,6 +206,8 @@ void MAX7219WPanel::draw() {
 		inptr += 24; // 8 RGB triplets
 		sendData(PANEL_BD,row+1,outbyte);
 	}
+#endif
+
 }
 
 void MAX7219WPanel::drawMirrored() {
@@ -197,7 +221,7 @@ void MAX7219WPanel::drawMirrored() {
 	}
 	refresh.set(REFRESH_MS);
 
-	// Currently 16x16 fixed, come up with a more universal solution later
+	// Currently 32x16 fixed, come up with a more universal solution later
 	
 	// Top row
 	for(int row=0;row<8;row++)  {
@@ -226,7 +250,35 @@ void MAX7219WPanel::drawMirrored() {
 		sendDataL(PANEL_TA,row+1,outbyteM);
 	}
 
-	// Bottom row
+#ifdef FLIP_BOTTOM_ROW
+	// Bottom row - rotated for easier wiring
+	for(int row=0;row<8;row++)  {
+		outbyte = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendDataR(PANEL_BD,(7-row)+1,outbyteM);
+		sendDataL(PANEL_BA,(7-row)+1,outbyte);
+
+		outbyte = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendDataR(PANEL_BC,(7-row)+1,outbyteM);
+		sendDataL(PANEL_BB,(7-row)+1,outbyte);
+
+		outbyte = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendDataR(PANEL_BB,(7-row)+1,outbyteM);
+		sendDataL(PANEL_BC,(7-row)+1,outbyte);
+
+		outbyte = rgb2bits(inptr);
+		outbyteM = rgb2bits_mirror(inptr);
+		inptr += 24; // 8 RGB triplets
+		sendDataR(PANEL_BA,(7-row)+1,outbyteM);
+		sendDataL(PANEL_BD,(7-row)+1,outbyte);
+	}
+#else
+	// Bottom row - original panel order
 	for(int row=0;row<8;row++)  {
 		outbyte = rgb2bits(inptr);
 		outbyteM = rgb2bits_mirror(inptr);
@@ -252,6 +304,7 @@ void MAX7219WPanel::drawMirrored() {
 		sendDataR(PANEL_BD,row+1,outbyte);
 		sendDataL(PANEL_BA,row+1,outbyteM);
 	}
+#endif
 }
 
 

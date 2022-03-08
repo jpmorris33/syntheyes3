@@ -13,6 +13,7 @@ display: MAX7219
 lights: WS2811 8
 lightbrightness: 100
 lightcolour: #ff8000
+lightpattern: triangle
 
 # Enable light modulation by microphone on T31
 mic_pin: T31
@@ -69,8 +70,10 @@ gpio: error
 	pin: 37
 	colour: #ff0000
 	drawmode: flash
-	before: set_gpio 33	# Set horns red (on Xerian's hardware)
-	after: clear_gpio 33    # Set horns normal (Xerian's hardware)
+	before: lightmode unison	# Set horns flashing unison (WS2811)
+	before: lightcolour #ff0000	# Set horns red (WS2811)
+	after: lightmode normal		# Set horns normal (WS2811)
+	after: lightcolour #ff8000	# Set horns orange (WS2811)
 
 gpio: annoyed
 	gif: annoyed.gif
