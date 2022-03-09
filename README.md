@@ -55,8 +55,7 @@ V3.00 - Initial release, full feature parity with SynthEyes 2 and more besides.
 
 V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colour cycling, experimental MAX7219 panel support
 
-# TODO for 3.02
-* Document hardware build for 16x16 MAX7219 and experimental 32x16 MAX7219W
+V3.02 - Neopixel lighting support, microphone modulation, experimental widescreen MAX7219 driver, improve GPIO handling, experimental servo support, allow 16 actions per expression instead of 8.
 
 # TODO for 3.03
 * See if we can stop pin 24 from enabling CS for all SPI transfers
