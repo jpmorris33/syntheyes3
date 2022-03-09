@@ -1,6 +1,7 @@
 #ifndef __VirtualSerialDriver_HPP__
 #define __VirtualSerialDriver_HPP__
 
+#include "../../platforms/Platform.hpp"
 #include "../SerialDriver.hpp"
 
 #include <stdio.h>

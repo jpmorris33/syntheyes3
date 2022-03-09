@@ -44,8 +44,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern void pi_init();
 extern void initPanel();
 extern void init_colourutils();
-extern void scanConfig(FILE *fp);
-extern void readConfig(FILE *fp);
+extern void init_platform();
+extern void scanConfig(FileIO *fp);
+extern void readConfig(FileIO *fp);
 extern void poll_keyboard(); // For ESC to quit on desktop
 
 static void runEyes();
@@ -74,6 +75,7 @@ Timing *gradient = NULL;
 Timing *lighttimer = NULL;
 Timing *ack = NULL;
 Timing *micwindow = NULL;
+Platform *sys = NULL;
 
 Font font;
 ExpressionList expressions;
@@ -113,8 +115,9 @@ static bool noMirror=false;
 
 
 int main(int argc, char *argv[]){
-	FILE *fp=NULL;
+	FileIO *fp=NULL;
 
+	init_platform();
 	init_colourutils();
 
 	printf("SynthEyes v%s - (C)2022 IT-HE Software\n",VERSION);
@@ -127,7 +130,7 @@ int main(int argc, char *argv[]){
 
 	if(argc > 3) {
 		if(!strcasecmp(argv[2], "-config")) {
-			fp=fopen(argv[3],"r");
+			fp=sys->openFile(argv[3],"r");
 			if(!fp) {
 				font.errorMsg("Error: failed to open config file '%s'\n",argv[3]);
 			}
@@ -136,11 +139,11 @@ int main(int argc, char *argv[]){
 
 	// For development
 	if(!fp) {
-		fp=fopen("./eyeconfig3.txt","r");
+		fp=sys->openFile("./eyeconfig3.txt","r");
 	}
 
 	if(!fp) {
-		fp=fopen("/boot/eyeconfig3.txt","r");
+		fp=sys->openFile("/boot/eyeconfig3.txt","r");
 		if(!fp) {
 			font.errorMsg("Error: failed to open config file '/boot/eyeconfig3.txt'\n");
 		}
@@ -170,11 +173,11 @@ int main(int argc, char *argv[]){
 			timing->wait_microseconds(100000);
 			panel->draw();
 			timing->wait_microseconds(100000);
-			exit(0);
+			sys->exit(0);
 		}
 		if((!strcasecmp(argv[1],"version")) || (!strcasecmp(argv[1],"-version"))) {
 			font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
-			exit(0);
+			sys->exit(0);
 		}
 	}
 
@@ -186,7 +189,7 @@ int main(int argc, char *argv[]){
 	puts("*Read config...");
 
 	readConfig(fp);
-	fclose(fp);
+	sys->closeFile(fp);
 
 	font.printVersion(VERSION, transmitter, 3000);	// Wait 3 sec
 

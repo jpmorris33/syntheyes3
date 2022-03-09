@@ -13,6 +13,9 @@
 #include "drivers/PosixTiming.hpp"
 #include "gpio.hpp"
 
+#include "PosixPlatform.hpp"
+
+extern Platform *sys;
 extern PanelDriver *panel;
 extern SerialDriver *serial;
 extern ServoDriver *servo;
@@ -28,6 +31,11 @@ extern bool forcetransmitter;
 static GPIOPin *deviceId=NULL;
 
 void init_pin_input(int pin);
+
+void init_platform() {
+	sys = new PosixPlatform();
+}
+
 
 void initPanel(const char *driver, const char *params) {
 	if(panel) {

@@ -1,6 +1,8 @@
 #include "VirtualSerialDriver.hpp"
 #include <string.h>
 
+extern Platform *sys;
+
 //
 //  Hacky and not very reliable file-based serial emulator
 //
@@ -14,11 +16,11 @@ VirtualSerialDriver::~VirtualSerialDriver() {
 
 bool VirtualSerialDriver::open_read(const char *port, int baud) {
 
-	FILE *fp=fopen(port, "rb");
+	FileIO *fp=sys->openFile(port, "rb");
 	if(!fp) {
 		return false;
 	}
-	fclose(fp);
+	sys->closeFile(fp);
 
 	strncpy(filename,port,1023);
 	filename[1023]=0;
@@ -28,11 +30,11 @@ bool VirtualSerialDriver::open_read(const char *port, int baud) {
 
 bool VirtualSerialDriver::open_write(const char *port, int baud) {
 
-	FILE *fp=fopen(port, "wb");
+	FileIO *fp=sys->openFile(port, "wb");
 	if(!fp) {
 		return false;
 	}
-	fclose(fp);
+	sys->closeFile(fp);
 
 	strncpy(filename,port,1023);
 	filename[1023]=0;
@@ -46,14 +48,14 @@ void VirtualSerialDriver::close() {
 int VirtualSerialDriver::read(char *buffer, int maxlen) {
 
 	int read=0;
-	FILE *fp=fopen(filename, "rb");
+	FileIO *fp=sys->openFile(filename, "rb");
 	if(!fp) {
 		return 0;
 	}
 	memset(buffer,0,maxlen);
-	read=fread(buffer,1,maxlen-1,fp);
+	read=fp->read(buffer,maxlen-1);
 
-	fclose(fp);
+	sys->closeFile(fp);
 	if(read > 0) {
 		write(""); // destroy contents
 	}
@@ -65,13 +67,13 @@ int VirtualSerialDriver::read(char *buffer, int maxlen) {
 int VirtualSerialDriver::write(const char *msg) {
 	int written=0;
 
-	FILE *fp=fopen(filename, "wb");
+	FileIO *fp=sys->openFile(filename, "wb");
 	if(!fp) {
 		return 0;
 	}
 
-	written=fwrite(msg,1,strlen(msg)+1,fp);
-	fclose(fp);
+	written=fp->write(msg,strlen(msg)+1);
+	sys->closeFile(fp);
 
 	return written;
 

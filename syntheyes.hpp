@@ -1,16 +1,18 @@
 #ifndef __SYNTHEYES_HPP__
 #define __SYNTHEYES_HPP__
 
-#define VERSION "3.02"
+#define VERSION "3.03"
 
 #include "expression.hpp"
 #include "font.hpp"
+#include "platforms/Platform.hpp"
 #include "drivers/PanelDriver.hpp"
 #include "drivers/SerialDriver.hpp"
 #include "drivers/Timing.hpp"
 #include "drivers/LightDriver.hpp"
 #include "drivers/ServoDriver.hpp"
 
+extern Platform *sys;
 extern PanelDriver *panel;
 extern LightDriver *lights;
 extern ServoDriver *servo;

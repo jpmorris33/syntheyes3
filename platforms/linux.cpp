@@ -14,6 +14,9 @@
 #include "drivers/PosixTiming.hpp"
 #include <SDL2/SDL.h>
 
+#include "PosixPlatform.hpp"
+
+extern Platform *sys;
 extern PanelDriver *panel;
 extern LightDriver *lights;
 extern ServoDriver *servo;
@@ -25,6 +28,11 @@ extern Timing *lighttimer;
 extern Timing *micwindow;
 extern SerialDriver *serial;
 extern bool forcetransmitter;
+
+
+void init_platform() {
+	sys = new PosixPlatform();
+}
 
 void initPanel(const char *driver, const char *params) {
 	if(panel) {
@@ -253,7 +261,7 @@ bool check_pin(int pin) {
 	SDL_PumpEvents();
 	const unsigned char *keys = SDL_GetKeyboardState(NULL);
 	if(keys[SDL_SCANCODE_ESCAPE]) {
-		exit(1);
+		sys->exit(1);
 	}
 
 	// Negative pins are for polling ESC

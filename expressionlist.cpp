@@ -18,14 +18,14 @@ ExpressionSet::ExpressionSet(int size) {
 		return;
 	}
 
-	set=(Expression **)calloc(sizeof(Expression *), size);
+	set=(Expression **)sys->alloc(sizeof(Expression *) * size);
 	len=size;
 }
 
 ExpressionSet::~ExpressionSet() {
 
 	if(set) {
-		free(set);
+		sys->free(set);
 		set=NULL;
 	}
 }

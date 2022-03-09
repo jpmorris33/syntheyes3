@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include "syntheyes.hpp"
 
-void readConfig(FILE *fp);
+void readConfig(FileIO *fp);
 static void preParse(const char *line);
 static void parse(const char *line);
 void makepath(char path[1024], const char *filename);
@@ -57,33 +57,33 @@ extern void initServo(const char *driver, int angle, const char *params);
 //  Config reader
 //
 
-void scanConfig(FILE *fp) {
+void scanConfig(FileIO *fp) {
 	char buf[1024];
 
-	fseek(fp,0L,SEEK_SET);
+	fp->seek(0L);
 
 	for(;;) {
-		if(feof(fp)) {
+		if(fp->eof()) {
 			return;
 		}
 		buf[0]=0;
-		if(fgets(buf,1024,fp)) {
+		if(fp->readLine(buf,1024)) {
 			preParse(buf);
 		}
 	}
 }
 
-void readConfig(FILE *fp) {
+void readConfig(FileIO *fp) {
 	char buf[1024];
 
-	fseek(fp,0L,SEEK_SET);
+	fp->seek(0L);
 
 	for(;;) {
-		if(feof(fp)) {
+		if(fp->eof()) {
 			return;
 		}
 		buf[0]=0;
-		if(fgets(buf,1024,fp)) {
+		if(fp->readLine(buf,1024)) {
 			parse(buf);
 		}
 	}
@@ -159,13 +159,13 @@ void preParse(const char *line) {
 		strcat(path,param);
 
 		printf("*Including config file '%s'\n",param);
-		FILE *fp = fopen(path,"r");
+		FileIO *fp = sys->openFile(path,"r");
 		if(!fp) {
-			fp = fopen(param,"r");
+			fp = sys->openFile(param,"r");
 		}
 		if(fp) {
 			scanConfig(fp);
-			fclose(fp);
+			sys->closeFile(fp);
 		}
 	}
 
@@ -215,13 +215,13 @@ void parse(const char *line) {
 		char path[2048];
 		strcpy(path,"/boot/");
 		strcat(path,param);
-		FILE *fp = fopen(path,"r");
+		FileIO *fp = sys->openFile(path,"r");
 		if(!fp) {
-			fp = fopen(param,"r");
+			fp = sys->openFile(param,"r");
 		}
 		if(fp) {
 			readConfig(fp);
-			fclose(fp);
+			sys->closeFile(fp);
 		}
 	}
 
