@@ -2,9 +2,12 @@
 ##  Basic setup
 ##
 
-#display: SDLSingle gpio1=666,gpio9=616,msg=fish
-display: SDL w=32,h=16
+display: SDLSingle gpio1=666,gpio9=616,msg=fish
+#display: SDL w=16,h=16
 display: MAX7219W csl=22,csr=18
+
+# Flip display 180 degrees
+#rotate180: true
 
 lights: SDLLights 8
 lights: WS2811 8

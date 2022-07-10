@@ -57,14 +57,17 @@ V3.01 - Smooth scrolling, Timer bugfixes, Procedural blinking, looping and colou
 
 V3.02 - Neopixel lighting support, microphone modulation, experimental widescreen MAX7219 driver, improve GPIO handling, experimental servo support, allow 16 actions per expression instead of 8.
 
-# TODO for 3.03
+V3.03 - Display rotation support (not on MAX7219 yet), Refactor for embedded support later
+
+# TODO for 3.04
+* VFS layer for embedded systems (#include a ZIP file as binary blob?)
 * See if we can stop pin 24 from enabling CS for all SPI transfers
 * Maybe more panel driver options (e.g. spi channel)
 * Background comms thread to stop the timeout glitching the display
-* Gauge expressions where the GIF is used as a status bar by mapping a percentage to the number of frames, e.g. to implement a brightness adjust GUI?
 
 # TODO for 3.1x
 * Startup animation for user splash screens?
+* Gauge expressions where the GIF is used as a status bar by mapping a percentage to the number of frames, e.g. to implement a brightness adjust GUI?
 * Winking support (probably a flag to keep displaying IDLE on one panel)
 * Redraw Xerian to make the eye image bigger
 * Desktop Windows build for testing?  (This looks to be a total PITA)

@@ -86,6 +86,7 @@ int cooldown_time = 5;
 bool seamless=false;
 bool transmitter = true;
 bool forcetransmitter = false;
+bool rotated180 = false;
 char serialPort[256];
 int serialRate=19200;
 GPIOPin *mic = NULL;

@@ -15,6 +15,7 @@
 #include "../PosixTiming.hpp"
 
 extern int mapPin(int pin);
+extern class PanelDriver *panel;
 
 //
 //	Init the WiringPi servo driver
@@ -24,7 +25,6 @@ void PiServo::init(int defaultAngle, const char *param) {
 	curAngle=targetAngle=defaultAngle;
 	seekDelay = 0;
 	timer = new PosixTiming();
-
 
 	int pwmPin = 12;
 	const char *p = getDriverParam(param, "pwm");
@@ -39,6 +39,10 @@ void PiServo::init(int defaultAngle, const char *param) {
 	}
 
 	printf("*PiServo: Set to initial angle %d on pin %d\n", defaultAngle,pwmPin);
+
+	if(!panel) {
+		wiringPiSetup();
+	}
 
 	reserveSpecialPin(pwmPin);
 	pwmSetMode(PWM_MODE_MS);

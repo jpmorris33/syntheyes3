@@ -39,6 +39,7 @@ extern int rainbowspeed;
 extern int scrollspeed;
 extern int lightspeed;
 extern bool forcetransmitter;
+extern bool rotated180;
 extern bool seamless;
 extern GPIOPin *ackPin;
 extern int ackTime;
@@ -130,6 +131,13 @@ void preParse(const char *line) {
 	if(!strcasecmp(cmd,"display:")) {
 		nextWord(param);
 		initPanel(param, param2);
+	}
+
+	if(!strcasecmp(cmd,"rotate180:")) {
+		nextWord(param);
+		if(parseTrue(param)) {
+			rotated180=true;
+		}
 	}
 
 	if(!strcasecmp(cmd,"lights:")) {

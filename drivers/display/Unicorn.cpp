@@ -67,6 +67,10 @@ void Unicorn::draw() {
 	// cheat and memcpy the whole lot
 	memcpy(outptr,inptr,768);
 
+	if(rotated180) {
+		rotate180(&spioutputbuf[1],panelW,panelH);
+	}
+
 	// The panel gets fussy if it's updated more than about 60Hz
 	if(refresh.elapsed()) {
 		refresh.set(REFRESH_MS);
@@ -90,6 +94,10 @@ void Unicorn::drawMirrored() {
 			outptr+=3;
 		}
 		inptr += windowwidth;
+	}
+
+	if(rotated180) {
+		rotate180(&spioutputbuf[1],panelW,panelH);
 	}
 
 	// The panel gets fussy if it's updated more than about 60Hz

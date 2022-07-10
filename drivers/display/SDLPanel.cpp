@@ -48,7 +48,6 @@ void SDLPanel::init(const char *param) {
 		printf("*SDL virtual display set height to %d\n",panelH);
 	}
 
-
 	framebuffer = (unsigned char *)calloc(1,panelW*panelH*3);
 	if(!framebuffer) {
 		printf("Failed to allocate framebuffer\n");
@@ -111,6 +110,10 @@ void SDLPanel::draw() {
 		outptr += windowwidth;
 	}
 
+	if(rotated180) {
+		rotate180(outbuffer,panelW,panelH);
+	}
+
 	SDL_UpdateTexture(texture, NULL, outbuffer, windowwidth);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
@@ -132,13 +135,15 @@ void SDLPanel::drawMirrored() {
 		inptr += windowwidth;
 	}
 
+	if(rotated180) {
+		rotate180(outbuffer,panelW,panelH);
+	}
+
 	SDL_UpdateTexture(texture, NULL, outbuffer, windowwidth);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
 
 }
-
-
 
 
 #endif

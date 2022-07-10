@@ -114,6 +114,10 @@ void SDLSinglePanel::draw() {
 		inptr += windowwidth;
 	}
 
+	if(rotated180) {
+		rotate180(outbuffer,panelW*2,panelH);
+	}
+
 	SDL_UpdateTexture(texture, NULL, outbuffer, windowwidth*2);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
@@ -137,6 +141,10 @@ void SDLSinglePanel::drawMirrored() {
 		memcpy(outptr,inptr,windowwidth);
 		outptr += windowwidth;
 		inptr += windowwidth;
+	}
+
+	if(rotated180) {
+		rotate180(outbuffer,panelW*2,panelH);
 	}
 
 	SDL_UpdateTexture(texture, NULL, outbuffer, windowwidth*2);

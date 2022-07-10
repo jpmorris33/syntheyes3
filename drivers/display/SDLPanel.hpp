@@ -6,6 +6,8 @@ class SDLPanel : public PanelDriver {
 		void init(const char *param);
 		void draw();
 		void drawMirrored();
+		void draw180();
+		void draw180Mirrored();
 		uint32_t getCaps();
 	private:
 		struct SDL_Window *win;
