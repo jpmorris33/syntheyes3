@@ -19,5 +19,6 @@ void *Platform::alloc(long amount) { return NULL; }
 void Platform::free(void *ptr) {}
 void Platform::exit(int code) {}
 FileIO *Platform::openFile(const char *filename, const char *mode) { return NULL; }
+FileIO *Platform::openSerial(const char *filename, const char *mode) { return NULL; }
 void Platform::closeFile(FileIO *file) {}
 Timing *Platform::getTimer() { return NULL; }

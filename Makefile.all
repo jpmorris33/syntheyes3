@@ -2,6 +2,7 @@
 SRC	= syntheyes.cpp config.cpp gpio.cpp font.cpp gifload.cpp expression.cpp expressionlist.cpp \
           colourutils.cpp \
           platforms/pi.cpp platforms/linux.cpp platforms/Platform.cpp platforms/PosixPlatform.cpp \
+          platforms/EmbeddedPosixPlatform.cpp platforms/MemFS.cpp platforms/TarFS.cpp \
           drivers/driverutils.cpp drivers/PanelDriver.cpp drivers/display/Unicorn.cpp \
           drivers/display/MAX7219Panel.cpp drivers/display/MAX7219WPanel.cpp \
           drivers/display/SDLPanel.cpp drivers/display/SDLSinglePanel.cpp \
@@ -14,6 +15,7 @@ SRC	= syntheyes.cpp config.cpp gpio.cpp font.cpp gifload.cpp expression.cpp expr
 OBJCODE = syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
         colourutils.o \
         platforms/pi.o platforms/linux.o platforms/Platform.o platforms/PosixPlatform.o \
+        platforms/EmbeddedPosixPlatform.o platforms/MemFS.o platforms/TarFS.o \
         drivers/driverutils.o drivers/PanelDriver.o drivers/display/Unicorn.o \
         drivers/display/SDLPanel.o drivers/display/SDLSinglePanel.o \
         drivers/display/MAX7219Panel.o drivers/display/MAX7219WPanel.o \

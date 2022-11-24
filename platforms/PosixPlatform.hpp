@@ -25,6 +25,7 @@ class PosixPlatform : public Platform {
 		void free(void *ptr);
 		void exit(int code);
 		FileIO *openFile(const char *filename, const char *mode);
+		FileIO *openSerial(const char *filename, const char *mode);
 		void closeFile(FileIO *file);
 		Timing *getTimer();
 };

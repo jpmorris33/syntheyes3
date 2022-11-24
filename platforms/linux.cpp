@@ -15,6 +15,7 @@
 #include <SDL2/SDL.h>
 
 #include "PosixPlatform.hpp"
+#include "EmbeddedPosixPlatform.hpp"
 
 extern Platform *sys;
 extern PanelDriver *panel;
@@ -31,7 +32,11 @@ extern bool forcetransmitter;
 
 
 void init_platform() {
+#ifdef EMBEDDED_ENABLED
+	sys = new EmbeddedPosixPlatform();	// Experimental
+#else
 	sys = new PosixPlatform();
+#endif
 }
 
 void initPanel(const char *driver, const char *params) {
@@ -97,6 +102,10 @@ void initPanel() {
 
 	// Fake serial port file
 	strcpy(serialPort,"/tmp/_eyetmp_");
+#ifdef EMBEDDED_ENABLED
+	// Provide a fake serial port
+	strcpy(serialPort,"./");
+#endif
 
 	if(!(panel->getCaps() & PANELCAPS_SPLIT)) {
 		forcetransmitter=true; // Single systems are always the transmitter

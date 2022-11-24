@@ -3,6 +3,16 @@
 #include <string.h>
 #include "gifload.hpp"
 #include <gif_lib.h>
+#include "platforms/Platform.hpp"
+
+extern Platform *sys;
+
+int readFunc(GifFileType *gif, GifByteType *gbyte, int bytes);
+
+int readFunc(GifFileType *gif, GifByteType *gbyte, int bytes) {
+	FileIO *fp = (FileIO *)gif->UserData;
+	return (int)fp->read(gbyte,bytes);
+}
 
 GIFANIM *loadgif(const char *path) {
 
@@ -10,21 +20,24 @@ GIFANIM *loadgif(const char *path) {
 	unsigned char oldpal[768];
 	memset(pal,0,768);
 	int transparency = -1;
-
 	int error;
-	GifFileType* gif = DGifOpenFileName(path, &error);
+
+	FileIO *handle = sys->openFile(path, "rb");
+	GifFileType* gif = DGifOpen((void *)handle, readFunc, &error);
 	if(!gif) {
 	        return NULL;
 	}
 
 	if(DGifSlurp(gif) == GIF_ERROR) {
 		DGifCloseFile(gif, &error);
+		sys->closeFile(handle);
 		return NULL;
 	}
 
 	GIFANIM* out = (GIFANIM*)calloc(1, sizeof(GIFANIM));
 	if(!out) {
 		DGifCloseFile(gif, &error);
+		sys->closeFile(handle);
 		return NULL;
 	}
 	out->w = gif->SWidth;
@@ -45,6 +58,7 @@ GIFANIM *loadgif(const char *path) {
 	if(!out->frame) {
 		DGifCloseFile(gif, &error);
 		free(out);
+		sys->closeFile(handle);
 		return NULL;
 	}
 
@@ -97,6 +111,8 @@ GIFANIM *loadgif(const char *path) {
 	}
     
 	DGifCloseFile(gif, &error);
+	sys->closeFile(handle);
 	
 	return out;
 }
+

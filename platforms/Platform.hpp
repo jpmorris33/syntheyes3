@@ -24,6 +24,7 @@ class Platform {
 		virtual void free(void *ptr);
 		virtual void exit(int code);
 		virtual FileIO *openFile(const char *filename, const char *mode);
+		virtual FileIO *openSerial(const char *filename, const char *mode);
 		virtual void closeFile(FileIO *file);
 		virtual Timing *getTimer();
 };

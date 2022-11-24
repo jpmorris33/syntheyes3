@@ -124,6 +124,15 @@ FileIO *PosixPlatform::openFile(const char *filename, const char *mode) {
 	return NULL;
 }
 
+FileIO *PosixPlatform::openSerial(const char *filename, const char *mode) {
+	FileIO *fp = new PosixFileIO();
+	if(fp->open(filename,mode)) {
+		return fp;
+	}
+	delete fp;
+	return NULL;
+}
+
 void PosixPlatform::closeFile(FileIO *file) {
 	if(file) {
 		delete file;

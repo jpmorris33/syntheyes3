@@ -3,12 +3,14 @@
 DEBUG	= -g -O0
 #DEBUG	+= -DDEBUGGING
 
+
 CC	= gcc
 INCLUDE	= -I/usr/local/include -I.
 CFLAGS	= $(DEBUG) -DPLATFORM_LINUX -Wall $(INCLUDE) -Winline -pipe
+#CFLAGS	+= -DEMBEDDED_ENABLED
 
 LDFLAGS	= -L/usr/local/lib
-LDLIBS    = -lpthread -lm -lstdc++ -lSDL2 -lgif
+LDLIBS	= -lpthread -lm -lstdc++ -lSDL2 -lgif
 
 include Makefile.all
 

@@ -16,7 +16,7 @@ VirtualSerialDriver::~VirtualSerialDriver() {
 
 bool VirtualSerialDriver::open_read(const char *port, int baud) {
 
-	FileIO *fp=sys->openFile(port, "rb");
+	FileIO *fp=sys->openSerial(port, "rb");
 	if(!fp) {
 		return false;
 	}
@@ -30,7 +30,7 @@ bool VirtualSerialDriver::open_read(const char *port, int baud) {
 
 bool VirtualSerialDriver::open_write(const char *port, int baud) {
 
-	FileIO *fp=sys->openFile(port, "wb");
+	FileIO *fp=sys->openSerial(port, "wb");
 	if(!fp) {
 		return false;
 	}
