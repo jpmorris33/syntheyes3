@@ -32,6 +32,7 @@ extern const char *getDriverParam(const char *string, const char *cmd);
 extern int getDriverInt(const char *param);
 extern const char *getDriverStr(const char *param);
 extern bool rotated180;
+extern class Timing *get_timer();
 
 #define PANELCAPS_SPLIT 	0x00000001	// Requires separate Transmitter/Reciver units
 #define PANELCAPS_FIXED 	0x00000002	// Display is fixed size

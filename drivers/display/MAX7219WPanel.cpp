@@ -2,16 +2,12 @@
  *   MAX7219 driver (32x16)
  */
 
-#ifdef PLATFORM_PI
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
 
-#include "../PosixTiming.hpp"
+#include "../Timing.hpp"
 #include "MAX7219WPanel.hpp"
 
 #define FLIP_BOTTOM_ROW		// This makes wiring them up easier
@@ -46,7 +42,7 @@ static unsigned char rgb2bits(unsigned char *rgb);
 static unsigned char rgb2bits_mirror(unsigned char *rgb);
 extern void init_pin_output(int pin);
 
-static PosixTiming refresh;
+static Timing *refresh;
 static unsigned char spioutputbuf[16];
 
 static GPIOPin *chipSelectL;
@@ -82,14 +78,10 @@ void MAX7219WPanel::init(const char *param) {
 		exit(1);
 	}
 
-	wiringPiSetup();
-	wiringPiSPISetup(0,16000000);
 
-	// Reserve some of the SPI0 pins
-	reserveSpecialPin(19);			// MOSI
-	reserveSpecialPin(23);			// CLK
-	chipSelectL = reserveOutputPin(csPinL);	// CS
+	chipSelectL = init_spi(csPinL,16000000,0,0);
 	chipSelectL->write(false); // Actually sets it high since we use inverse logic
+
 	chipSelectR = reserveOutputPin(csPinR);	// CS
 	chipSelectR->write(false); // Actually sets it high since we use inverse logic
 
@@ -102,7 +94,8 @@ void MAX7219WPanel::init(const char *param) {
 		sendData(panel, CMD_SHUTDOWN,1);		// 0 turns it off, 1 turns it on
 	}
 
-	refresh.set(0);
+	refresh = get_timer();
+	refresh->set(0);
 
 }
 
@@ -141,11 +134,11 @@ void MAX7219WPanel::draw() {
 	unsigned char *inptr = &framebuffer[0];
 	unsigned char outbyte;
 
-	if(!refresh.elapsed()) {
+	if(!refresh->elapsed()) {
 		// Reduce SPI bus traffic (and thus CPU usage)
 		return;
 	}
-	refresh.set(REFRESH_MS);
+	refresh->set(REFRESH_MS);
 
 	// Currently 32x16 fixed, come up with a more universal solution later
 	
@@ -215,11 +208,11 @@ void MAX7219WPanel::drawMirrored() {
 	unsigned char outbyte;
 	unsigned char outbyteM;
 
-	if(!refresh.elapsed()) {
+	if(!refresh->elapsed()) {
 		// Reduce SPI bus traffic (and thus CPU usage)
 		return;
 	}
-	refresh.set(REFRESH_MS);
+	refresh->set(REFRESH_MS);
 
 	// Currently 32x16 fixed, come up with a more universal solution later
 	
@@ -326,7 +319,7 @@ void sendData(int addr, unsigned char opcode, unsigned char data) {
 	// Blit it to both displays
 	chipSelectL->write(true); // LOW
 	chipSelectR->write(true); // LOW
-	wiringPiSPIDataRW(0,spioutputbuf,16);
+	blit_spi(0,spioutputbuf,16);
 	chipSelectL->write(false); // HIGH
 	chipSelectR->write(false); // HIGH
 }
@@ -342,7 +335,7 @@ void sendDataL(int addr, unsigned char opcode, unsigned char data) {
 
 	// Blit it to the display
 	chipSelectL->write(true); // LOW
-	wiringPiSPIDataRW(0,spioutputbuf,16);
+	blit_spi(0,spioutputbuf,16);
 	chipSelectL->write(false); // HIGH
 }
 
@@ -357,7 +350,7 @@ void sendDataR(int addr, unsigned char opcode, unsigned char data) {
 
 	// Blit it to the display
 	chipSelectR->write(true); // LOW
-	wiringPiSPIDataRW(0,spioutputbuf,16);
+	blit_spi(0,spioutputbuf,16);
 	chipSelectR->write(false); // HIGH
 }
 
@@ -386,5 +379,3 @@ unsigned char rgb2bits_mirror(unsigned char *rgb) {
 	}
 	return out;
 }
-
-#endif

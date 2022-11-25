@@ -2,16 +2,12 @@
  *   MAX7219 driver
  */
 
-#ifdef PLATFORM_PI
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
 
-#include "../PosixTiming.hpp"
+#include "../Timing.hpp"
 #include "MAX7219Panel.hpp"
 
 #define MAXPANEL_W 16
@@ -42,7 +38,7 @@ static unsigned char rgb2bits(unsigned char *rgb);
 static unsigned char rgb2bits_mirror(unsigned char *rgb);
 extern void init_pin_output(int pin);
 
-static PosixTiming refresh;
+static Timing *refresh;
 static unsigned char spioutputbuf[16];
 
 static GPIOPin *chipSelect;
@@ -70,13 +66,7 @@ void MAX7219Panel::init(const char *param) {
 		exit(1);
 	}
 
-	wiringPiSetup();
-	wiringPiSPISetup(0,16000000);
-
-	// Reserve some of the SPI0 pins
-	reserveSpecialPin(19);			// MOSI
-	reserveSpecialPin(23);			// CLK
-	chipSelect = reserveOutputPin(csPin);	// CS
+	chipSelect = init_spi(csPin,16000000,0,0);
 	chipSelect->write(false); // Actually sets it high since we use inverse logic
 
 	// Initialise the panels
@@ -88,7 +78,8 @@ void MAX7219Panel::init(const char *param) {
 		sendData(panel, CMD_SHUTDOWN,1);		// 0 turns it off, 1 turns it on
 	}
 
-	refresh.set(0);
+	refresh = get_timer();
+	refresh->set(0);
 
 }
 
@@ -126,11 +117,11 @@ void MAX7219Panel::draw() {
 	unsigned char *inptr = &framebuffer[0];
 	unsigned char outbyte;
 
-	if(!refresh.elapsed()) {
+	if(!refresh->elapsed()) {
 		// Reduce SPI bus traffic (and thus CPU usage)
 		return;
 	}
-	refresh.set(REFRESH_MS);
+	refresh->set(REFRESH_MS);
 
 	// Currently 16x16 fixed, come up with a more universal solution later
 	
@@ -170,11 +161,11 @@ void MAX7219Panel::drawMirrored() {
 	unsigned char outbyte;
 	unsigned char outbyteM;
 
-	if(!refresh.elapsed()) {
+	if(!refresh->elapsed()) {
 		// Reduce SPI bus traffic (and thus CPU usage)
 		return;
 	}
-	refresh.set(REFRESH_MS);
+	refresh->set(REFRESH_MS);
 
 	// Currently 16x16 fixed, come up with a more universal solution later
 	
@@ -231,7 +222,7 @@ void sendData(int addr, unsigned char opcode, unsigned char data) {
 
 	// Blit it to the display
 	chipSelect->write(true); // LOW
-	wiringPiSPIDataRW(0,spioutputbuf,16);
+	blit_spi(0,spioutputbuf,16);
 	chipSelect->write(false); // HIGH
 }
 
@@ -261,4 +252,3 @@ unsigned char rgb2bits_mirror(unsigned char *rgb) {
 	return out;
 }
 
-#endif

@@ -296,4 +296,17 @@ void poll_keyboard() {
 	check_pin(-666);  // Check fake GPIO
 }
 
+Timing *get_timer() {
+	return new PosixTiming();
+}
+
+
+GPIOPin *init_spi(int csPin, long speed, int mode, int bus) {
+	return reserveOutputPin(csPin);
+}
+
+void blit_spi(int bus, unsigned char *data, int len) {
+	// Not supported
+}
+
 #endif

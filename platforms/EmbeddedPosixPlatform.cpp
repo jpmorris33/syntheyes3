@@ -6,7 +6,11 @@
 #include "../drivers/PosixTiming.hpp"
 #include "TarFS.hpp"
 
-#include "../embedded/testtar.h"	// imageBytes
+#ifdef EMBEDDED_ENABLED
+	#include "../embedded/testtar.h"	// imageBytes
+#else
+	unsigned char imageBytes[]="NO";
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

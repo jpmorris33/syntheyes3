@@ -1,17 +1,13 @@
-#ifdef PLATFORM_PI
-
 /**
  * Render to a Unicorn HD panel via SPI
  */
 
 #include "Unicorn.hpp"
-#include "../PosixTiming.hpp"
+#include "../Timing.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wiringPi.h>
-#include <wiringPiSPI.h>
 
 #define UNICORNPANEL_W 16
 #define UNICORNPANEL_H 16
@@ -20,7 +16,7 @@
 
 static unsigned char spioutputbuf[769];
 extern bool transmitter;
-static PosixTiming refresh;
+static Timing *refresh;
 
 //
 //	Init the Unicorn HD driver
@@ -36,16 +32,9 @@ void Unicorn::init(const char *param) {
 		exit(1);
 	}
 
-	wiringPiSetup();
-	wiringPiSPISetup(0,9000000);
-	refresh.set(0);
-
-	// Reserve the SPI0 pins
-	reserveSpecialPin(19);	// MOSI
-	reserveSpecialPin(21);	// MISO
-	reserveSpecialPin(23);	// CLK
-	reserveOutputPin(24);	// CS
-
+	init_spi(24, 9000000, 0, 0); // CS pin, speed, mode, bus
+	refresh = get_timer();
+	refresh->set(0);
 }
 
 //
@@ -72,9 +61,9 @@ void Unicorn::draw() {
 	}
 
 	// The panel gets fussy if it's updated more than about 60Hz
-	if(refresh.elapsed()) {
-		refresh.set(REFRESH_MS);
-		wiringPiSPIDataRW(0,spioutputbuf,769);
+	if(refresh->elapsed()) {
+		refresh->set(REFRESH_MS);
+		blit_spi(0,spioutputbuf,769);
 	}
 }
 
@@ -101,11 +90,9 @@ void Unicorn::drawMirrored() {
 	}
 
 	// The panel gets fussy if it's updated more than about 60Hz
-	if(refresh.elapsed()) {
-		refresh.set(REFRESH_MS);
-		wiringPiSPIDataRW(0,spioutputbuf,769);
+	if(refresh->elapsed()) {
+		refresh->set(REFRESH_MS);
+		blit_spi(0,spioutputbuf,769);
 	}
 }
 
-
-#endif

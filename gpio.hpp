@@ -39,4 +39,7 @@ extern GPIOPin *reserveOutputPin(int pin);
 extern GPIOPin *reserveInputPin(int pin);
 extern GPIOPin *reserveSpecialPin(int pin);
 
+extern GPIOPin *init_spi(int cspin, long speed, int mode, int bus);
+extern void blit_spi(int bus, unsigned char *data, int len);
+
 #endif

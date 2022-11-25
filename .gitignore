@@ -52,3 +52,8 @@ Mkfile.old
 dkms.conf
 eyes
 _tmp_
+
+# Custom
+pico/build/*
+pico/giflib/giflib-5.2.1
+pico/generated/*

@@ -4,6 +4,7 @@
 #include "colourutils.hpp"
 #include <string.h>
 #include <wiringPi.h>
+#include <wiringPiSPI.h>
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/display/MAX7219Panel.hpp"
 #include "drivers/display/MAX7219WPanel.hpp"
@@ -284,6 +285,25 @@ void set_pin(int pin, bool state) {
 }
 
 void poll_keyboard() {
+}
+
+Timing *get_timer() {
+	return new PosixTiming();
+}
+
+GPIOPin *init_spi(int cspin, long speed, int mode, int bus) {
+	wiringPiSetup();
+	wiringPiSPISetup(bus,speed);
+
+	// Reserve the SPI0 pins
+	reserveSpecialPin(19);	// MOSI
+	reserveSpecialPin(21);	// MISO
+	reserveSpecialPin(23);	// CLK
+	return reserveOutputPin(cspin);
+}
+
+void blit_spi(int bus, unsigned char *data, int len) {
+	wiringPiSPIDataRW(bus,data,len);
 }
 
 #endif
