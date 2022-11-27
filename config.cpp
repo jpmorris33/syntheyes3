@@ -3,7 +3,6 @@
 //
 
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -238,7 +237,7 @@ void parse(const char *line) {
 	if(!strcasecmp(cmd,"gifdir:")) {
 		nextWord(param);
 		// Only use it if it exists
-		if(!access(param,R_OK|X_OK)) {
+		if(sys->access(param,ACCESS_R_OK|ACCESS_X_OK)) {
 			SAFE_STRCPY(gifDir,param);
 		} else {
 			dbprintf("Warning: gifdir '%s' not present\n",param);

@@ -73,6 +73,13 @@ void EmbeddedPosixPlatform::closeFile(FileIO *file) {
 	}
 }
 
+bool EmbeddedPosixPlatform::access(const char *filename, int mode) {
+ 	FileIO *fp = new TarFileIO(imageBytes,sizeof(imageBytes));
+	bool ret = fp->open(filename,"rb");
+	delete fp;
+	return ret;
+}
+
 Timing *EmbeddedPosixPlatform::getTimer() {
 	return new PosixTiming();
 }

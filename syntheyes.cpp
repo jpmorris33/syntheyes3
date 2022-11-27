@@ -118,6 +118,10 @@ static bool noMirror=false;
 int main(int argc, char *argv[]){
 	FileIO *fp=NULL;
 
+#ifdef PLATFORM_PICO
+	argc=0;	// The Pico doesn't like scanning the arguments
+#endif
+
 	init_platform();
 	init_colourutils();
 

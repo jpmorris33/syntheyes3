@@ -192,3 +192,19 @@ void PanelDriver::rotate180(unsigned char *buffer, int w, int h) {
 		startptr += 3;
 	}
 }
+
+void PanelDriver::rotate180(uint32_t *buffer, int w, int h) {
+	uint32_t *startptr = buffer;
+	uint32_t *endptr = buffer + (w * h);
+	uint32_t spare;
+
+	int pixels=w*h;
+	pixels >>= 1;	// Halve the total since we're doing both ends at once
+
+	for(int ctr=0;ctr<pixels;ctr++) {
+		spare=*startptr;
+		*startptr++=*--endptr;
+		*endptr=spare;
+	}
+
+}

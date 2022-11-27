@@ -19,6 +19,7 @@ class PanelDriver {
 		virtual void setBrightness(int percentage);
 		virtual uint32_t getCaps();
 		virtual void rotate180(unsigned char *buffer, int w, int h);
+		virtual void rotate180(uint32_t *buffer, int w, int h);
 		int getW();
 		int getH();
 	protected:

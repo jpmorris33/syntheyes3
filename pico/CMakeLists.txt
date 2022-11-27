@@ -20,7 +20,7 @@ add_executable(syntheyes3
 	../platforms/pico.cpp ../platforms/Platform.cpp ../platforms/PicoPlatform.cpp
 	../platforms/MemFS.cpp ../platforms/TarFS.cpp
 	../drivers/driverutils.cpp ../drivers/PanelDriver.cpp
-	../drivers/display/Unicorn.cpp ../drivers/display/MAX7219Panel.cpp
+	../drivers/display/Unicorn.cpp ../drivers/display/MAX7219Panel.cpp ../drivers/display/WS2811PicoPanel.cpp
 	../drivers/SerialDriver.cpp ../drivers/serial/VirtualSerialDriver.cpp
 	../drivers/LightDriver.cpp  ../drivers/ServoDriver.cpp
 	../drivers/Timing.cpp ../drivers/PicoTiming.cpp

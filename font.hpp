@@ -17,6 +17,7 @@ class Font {
 		void errorMsg(const char *msg, const char *param, const char *param2);
 		void errorMsg(const char *msg, int param);
 		void printVersion(const char *version, bool transmitter, int duration);
+		void print(const char *msg);
 
 	private:
 		void printMsg(const char *msg, unsigned char *outbuf, int w, int h, int x, int y);

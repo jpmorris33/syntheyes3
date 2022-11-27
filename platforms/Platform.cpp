@@ -21,4 +21,5 @@ void Platform::exit(int code) {}
 FileIO *Platform::openFile(const char *filename, const char *mode) { return NULL; }
 FileIO *Platform::openSerial(const char *filename, const char *mode) { return NULL; }
 void Platform::closeFile(FileIO *file) {}
+bool Platform::access(const char *filename, int mode) { return false; }
 Timing *Platform::getTimer() { return NULL; }

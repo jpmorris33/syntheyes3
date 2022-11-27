@@ -45,7 +45,7 @@ void PicoPlatform::exit(int code) {
 }
 
 FileIO *PicoPlatform::openFile(const char *filename, const char *mode) {
-	FileIO *fp = new TarFileIO(imageBytes,sizeof(imageBytes));
+ 	FileIO *fp = new TarFileIO(imageBytes,sizeof(imageBytes));
 	if(fp->open(filename,mode)) {
 		return fp;
 	}
@@ -54,7 +54,7 @@ FileIO *PicoPlatform::openFile(const char *filename, const char *mode) {
 }
 
 FileIO *PicoPlatform::openSerial(const char *filename, const char *mode) {
-	FileIO *fp = new TarFileIO(imageBytes,sizeof(imageBytes));
+ 	FileIO *fp = new TarFileIO(imageBytes,sizeof(imageBytes));
 	if(fp->open(filename,mode)) {
 		return fp;
 	}
@@ -67,6 +67,14 @@ void PicoPlatform::closeFile(FileIO *file) {
 		delete file;
 	}
 }
+
+bool PicoPlatform::access(const char *filename, int mode) {
+ 	FileIO *fp = new TarFileIO(imageBytes,sizeof(imageBytes));
+	bool ret = fp->open(filename,"rb");
+	delete fp;
+	return ret;
+}
+
 
 Timing *PicoPlatform::getTimer() {
 	return new PicoTiming();

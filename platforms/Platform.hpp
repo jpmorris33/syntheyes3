@@ -3,6 +3,10 @@
 
 #include "../drivers/Timing.hpp"
 
+#define ACCESS_R_OK 1
+#define ACCESS_W_OK 2
+#define ACCESS_X_OK 4
+
 class FileIO {
 	public:
 		virtual ~FileIO();
@@ -26,6 +30,7 @@ class Platform {
 		virtual FileIO *openFile(const char *filename, const char *mode);
 		virtual FileIO *openSerial(const char *filename, const char *mode);
 		virtual void closeFile(FileIO *file);
+		virtual bool access(const char *filename, int mode);
 		virtual Timing *getTimer();
 };
 

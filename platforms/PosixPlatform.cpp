@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 //
 //  Simple wrapper around fopen
@@ -137,6 +138,18 @@ void PosixPlatform::closeFile(FileIO *file) {
 	if(file) {
 		delete file;
 	}
+}
+
+bool PosixPlatform::access(const char *filename, int mode) {
+	int newmode = 0;
+	if(mode & ACCESS_R_OK) {
+		newmode |= R_OK;
+	}
+	if(mode & ACCESS_X_OK) {
+		newmode |= X_OK;
+	}
+
+	return !::access(filename,newmode);
 }
 
 Timing *PosixPlatform::getTimer() {

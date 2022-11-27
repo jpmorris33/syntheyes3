@@ -1038,8 +1038,9 @@ void Font::scroll(const char *msg, int yoffset, uint32_t col, bool interruptible
 }
 
 void Font::errorMsg(const char *msg) {
+	int y=panel->getH() < 16 ? 0 : 4;
 	for(;;) {
-		scroll(msg,4,0xff1010,false,false,false);
+		scroll(msg,y,0xff1010,false,false,false);
 	}
 }
 
@@ -1049,10 +1050,10 @@ void Font::errorMsg(const char *msg, const char *param) {
 	text[2047]=0;
 
 	puts(text);  // To console
-
-
+	
+	int y=panel->getH() < 16 ? 0 : 4;
 	for(;;) {
-		scroll(text,4,0xff1010,false,false,false);
+		scroll(text,y,0xff1010,false,false,false);
 	}
 }
 
@@ -1063,9 +1064,9 @@ void Font::errorMsg(const char *msg, const char *param1, const char *param2) {
 
 	puts(text);  // To console
 
-
+	int y=panel->getH() < 16 ? 0 : 4;
 	for(;;) {
-		scroll(text,4,0xff1010,false,false,false);
+		scroll(text,y,0xff1010,false,false,false);
 	}
 }
 
@@ -1076,9 +1077,9 @@ void Font::errorMsg(const char *msg, int param) {
 
 	puts(text);  // To console
 
-
+	int y=panel->getH() < 16 ? 0 : 4;
 	for(;;) {
-		scroll(text,4,0xff1010,false,false,false);
+		scroll(text,y,0xff1010,false,false,false);
 	}
 }
 
@@ -1202,4 +1203,30 @@ void Font::printVersion16(const char *version, bool transmitter, int duration) {
 		panel->draw();
 		timing->wait_microseconds(1000);
 	}
+}
+
+void Font::print(const char *msg) {
+
+	unsigned char bmp[16*16*3];
+	unsigned char *ptr = &bmp[0];
+	memset(ptr,0,sizeof(bmp));
+
+	int w=panel->getW();
+	int h=panel->getH();
+	if(w>32) {
+		w=32;
+	}
+	if(h>16) {
+		h=16;
+	}
+
+	char outmsg[10];
+	memset(outmsg,0,10);
+	strncpy(outmsg,msg,w/4);
+
+	printMsg(outmsg, ptr, 16, 8, 0, 0);
+	panel->clear(0);
+	panel->updateRGB(bmp, w, h, 0x404040);
+	timing->wait_microseconds(50000);
+	panel->draw();
 }

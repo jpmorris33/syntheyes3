@@ -12,6 +12,7 @@
 #include "../colourutils.hpp"
 #include "../drivers/servo/TestServo.hpp"
 #include "../drivers/serial/VirtualSerialDriver.hpp"
+#include "../drivers/display/WS2811PicoPanel.hpp"
 #include "../drivers/PicoTiming.hpp"
 
 #include "PicoPlatform.hpp"
@@ -37,18 +38,21 @@ extern GPIOPin *ackPin;
 void init_platform() {
 
 	stdio_init_all();
+
+	gpio_init(PICO_DEFAULT_LED_PIN);
+	gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+
 	sys = new PicoPlatform();
 	ackPin = reserveOutputPin(PICO_DEFAULT_LED_PIN);
-
 }
 
 void initPanel(const char *driver, const char *params) {
-	if(panel) {
-		return;
-	}
-
 	// Initialise any other drivers here
 
+	if(!panel) {
+		panel = new WS2811PicoPanel();
+		panel->init("");
+	}
 }
 
 void initLights(const char *driver, int numlights, const char *params) {
@@ -75,8 +79,8 @@ void initPanel() {
 	serial = new VirtualSerialDriver();
 
 	if(!panel) {
-//		panel = new SDLPanel();
-//		panel->init("");
+		panel = new WS2811PicoPanel();
+		panel->init("");
 	}
 
 	// Fake serial port file
@@ -216,6 +220,10 @@ GPIOPin *init_spi(int csPin, long speed, int mode, int bus) {
 
 void blit_spi(int bus, unsigned char *data, int len) {
 	spi_write_blocking(bus?spi1:spi0,data,len);	// Currently just 0 or 1
+}
+
+void debugLight() {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1);
 }
 
 #endif
