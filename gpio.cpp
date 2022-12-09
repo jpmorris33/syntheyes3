@@ -36,10 +36,11 @@ GPIOPin::GPIOPin(int inpin, char indevice, char gpiomode) {
 	next = NULL;
 
 	realpin = inpin;
-	pin=mapPin(inpin);
-	device=indevice;
+	pin = mapPin(inpin);
+	device = indevice;
 	mode = verify_mode(gpiomode);
-	reserved=false;
+	reserved = false;
+	invert = false;
 
 	// Set up the GPIO pin
 	if(rightDevice()) {
@@ -96,6 +97,10 @@ bool GPIOPin::check() {
 		return false;
 	}
 
+	if(invert) {
+		// May want to invert logic on specific pins
+		return !check_pin(pin);
+	}
 	return check_pin(pin);
 }
 
@@ -171,6 +176,11 @@ bool GPIOPin::conflicting(GPIOPin *ptr) {
 	}
 	return true; // Oh dear
 }
+
+void GPIOPin::setInverted() {
+	invert = true;
+}
+
 
 bool same_device(char dev1, char dev2) {
 	if(dev1 == DEVICE_BOTH || dev2 == DEVICE_BOTH) {

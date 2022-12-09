@@ -20,6 +20,7 @@ class GPIOPin {
 		bool isInput();
 		bool isReserved();
 		void reserve();
+		void setInverted();
 		GPIOPin *findConflict();
 
 		GPIOPin *next;
@@ -33,6 +34,7 @@ class GPIOPin {
 		char device;
 		char mode;
 		bool reserved;
+		bool invert;
 };
 
 extern GPIOPin *reserveOutputPin(int pin);

@@ -599,6 +599,24 @@ void parse(const char *line) {
 		dbprintf("Set gpio pin to %d for expression '%s'\n",curexp->parameter,curexp->name);
 	}
 
+	if(!strcasecmp(cmd,"invertpin:")) {
+		if(!curexp) {
+			font.errorMsg("Error: 'invertpin:' no expression defined");
+		}
+		if(curexp->trigger != TRIGGER_GPIO) {
+			font.errorMsg("Error: 'invertpin:' is only for GPIO expressions");
+		}
+		if(!curexp->pin) {
+			font.errorMsg("Error: 'invertpin:' pin hasn't been declared yet");
+		}
+		nextWord(param);
+		if(parseTrue(param)) {
+			curexp->pin->setInverted();
+			dbprintf("Set gpio pin %d to use inverted logic for expression '%s'\n",curexp->parameter,curexp->name);
+		}
+
+	}
+
 	if(!strcasecmp(cmd,"drawmode:")) {
 		if(!curexp) {
 			font.errorMsg("Error: 'drawmode:' no expression defined");
