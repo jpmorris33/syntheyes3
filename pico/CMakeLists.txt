@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(GIF_LIB_SRC giflib/giflib-5.2.1)
 
 add_compile_definitions(PLATFORM_PICO)
-#include_directories(../pico)
 include_directories(../pico)
 include_directories(${GIF_LIB_SRC})
 
@@ -21,6 +20,7 @@ add_executable(syntheyes3
 	../platforms/MemFS.cpp ../platforms/TarFS.cpp
 	../drivers/driverutils.cpp ../drivers/PanelDriver.cpp
 	../drivers/display/Unicorn.cpp ../drivers/display/MAX7219Panel.cpp ../drivers/display/WS2811PicoPanel.cpp
+	../drivers/display/Hub75Pico.cpp
 	../drivers/SerialDriver.cpp ../drivers/serial/VirtualSerialDriver.cpp
 	../drivers/LightDriver.cpp  ../drivers/ServoDriver.cpp
 	../drivers/Timing.cpp ../drivers/PicoTiming.cpp
@@ -31,6 +31,7 @@ add_executable(syntheyes3
 
 # generate the header file into the source tree as it is included in the RP2040 datasheet
 pico_generate_pio_header(syntheyes3 ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)
+pico_generate_pio_header(syntheyes3 ${CMAKE_CURRENT_LIST_DIR}/hub75.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)
 
 target_link_libraries(syntheyes3 PRIVATE pico_stdlib hardware_pio hardware_spi)
 pico_add_extra_outputs(syntheyes3)

@@ -13,6 +13,7 @@
 #include "../drivers/servo/TestServo.hpp"
 #include "../drivers/serial/VirtualSerialDriver.hpp"
 #include "../drivers/display/WS2811PicoPanel.hpp"
+#include "../drivers/display/Hub75Pico.hpp"
 #include "../drivers/PicoTiming.hpp"
 
 #include "PicoPlatform.hpp"
@@ -50,7 +51,8 @@ void initPanel(const char *driver, const char *params) {
 	// Initialise any other drivers here
 
 	if(!panel) {
-		panel = new WS2811PicoPanel();
+//		panel = new WS2811PicoPanel();
+		panel = new Hub75Pico();
 		panel->init("");
 	}
 }
@@ -79,7 +81,8 @@ void initPanel() {
 	serial = new VirtualSerialDriver();
 
 	if(!panel) {
-		panel = new WS2811PicoPanel();
+		panel = new Hub75Pico();
+//		panel = new WS2811PicoPanel();
 		panel->init("");
 	}
 
