@@ -8,6 +8,7 @@
 #include "colourutils.hpp"
 #include "drivers/display/SDLPanel.hpp"
 #include "drivers/display/SDLSinglePanel.hpp"
+#include "drivers/display/SDLScreen.hpp"
 #include "drivers/lights/SDLLights.hpp"
 #include "drivers/servo/TestServo.hpp"
 #include "drivers/serial/VirtualSerialDriver.hpp"
@@ -53,6 +54,11 @@ void initPanel(const char *driver, const char *params) {
 
 	if(!strcasecmp(driver, "SDLSingle")) {
 		panel = new SDLSinglePanel();
+		panel->init(params);
+	}
+
+	if(!strcasecmp(driver, "SDLScreen")) {
+		panel = new SDLScreen();
 		panel->init(params);
 	}
 

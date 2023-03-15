@@ -5,7 +5,7 @@ SRC	= syntheyes.cpp config.cpp gpio.cpp font.cpp gifload.cpp expression.cpp expr
           platforms/EmbeddedPosixPlatform.cpp platforms/MemFS.cpp platforms/TarFS.cpp \
           drivers/driverutils.cpp drivers/PanelDriver.cpp drivers/display/Unicorn.cpp \
           drivers/display/MAX7219Panel.cpp drivers/display/MAX7219WPanel.cpp \
-          drivers/display/SDLPanel.cpp drivers/display/SDLSinglePanel.cpp \
+          drivers/display/SDLPanel.cpp drivers/display/SDLSinglePanel.cpp drivers/display/SDLScreen.cpp \
           drivers/SerialDriver.cpp drivers/serial/PiSerialDriver.cpp \
           drivers/serial/VirtualSerialDriver.cpp \
           drivers/LightDriver.cpp drivers/lights/SDLLights.cpp drivers/lights/WS2811Lights.cpp \
@@ -17,7 +17,7 @@ OBJCODE = syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionli
         platforms/pi.o platforms/linux.o platforms/Platform.o platforms/PosixPlatform.o \
         platforms/EmbeddedPosixPlatform.o platforms/MemFS.o platforms/TarFS.o \
         drivers/driverutils.o drivers/PanelDriver.o drivers/display/Unicorn.o \
-        drivers/display/SDLPanel.o drivers/display/SDLSinglePanel.o \
+        drivers/display/SDLPanel.o drivers/display/SDLSinglePanel.o drivers/display/SDLScreen.o \
         drivers/display/MAX7219Panel.o drivers/display/MAX7219WPanel.o \
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/LightDriver.o drivers/lights/SDLLights.o drivers/lights/WS2811Lights.o \

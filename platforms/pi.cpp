@@ -8,6 +8,7 @@
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/display/MAX7219Panel.hpp"
 #include "drivers/display/MAX7219WPanel.hpp"
+#include "drivers/display/SDLScreen.hpp"
 #include "drivers/lights/WS2811Lights.hpp"
 #include "drivers/servo/PiServo.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
@@ -51,6 +52,12 @@ void initPanel(const char *driver, const char *params) {
 		panel = new MAX7219WPanel();
 		panel->init(params);
 	}
+#ifdef SDL_SUPPORT
+	if(!strcasecmp(driver, "SDLScreen")) {
+		panel = new SDLScreen();
+		panel->init(params);
+	}
+#endif
 }
 
 void initLights(const char *driver, int numlights, const char *params) {

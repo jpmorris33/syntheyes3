@@ -1,4 +1,6 @@
 WS2811  = true
+SDL  = true
+
 #DEBUG	= -g -O0
 DEBUG	= -O3
 CC	= gcc
@@ -7,11 +9,17 @@ CFLAGS	= $(DEBUG) -DPLATFORM_PI -Wall $(INCLUDE) -Winline -pipe
 ifneq ($(WS2811),)
         CFLAGS  += -DWS2811_SUPPORT
 endif
+ifneq ($(SDL),)
+        CFLAGS  += -DSDL_SUPPORT
+endif
 
 LDFLAGS	= -L/usr/local/lib
 LDLIBS    = -lpthread -lm -lstdc++ -lgif -lwiringPi -lwiringPiDev
 ifneq ($(WS2811),)
         LDLIBS  += -lws2811
+endif
+ifneq ($(SDL),)
+        LDLIBS  += -lSDL2
 endif
 
 include Makefile.all
