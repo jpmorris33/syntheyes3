@@ -7,8 +7,8 @@ class Hub75Pico : public PanelDriver {
 		void draw();
 		void drawMirrored();
 		uint32_t getCaps();
+		void blit();	// Helper thread needs to call this
 	private:
-		void blit();
 		uint32_t *outbuffer;
 		int rowpins;
 		uint data_prog_offset;

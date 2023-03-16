@@ -6,13 +6,13 @@
  */
 
 #include "Hub75Pico.hpp"
-#include "../Timing.hpp"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "hardware/gpio.h"
+#include "pico/multicore.h"
 #include "hub75.pio.h"
 
 #define HUBPANEL_W 64
@@ -21,6 +21,7 @@
 #define SM_DATA 0
 #define SM_ROW 1
 
+// Pinouts - these are the same as the example and work out-of-the-box on the Pimoroni Interstate 75W
 #define DATA_BASE_PIN 0
 #define DATA_N_PINS 6
 #define ROWSEL_BASE_PIN 6
@@ -28,12 +29,10 @@
 #define STROBE_PIN 12
 #define OEN_PIN 13
 
-#define REFRESH_MS 12	// 16ms is about 60fps
-static Timing *refresh;
+void background_blit();
 
 //
-//	Init the PIO programs.
-//	This is based on code from the Pico HUB75 example.
+//	Set up the driver for displaying on Hub75 panels
 //
 
 void Hub75Pico::init(const char *param) {
@@ -72,17 +71,26 @@ void Hub75Pico::init(const char *param) {
 		exit(1);
 	}
 
-//	TODO: probably want to reserve the pins later
+//	TODO: probably want to reserve the pins at some point
 
 	rowpins = panelH == 32 ? 4 : 3;	// 4 = 32 pixel height, 3 = 16 pixels.  Don't yet support H=64 (5 pins)
+
+	// This PIO init section is based on code from the Pico HUB75 example.
+
 	pio = pio0;
 	data_prog_offset = pio_add_program(pio, &hub75_data_rgb888_program);
 	row_prog_offset = pio_add_program(pio, &hub75_row_program);
 	hub75_data_rgb888_program_init(pio, SM_DATA, data_prog_offset, DATA_BASE_PIN, CLK_PIN);
 	hub75_row_program_init(pio, SM_ROW, row_prog_offset, ROWSEL_BASE_PIN, rowpins, STROBE_PIN);
 
-	refresh = get_timer();
-	refresh->set(0);
+	// Because the image data has to be constantly streamed into the display panel to keep it alive,
+	// We offload the blit process to the Pico's second CPU core.  That way the main thread just has to
+	// keep the framebuffer updated.
+
+	// I've yet to see screen tearing, but if that happens we may need a vsync waitlock on draw() and draw_mirrored()
+
+	multicore_launch_core1(background_blit);
+        multicore_fifo_push_blocking((int32_t) this);
 
 }
 
@@ -92,7 +100,8 @@ uint32_t Hub75Pico::getCaps() {
 
 
 //
-//	Convert the framebuffer to the format the Hub75 display engine wants and blit it to the panel
+//	Convert the framebuffer to the format the Hub75 display engine wants
+//	The background renderer will use it as and when
 //
 void Hub75Pico::draw() {
 	unsigned char *inptr = framebuffer;
@@ -111,8 +120,6 @@ void Hub75Pico::draw() {
 			inptr+=3;
 		}
 	}
-
-	blit();
 }
 
 //
@@ -138,8 +145,6 @@ void Hub75Pico::drawMirrored() {
 		// now fast-forward to the next row
 		inptr = start + (panelW * 3);
 	}
-
-	blit();
 }
 
 //
@@ -148,14 +153,6 @@ void Hub75Pico::drawMirrored() {
 //
 
 void Hub75Pico::blit() {
-
-	// Save bandwidth by not always updating
-	if(refresh->elapsed()) {
-		refresh->set(REFRESH_MS);
-	} else {
-		return;
-	}
-
 	uint32_t *row1,*row2,*rowptr1,*rowptr2;
 	int w = panelW * 2;
 
@@ -181,5 +178,27 @@ void Hub75Pico::blit() {
 		        // Latch row data, pulse output enable for new row.
 		        pio_sm_put_blocking(pio, SM_ROW, rowsel | (100u * (1u << bit) << 5));
 		}
+	}
+}
+
+//
+//	This runs on the second core to offload processing from the main thread
+//
+
+void background_blit() {
+
+        void *driverPointer = (void *)multicore_fifo_pop_blocking();
+	Hub75Pico *hubDriver = (Hub75Pico *)driverPointer;
+
+	// Run the blit process in the background forever.
+	// If it were to stop the display would instantly go blank so 
+	// rather than poll it, we have a tight loop on the second core.
+
+	// This not only stops the display from shimmering or flickering
+	// if the main thread stalls, but also increases the frame rate
+	// as it's not longer being held back by the data transfers
+
+	while(1) {
+		hubDriver->blit();
 	}
 }

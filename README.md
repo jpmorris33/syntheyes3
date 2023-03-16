@@ -74,5 +74,4 @@ V3.03 - Display rotation support (not on MAX7219 yet), Refactor for embedded sup
 * Network comms for WIFI control (how did Sofox do this for his Protogen?)
 
 # Future projects
-* Hub75 driver
 * Gauge expressions where the GIF is used as a status bar by mapping a percentage to the number of frames, e.g. to implement a brightness adjust GUI?

@@ -26,12 +26,11 @@ add_executable(syntheyes3
 	../drivers/Timing.cpp ../drivers/PicoTiming.cpp
 
 	${GIF_LIB_SRC}/dgif_lib.c ${GIF_LIB_SRC}/gifalloc.c ${GIF_LIB_SRC}/gif_err.c ${GIF_LIB_SRC}/gif_font.c ${GIF_LIB_SRC}/gif_hash.c ${GIF_LIB_SRC}/openbsd-reallocarray.c
-
 	)
 
 # generate the header file into the source tree as it is included in the RP2040 datasheet
 pico_generate_pio_header(syntheyes3 ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)
 pico_generate_pio_header(syntheyes3 ${CMAKE_CURRENT_LIST_DIR}/hub75.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)
 
-target_link_libraries(syntheyes3 PRIVATE pico_stdlib hardware_pio hardware_spi)
+target_link_libraries(syntheyes3 PRIVATE pico_stdlib hardware_pio hardware_spi pico_multicore)
 pico_add_extra_outputs(syntheyes3)
