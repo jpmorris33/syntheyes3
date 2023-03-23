@@ -1,5 +1,6 @@
 WS2811  = true
-SDL  = true
+#SDL  = true
+# SDL will need new OS image!
 
 #DEBUG	= -g -O0
 DEBUG	= -O3

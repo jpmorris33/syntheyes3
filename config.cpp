@@ -188,6 +188,7 @@ void parse(const char *line) {
 	char cmd[1024];
 	char param[1024];
 	const char *word;
+	GPIOPin *ground;
 
 	static char curname[256];
 	static int curtype;
@@ -433,6 +434,14 @@ void parse(const char *line) {
 			lights->setBrightness(brightness);
 			dbprintf("Set lights brightness to %d percent\n",brightness);
 		}
+	}
+
+	// Force a GPIO pin to act as signal ground
+	if((!strcasecmp(cmd,"ground:"))) {
+		nextWord(param);
+		ground = parseGPIO("ground:",param, true);
+		ground->write(true); // 0v owing to inverted logic
+		dbprintf("Grounding GPIO pin %d\n",ground->getPin());
 	}
 
 	//

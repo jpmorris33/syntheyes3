@@ -1,0 +1,116 @@
+##
+##  Basic setup
+##
+
+# It will try these in turn and use the last one that's valid
+gifdir: ./videos/xerian/	# for testing
+gifdir: /boot/videos/xerian/	# for release
+
+# Use monochrome LED panels
+display: MAX7219
+
+# Enable lighting array
+lights: WS2811 8
+lightbrightness: 75
+lightcolour: #ff8000
+lightpatten: triangle
+
+# Enable light modulation by microphone on T31
+mic_pin: T31
+miccolour: #ff8000
+micbright: 100
+micdim: 5
+micinvert: true
+
+# Turn pins 5 and 7 into virtual grounds for signalling
+ground: 5
+ground: 7
+
+# The board can flash a light to acknowledge an expression was selected by the user.
+# On Xerian's hardware the LED is on pin 32.  Force it to be Transmitter for single-board system.
+ack_pin: T32
+ack_time: 600
+
+# Default eye colour - will be ignored for the monochrome panels anyway
+eyecolour: #ff8000
+
+# Cooldown time in seconds between repeating the same (non-idle) expression
+cooldown: 5
+
+# Percentage chance of picking a random blink animation to space things out
+# Default is 75 percent
+random_chance: 75
+
+##
+##  Video list
+##
+##  Must have at least the following lines to set the default video:
+#   idle: myvideo
+#   gif: somevideo.gif
+##
+
+# Do not use pin 29 for GPIO animations.
+# Pin 29 is bridged on the transmitter and will trigger continually
+
+# Default expression
+idle: idle
+	gif: idle.gif
+	drawmode: monochrome
+	ack: off
+
+# Random blink
+random: blink
+	blink: default
+	background: idle
+	chance: 50
+	ack: off
+
+# These expressions are triggered by the GPIO pins
+
+gpio: eyeroll
+	gif: eyeroll.gif
+	pin: 38
+	drawmode: monochrome
+
+gpio: error
+	gif: error.gif
+	pin: 37
+	colour: #ff0000
+	drawmode: flash
+	before: lightmode unison	# Set horns flashing unison (WS2811)
+	before: lightcolour #ff0000	# Set horns red (WS2811)
+	after: lightmode normal		# Set horns normal (WS2811)
+	after: lightcolour #ff8000	# Set horns orange (WS2811)
+
+#gpio: annoyed
+#	gif: annoyed.gif
+#	pin: 36
+#	drawmode: monochrome
+
+gpio: happy
+	gif: happy.gif
+	pin: 35
+	drawmode: monochrome
+
+gpio: scroller
+	scroll: I am not a Protogen, I am a Synth
+	pin: 33
+
+#gpio: startled
+#	gif: startled.gif
+#	pin: 38
+#	drawmode: monochrome
+#gpio: owo
+#	gif: owo.gif
+#	pin: 31
+#	drawmode: monochrome
+#
+#gpio: blush
+#	gif: blush.gif
+#	pin: 37
+#	drawmode: colour		# Use GIF's own colours
+#	background: blush_background	# Draw blush effect on top of this
+#
+#scripted: blush_background
+#	gif: blush_eye.gif
+#	drawmode: monochrome
