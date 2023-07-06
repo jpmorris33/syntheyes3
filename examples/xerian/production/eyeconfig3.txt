@@ -96,6 +96,12 @@ gpio: scroller
 	scroll: I am not a Protogen, I am a Synth
 	pin: 33
 
+gpio: blush2
+	gif: happy.gif
+	pin: 3
+	drawmode: monochrome
+
+
 #gpio: startled
 #	gif: startled.gif
 #	pin: 38

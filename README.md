@@ -59,18 +59,27 @@ V3.02 - Neopixel lighting support, microphone modulation, experimental widescree
 
 V3.03 - Display rotation support (not on MAX7219 yet), Refactor for embedded support later
 
+V3.04 - Pico support
+
 # TODO for 3.04
 * Pi Pico support using embedded TAR VFS
-* See if we can stop pin 24 from enabling CS for all SPI transfers
+* Pico has an ADC - move current mic handling to ADC class or something
+  So we can also support an actual ADC not just the crappy workaround we have now
+
+# TODO for 3.05
+* Neopixel driver (currently pico-only)
 * Maybe more panel driver options (e.g. spi channel)
 * Background comms thread to stop the timeout glitching the display
 
+* Arduino Portenta support?
+
+
 # TODO for 3.1x
+* See if we can stop pin 24 from enabling CS for all SPI transfers
 * Startup animation for user splash screens?
 * Winking support (probably a flag to keep displaying IDLE on one panel)
 * Redraw Xerian to make the eye image bigger
 * Desktop Windows build for testing?  (This looks to be a total PITA)
-* Neopixel driver (16x16 outputs)
 * Network comms for WIFI control (how did Sofox do this for his Protogen?)
 
 # Future projects

@@ -15,9 +15,9 @@
 //  TAR Virtual Filesystem
 //
 
-static MemFS *find_file(unsigned char *start, const char *filename, long len);
+static MemFS *find_file(const unsigned char *start, const char *filename, long len);
 
-TarFileIO::TarFileIO(unsigned char *src, long length) {
+TarFileIO::TarFileIO(const unsigned char *src, long length) {
 	filehandle=NULL;
 	datasrc = src;
 	datalen = length;
@@ -100,7 +100,7 @@ bool TarFileIO::eof() {
 //	Scan the TAR header to find the file, or else return NULL
 //
 
-MemFS *find_file(unsigned char *start, const char *filename, long len) {
+MemFS *find_file(const unsigned char *start, const char *filename, long len) {
 	char block[512];
 	char *name;
 	long idx,flen,flen512;

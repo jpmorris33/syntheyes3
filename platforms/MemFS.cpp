@@ -11,7 +11,7 @@
 // file, to be provided by a higher-level layer, e.g. TarFS
 //
 
-MemFS::MemFS(unsigned char *src, long length) {
+MemFS::MemFS(const unsigned char *src, long length) {
 	filelen = length;
 	filehandle = (void *)src;
 	startptr = endptr = curptr = src;
@@ -54,8 +54,8 @@ long MemFS::write(const void *buffer, long bytes) {
 }
 
 char *MemFS::readLine(char *buffer, long bytes) {
-	unsigned char *ptr;
-	unsigned char *end;
+	const unsigned char *ptr;
+	const unsigned char *end;
 	unsigned char *out;
 
 	if((!filehandle) || (!buffer) || bytes < 1) {

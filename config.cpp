@@ -479,7 +479,7 @@ void parse(const char *line) {
 
 	if(!strcasecmp(cmd,"gif:")) {
 		// Check for silliness
-		if(!curname) {
+		if(!curname[0]) {
 			font.errorMsg("Error: 'gif:' command must have a type and name first, e.g. idle: my_idle_animation");
 		}
 		if(curexp) {
@@ -514,7 +514,7 @@ void parse(const char *line) {
 
 	if(!strcasecmp(cmd,"scroll:")) {
 		// Check for silliness
-		if(!curname) {
+		if(!curname[0]) {
 			font.errorMsg("Error: 'scroll:' command must have a type and name first, e.g. idle: my_idle_animation");
 		}
 		if(curexp) {
@@ -546,7 +546,7 @@ void parse(const char *line) {
 
 	if(!strcasecmp(cmd,"blink:")) {
 		// Check for silliness
-		if(!curname) {
+		if(!curname[0]) {
 			font.errorMsg("Error: 'blink:' command must have a type and name first, e.g. idle: my_idle_animation");
 		}
 		if(curexp) {

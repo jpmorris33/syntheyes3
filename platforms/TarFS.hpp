@@ -2,7 +2,7 @@
 
 class TarFileIO : public FileIO {
 	public:
-		TarFileIO(unsigned char *src, long length);
+		TarFileIO(const unsigned char *src, long length);
 		~TarFileIO();
 		bool open(const char *filename, const char *mode);
 		void close();
@@ -13,6 +13,6 @@ class TarFileIO : public FileIO {
 		long tell();
 		bool eof();
 	private:
-		unsigned char *datasrc;
+		const unsigned char *datasrc;
 		long datalen;
 };

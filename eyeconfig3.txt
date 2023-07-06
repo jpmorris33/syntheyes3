@@ -2,7 +2,8 @@
 ##  Basic setup
 ##
 
-display: SDLSingle gpio1=666,gpio9=616,msg=fish
+display: SDLScreen
+#display: SDLSingle gpio1=666,gpio9=616,msg=fish
 #display: SDL w=16,h=16
 display: MAX7219W csl=22,csr=18
 
