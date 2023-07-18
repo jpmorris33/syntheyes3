@@ -11,6 +11,7 @@
 #include "drivers/display/SDLScreen.hpp"
 #include "drivers/lights/SDLLights.hpp"
 #include "drivers/servo/TestServo.hpp"
+#include "drivers/sensor/SDLSensor.hpp"
 #include "drivers/serial/VirtualSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include <SDL2/SDL.h>
@@ -91,6 +92,18 @@ void initServo(const char *driver, int angle, const char *params) {
 		servo->init(angle,params);
 	}
 }
+
+void initSensor(const char *driver, const char *params) {
+	if(sensor) {
+		return;
+	}
+	// Initialise any other drivers here
+	if(!strcasecmp(driver, "TESTSENSOR")) {
+		sensor = new SDLSensor();
+		sensor->init(params);
+	}
+}
+
 
 void initPanel() {
 	timing = new PosixTiming();

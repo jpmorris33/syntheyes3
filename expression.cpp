@@ -36,6 +36,7 @@ void Expression::initDefaults() {
 	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
 	parameter=0;
+	sensorchannel=-1;
 	drawmode = DRAWMODE_COLOUR;
 	colour = eyecolour;
 	beforeactions=0;

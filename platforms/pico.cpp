@@ -71,6 +71,13 @@ void initServo(const char *driver, int angle, const char *params) {
 	}
 }
 
+void initSensor(const char *driver, const char *params) {
+	if(sensor) {
+		return;
+	}
+}
+
+
 void initPanel() {
 	timing = new PicoTiming();
 	cooldown = new PicoTiming();

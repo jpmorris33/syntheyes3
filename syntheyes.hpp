@@ -11,11 +11,13 @@
 #include "drivers/Timing.hpp"
 #include "drivers/LightDriver.hpp"
 #include "drivers/ServoDriver.hpp"
+#include "drivers/SensorDriver.hpp"
 
 extern Platform *sys;
 extern PanelDriver *panel;
 extern LightDriver *lights;
 extern ServoDriver *servo;
+extern SensorDriver *sensor;
 extern Timing *timing;
 extern Font font;
 extern ExpressionList expressions;

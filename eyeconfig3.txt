@@ -2,8 +2,8 @@
 ##  Basic setup
 ##
 
-display: SDLScreen
-#display: SDLSingle gpio1=666,gpio9=616,msg=fish
+#display: SDLScreen
+display: SDLSingle gpio1=666,gpio9=616,msg=fish
 #display: SDL w=16,h=16
 display: MAX7219W csl=22,csr=18
 
@@ -14,6 +14,7 @@ lights: SDLLights 8
 lights: WS2811 8
 lightbrightness: 100
 servo: piservo
+sensordrv: testsensor i2c=something
 
 # It will try these in turn and use the last one that's valid
 gifdir: ./videos/xerian/	# for testing
@@ -91,6 +92,11 @@ random: scroller
 gpio: eyeroll
 	gif: eyeroll.gif
 	pin: 33
+	drawmode: monochrome
+
+sensor: sensortest
+	gif: eyeroll.gif
+	sensorchannel: 2
 	drawmode: monochrome
 
 gpio: error

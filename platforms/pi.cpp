@@ -89,6 +89,20 @@ void initServo(const char *driver, int angle, const char *params) {
 	}
 }
 
+void initSensor(const char *driver, const char *params) {
+	if(sensor) {
+		return;
+	}
+/*
+	// Initialise any other drivers here
+	if(!strcasecmp(driver, "PISERVO")) {
+		servo = new PiServo();
+		servo->init(angle,params);
+	}
+*/
+}
+
+
 void initPanel() {
 	timing = new PosixTiming();
 	cooldown = new PosixTiming();

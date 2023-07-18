@@ -20,6 +20,7 @@ static const char *findWord(const char *input, int pos);
 static uint32_t parseColour(const char *hex);
 static int parseDrawmode(const char *mode);
 static int parseLightmode(const char *mode);
+static int parseSensorChannel(const char *channel);
 static void add_action(ExpressionAction *slot, const char *input);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output);
 static GPIOPin *parseGPIO(const char *cmd, const char *param, bool output, char forceDevice);
@@ -52,6 +53,7 @@ extern int randomChance;
 extern void initPanel(const char *driver, const char *params);
 extern void initLights(const char *driver, int numlights, const char *params);
 extern void initServo(const char *driver, int angle, const char *params);
+extern void initSensor(const char *driver, const char *params);
 
 //
 //  Config reader
@@ -157,6 +159,12 @@ void preParse(const char *line) {
 			angle=atoi(param2);
 		}
 		initServo(param, angle, word);
+	}
+
+	if(!strcasecmp(cmd,"sensordrv:")) {
+		nextWord(param);
+		nextWord(param2);
+		initSensor(param, param2);
 	}
 
 	if(!strcasecmp(cmd,"include:")) {
@@ -474,6 +482,12 @@ void parse(const char *line) {
 		curtype=TRIGGER_SCRIPT;
 		curexp=NULL;
 	}
+	if(!strcasecmp(cmd,"sensor:")) {
+		SAFE_STRCPY(curname,param);
+		nextWord(curname);
+		curtype=TRIGGER_SENSOR;
+		curexp=NULL;
+	}
 
 	// Now say if it's an animation or a scrolly
 
@@ -624,6 +638,21 @@ void parse(const char *line) {
 			dbprintf("Set gpio pin %d to use inverted logic for expression '%s'\n",curexp->parameter,curexp->name);
 		}
 
+	}
+
+	if(!strcasecmp(cmd,"sensorchannel:")) {
+		if(!curexp) {
+			font.errorMsg("Error: 'sensorchannel:' no expression defined");
+		}
+		if(curexp->trigger != TRIGGER_SENSOR) {
+			font.errorMsg("Error: 'sensorchannel:' is only for sensor-triggered expressions");
+		}
+		nextWord(param);
+
+		// Set the channel to use (default is -1 or 'any')
+		curexp->sensorchannel = parseSensorChannel(param);
+		registerSensorChannel(curexp->sensorchannel);
+		dbprintf("Set sensor channel to %d for expression '%s'\n",curexp->parameter,curexp->name);
 	}
 
 	if(!strcasecmp(cmd,"drawmode:")) {
@@ -1070,3 +1099,10 @@ int parseBlinkmode(const char *mode) {
 	return 0;
 }
 
+int parseSensorChannel(const char *channel) {
+	if(!strcasecmp(channel, "any")) {
+		return -1;
+	}
+
+	return atoi(channel);
+}

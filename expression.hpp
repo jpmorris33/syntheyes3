@@ -9,6 +9,7 @@
 #define TRIGGER_RANDOM 2
 #define TRIGGER_GPIO 3
 #define TRIGGER_SCRIPT 4
+#define TRIGGER_SENSOR 5
 
 #define DRAWMODE_COLOUR 0
 #define DRAWMODE_MONOCHROME 1
@@ -70,6 +71,7 @@ class Expression {
 		Expression *background;
 		const char *backgroundname;
 		int parameter;
+		int sensorchannel;
 		GPIOPin *pin;
 		int drawmode;
 		uint32_t colour;
@@ -141,6 +143,7 @@ class ExpressionList {
 		Expression *findFirstByTrigger(int triggertype);
 		ExpressionSet *findAllByTrigger(int triggertype);
 		ExpressionSet *findByGPIO(int pin);
+		ExpressionSet *findBySensor(int channel); // Can be -1 for 'any'
 		void initBackgrounds();
 	private:
 		Expression *anchor;

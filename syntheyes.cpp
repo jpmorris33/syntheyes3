@@ -56,6 +56,7 @@ static bool check_comms();
 static bool check_gpio();
 static bool check_serial();
 static bool check_network();
+static bool check_sensor();
 static void update_ack();
 static void update_rainbow();
 static void update_lights();
@@ -69,6 +70,7 @@ PanelDriver *panel = NULL;
 LightDriver *lights = NULL;
 SerialDriver *serial = NULL;
 ServoDriver *servo = NULL;
+SensorDriver *sensor = NULL;
 Timing *timing = NULL;
 Timing *cooldown = NULL;
 Timing *gradient = NULL;
@@ -339,6 +341,10 @@ bool check_comms() {
 		return true;
 	}
 
+	if(check_sensor()) {
+		return true;
+	}
+
 	return check_gpio();
 }
 
@@ -410,6 +416,55 @@ bool check_gpio() {
 				return true;
 			}
 		}
+	}
+	return false;
+}
+
+//
+//	Check dedicated hardware sensor, e.g. capacitive module on I2C bus
+//
+
+bool check_sensor() {
+	// If we're acting as a receiver only, don't check the sensor
+	if(!transmitter) {
+		return false;
+	}
+
+	if(nextExpression) {
+		return false;
+	}
+
+	if(!sensor) {
+		return false;	// Not loaded, it's not going to work anyway
+	}
+
+	if(sensor->check()) {
+		// If we have reserved any channels, check those first
+		for(int ctr=0;ctr<sensorChannels;ctr++) {
+			if(sensor->isChannel(sensorChannel[ctr])) {
+				ExpressionSet *videos = expressions.findBySensor(sensorChannel[ctr]);
+				if(videos) {
+					setnextExpression(videos->getRandom());
+					delete videos;
+					return true;
+				}
+			}
+		}
+
+		// If we're looking for specific channels, abort because we didn't find anything
+		if(sensorChannels > 0) {
+			return false;
+		}
+
+
+		// No specific channels have been reserved, pick anything
+		ExpressionSet *videos = expressions.findBySensor(-1);
+		if(videos) {
+			setnextExpression(videos->getRandom());
+			delete videos;
+			return true;
+		}
+		return false;
 	}
 	return false;
 }

@@ -227,6 +227,38 @@ ExpressionSet *ExpressionList::findByGPIO(int pin) {
 	return list;
 }
 
+ExpressionSet *ExpressionList::findBySensor(int channel) {
+
+	if(!anchor) {
+		return NULL;
+	}
+
+	int total=0;
+	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
+		if(ptr->trigger == TRIGGER_SENSOR && (ptr->sensorchannel == -1 || ptr->sensorchannel == channel || channel == -1)) {
+			total++;
+		}
+	}
+
+	if(!total) {
+		return NULL;
+	}
+
+	ExpressionSet *list = new ExpressionSet(total);
+	if(!list) {
+		return list;
+	}
+
+	int ctr=0;
+	for(Expression *ptr=anchor;ptr;ptr=ptr->next) {
+		if(ptr->trigger == TRIGGER_SENSOR && (ptr->sensorchannel == -1 || ptr->sensorchannel == channel || channel == -1)) {
+			list->put(ctr++, ptr);
+		}
+	}
+
+	return list;
+}
+
 void ExpressionList::initBackgrounds() {
 	if(!anchor) {
 		return;
