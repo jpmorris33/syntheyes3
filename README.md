@@ -59,7 +59,7 @@ V3.02 - Neopixel lighting support, microphone modulation, experimental widescree
 
 V3.03 - Display rotation support (not on MAX7219 yet), Refactor for embedded support later
 
-V3.04 - Pico support
+V3.04 - Pico support, SDL fullscreen, GPIO virtual groundd, experimental CAP1188 sensor driver
 
 # TODO for 3.04
 * Pi Pico support using embedded TAR VFS

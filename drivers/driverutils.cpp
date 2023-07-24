@@ -38,6 +38,19 @@ int getDriverInt(const char *param) {
 	return atoi(word);
 }
 
+int getDriverHex(const char *param) {
+	char word[256];
+	SAFE_STRCPY(word, param);
+	clean(word);
+
+	char *ptr = strchr(word,',');
+	if(ptr) {
+		*ptr=0;
+	}
+
+	return strtol(word,NULL,16);
+}
+
 const char *getDriverStr(const char *param) {
 	static char word[256];
 	SAFE_STRCPY(word, param);

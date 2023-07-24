@@ -328,4 +328,15 @@ void blit_spi(int bus, unsigned char *data, int len) {
 	// Not supported
 }
 
+int init_i2c(int bus, int addr) {
+	return -1; // Not supported
+}
+
+unsigned char i2c_readReg(int handle, int reg) {
+	return 0;  // Not supported
+}
+
+void i2c_writeReg(int handle, int reg, unsigned char val) {
+}
+
 #endif

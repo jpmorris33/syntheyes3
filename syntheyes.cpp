@@ -444,6 +444,7 @@ bool check_sensor() {
 			if(sensor->isChannel(sensorChannel[ctr])) {
 				ExpressionSet *videos = expressions.findBySensor(sensorChannel[ctr]);
 				if(videos) {
+//					printf("sensor %d got something\n", sensorChannel[ctr]);
 					setnextExpression(videos->getRandom());
 					delete videos;
 					return true;

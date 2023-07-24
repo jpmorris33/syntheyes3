@@ -10,7 +10,8 @@ SRC	= syntheyes.cpp config.cpp gpio.cpp font.cpp gifload.cpp expression.cpp expr
           drivers/serial/VirtualSerialDriver.cpp \
           drivers/LightDriver.cpp drivers/lights/SDLLights.cpp drivers/lights/WS2811Lights.cpp \
           drivers/ServoDriver.cpp drivers/servo/PiServo.cpp drivers/servo/TestServo.cpp \
-          drivers/Timing.cpp drivers/PosixTiming.cpp drivers/SensorDriver.cpp drivers/sensor/SDLSensor.cpp
+          drivers/Timing.cpp drivers/PosixTiming.cpp drivers/SensorDriver.cpp drivers/sensor/SDLSensor.cpp \
+          drivers/sensor/CAP1188Sensor.cpp
 
 OBJCODE = syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionlist.o \
         colourutils.o \
@@ -22,7 +23,8 @@ OBJCODE = syntheyes.o config.o gpio.o font.o gifload.o expression.o expressionli
         drivers/SerialDriver.o drivers/serial/PiSerialDriver.o drivers/serial/VirtualSerialDriver.o \
         drivers/LightDriver.o drivers/lights/SDLLights.o drivers/lights/WS2811Lights.o \
         drivers/ServoDriver.o drivers/servo/PiServo.o drivers/servo/TestServo.o \
-        drivers/Timing.o drivers/PosixTiming.o drivers/SensorDriver.o drivers/sensor/SDLSensor.o
+        drivers/Timing.o drivers/PosixTiming.o drivers/SensorDriver.o drivers/sensor/SDLSensor.o \
+        drivers/sensor/CAP1188Sensor.o
 
 eyes:	$(OBJCODE)
 	$Q echo [link]

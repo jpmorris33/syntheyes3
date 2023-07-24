@@ -22,7 +22,7 @@ add_executable(syntheyes3
 	../drivers/display/Unicorn.cpp ../drivers/display/MAX7219Panel.cpp ../drivers/display/WS2811PicoPanel.cpp
 	../drivers/display/Hub75Pico.cpp
 	../drivers/SerialDriver.cpp ../drivers/serial/VirtualSerialDriver.cpp
-	../drivers/LightDriver.cpp  ../drivers/ServoDriver.cpp
+	../drivers/LightDriver.cpp  ../drivers/ServoDriver.cpp ../drivers/SensorDriver.cpp
 	../drivers/Timing.cpp ../drivers/PicoTiming.cpp
 
 	${GIF_LIB_SRC}/dgif_lib.c ${GIF_LIB_SRC}/gifalloc.c ${GIF_LIB_SRC}/gif_err.c ${GIF_LIB_SRC}/gif_font.c ${GIF_LIB_SRC}/gif_hash.c ${GIF_LIB_SRC}/openbsd-reallocarray.c

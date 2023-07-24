@@ -14,7 +14,7 @@ lights: SDLLights 8
 lights: WS2811 8
 lightbrightness: 100
 servo: piservo
-sensordrv: testsensor i2c=something
+sensordrv: CAP1188 address=0x29,sensitivity=5,lights=1
 
 # It will try these in turn and use the last one that's valid
 gifdir: ./videos/xerian/	# for testing

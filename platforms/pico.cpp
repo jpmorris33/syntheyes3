@@ -232,6 +232,19 @@ void blit_spi(int bus, unsigned char *data, int len) {
 	spi_write_blocking(bus?spi1:spi0,data,len);	// Currently just 0 or 1
 }
 
+int init_i2c(int bus, int addr) {
+	return -1; // Not yet supported (placeholder)
+}
+
+unsigned char i2c_readReg(int handle, int reg) {
+	return 0;  // Not yet supported
+}
+
+void i2c_writeReg(int handle, int reg, unsigned char val) {
+	// Not yet supported
+}
+
+
 void debugLight() {
         gpio_put(PICO_DEFAULT_LED_PIN, 1);
 }

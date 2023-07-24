@@ -5,12 +5,14 @@
 #include <string.h>
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
+#include <wiringPiI2C.h>
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/display/MAX7219Panel.hpp"
 #include "drivers/display/MAX7219WPanel.hpp"
 #include "drivers/display/SDLScreen.hpp"
 #include "drivers/lights/WS2811Lights.hpp"
 #include "drivers/servo/PiServo.hpp"
+#include "drivers/sensor/CAP1188Sensor.hpp"
 #include "drivers/serial/PiSerialDriver.hpp"
 #include "drivers/PosixTiming.hpp"
 #include "gpio.hpp"
@@ -93,13 +95,11 @@ void initSensor(const char *driver, const char *params) {
 	if(sensor) {
 		return;
 	}
-/*
 	// Initialise any other drivers here
-	if(!strcasecmp(driver, "PISERVO")) {
-		servo = new PiServo();
-		servo->init(angle,params);
+	if(!strcasecmp(driver, "CAP1188")) {
+		sensor = new CAP1188Sensor();
+		sensor->init(params);
 	}
-*/
 }
 
 
@@ -325,6 +325,26 @@ GPIOPin *init_spi(int cspin, long speed, int mode, int bus) {
 
 void blit_spi(int bus, unsigned char *data, int len) {
 	wiringPiSPIDataRW(bus,data,len);
+}
+
+int init_i2c(int bus, int addr) {
+	int ret = wiringPiI2CSetup(addr);
+	if(ret == -1) {
+		return ret;
+	}
+
+	reserveSpecialPin(2);	// DATA
+	reserveSpecialPin(5);	// CLOCK
+
+	return ret;
+}
+
+unsigned char i2c_readReg(int handle, int reg) {
+	return wiringPiI2CReadReg8(handle, reg);
+}
+
+void i2c_writeReg(int handle, int reg, unsigned char val) {
+	wiringPiI2CWriteReg8(handle, reg, val);
 }
 
 #endif
