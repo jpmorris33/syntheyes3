@@ -127,7 +127,7 @@ int main(int argc, char *argv[]){
 	init_platform();
 	init_colourutils();
 
-	printf("SynthEyes v%s - (C)2022 IT-HE Software\n",VERSION);
+	printf("SynthEyes v%s - (C)2024 IT-HE Software\n",VERSION);
 	puts(  "========================================\n");
 	puts("Software provided under the 3-clause BSD license\n");
 

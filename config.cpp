@@ -640,6 +640,24 @@ void parse(const char *line) {
 
 	}
 
+	if((!strcasecmp(cmd,"holdframe:")) || (!strcasecmp(cmd,"hold_frame:"))) {
+		if(!curexp) {
+			font.errorMsg("Error: 'holdframe:' no expression defined");
+		}
+		nextWord(param);
+		curexp->hold_frame = atoi(param); // The frame is 1-based
+		dbprintf("Hold frame %d for expression '%s'\n",curexp->hold_frame,curexp->name);
+	}
+
+	if((!strcasecmp(cmd,"holddelay:")) || (!strcasecmp(cmd,"hold_delay:"))) {
+		if(!curexp) {
+			font.errorMsg("Error: 'holddelay:' no expression defined");
+		}
+		nextWord(param);
+		curexp->hold_delay = atoi(param);
+		dbprintf("Hold frame %d for %d milliseconds on expression '%s'\n",curexp->hold_frame,curexp->hold_delay,curexp->name);
+	}
+
 	if(!strcasecmp(cmd,"sensorchannel:")) {
 		if(!curexp) {
 			font.errorMsg("Error: 'sensorchannel:' no expression defined");

@@ -59,18 +59,19 @@ V3.02 - Neopixel lighting support, microphone modulation, experimental widescree
 
 V3.03 - Display rotation support (not on MAX7219 yet), Refactor for embedded support later
 
-V3.04 - Pico support, SDL fullscreen, GPIO virtual groundd, experimental CAP1188 sensor driver
+V3.04 - Pico support, SDL fullscreen, GPIO virtual ground, experimental CAP1188 sensor driver, invertpin, holdframe/holddelay
 
 # TODO for 3.04
+* Document invertpin, holdframe
 * Pi Pico support using embedded TAR VFS
-* Pico has an ADC - move current mic handling to ADC class or something
-  So we can also support an actual ADC not just the crappy workaround we have now
 
 # TODO for 3.05
+* GPIO beeper support?
 * Neopixel driver (currently pico-only)
 * Maybe more panel driver options (e.g. spi channel)
 * Background comms thread to stop the timeout glitching the display
-
+* Pico has an ADC - move current mic handling to ADC class or something
+  So we can also support an actual ADC not just the crappy workaround we have now
 * Arduino Portenta support?
 
 

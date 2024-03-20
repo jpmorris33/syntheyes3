@@ -32,6 +32,8 @@ void Expression::initDefaults() {
 	loop=false;
 	scrolltop=0;
 	blinkspeed=6;
+	hold_frame=-1;
+	hold_delay=0;
 	background=NULL;
 	backgroundname=NULL;
 	trigger=TRIGGER_NEVER;
@@ -173,6 +175,10 @@ int GifExpression::drawFrame(int frame) {
 	drawFrameOnly(frame);
 
 	drawEyes(mirror);
+
+	if(hold_frame > 0 && (frame == hold_frame-1) && hold_delay > 0) {
+		return hold_delay;
+	}
 
 	return gif->frame[frame].delay;
 }

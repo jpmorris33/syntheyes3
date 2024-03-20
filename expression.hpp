@@ -68,6 +68,8 @@ class Expression {
 		bool loop;
 		int blinkspeed;
 		int scrolltop;
+		int hold_frame;
+		int hold_delay;
 		Expression *background;
 		const char *backgroundname;
 		int parameter;
