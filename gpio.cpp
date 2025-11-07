@@ -17,6 +17,7 @@
 extern void init_pin_input(int pin);
 extern void init_pin_output(int pin);
 extern void set_pin(int pin, bool state);
+extern void shift_out_msb(int pin, int clock, unsigned char val);
 extern bool check_pin(int pin);
 extern int mapPin(int pin);
 
@@ -84,6 +85,20 @@ void GPIOPin::write(bool state) {
 	}
 
 	set_pin(pin,state);
+}
+
+//
+//	Shift out 8 bits, first making sure we're allowed to do that, and we're on the correct device
+//
+
+void GPIOPin::writeByte(unsigned char value, GPIOPin *clock) {
+	if((!isOutput()) || (!rightDevice())) {
+		return;
+	}
+
+	// This, with clock->getPin() displays red on the Hub75 panel irrespective of the dpin - clock is realpin 11, gpio 17, wpi 0
+	// 'pin' is pre-mapped to wiringPi pins, getPin returns the realpin and shift_out_msb will map that itself
+	shift_out_msb(pin, clock->getPin(), value);
 }
 
 //

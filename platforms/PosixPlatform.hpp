@@ -29,6 +29,7 @@ class PosixPlatform : public Platform {
 		bool access(const char *filename, int mode);
 		void closeFile(FileIO *file);
 		Timing *getTimer();
+		void background(void *(*thread)(void *), void *parm);
 };
 
 #endif

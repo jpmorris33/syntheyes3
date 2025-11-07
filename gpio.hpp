@@ -9,10 +9,14 @@
 #define GPIOMODE_OUTPUT		1	// Force to output pin
 #define GPIOMODE_SPECIAL	2	// SPI etc, don't change the mode!
 
+#define GPIO_LOGIC_HIGH 0		// Yes, this is stupid
+#define GPIO_LOGIC_LOW 1
+
 class GPIOPin {
 	public:
 		GPIOPin(int pin, char device, char mode);
 		void write(bool state);
+		void writeByte(unsigned char value, GPIOPin *clock);
 		bool check();
 		int getPin();
 		char getDevice();

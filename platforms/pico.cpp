@@ -211,6 +211,11 @@ void set_pin(int pin, bool state) {
         gpio_put(pin, state);
 }
 
+void shift_out_msb(int pin, int clockpin, unsigned char value) {
+	// NOT IMPLEMENTED YET!
+}
+
+
 void poll_keyboard() {
 }
 

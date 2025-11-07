@@ -23,3 +23,5 @@ FileIO *Platform::openSerial(const char *filename, const char *mode) { return NU
 void Platform::closeFile(FileIO *file) {}
 bool Platform::access(const char *filename, int mode) { return false; }
 Timing *Platform::getTimer() { return NULL; }
+void Platform::background(void *(*thread)(void *), void *parm) {}
+

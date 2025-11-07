@@ -5,7 +5,8 @@
 #display: SDLScreen
 display: SDLSingle gpio1=666,gpio9=616,msg=fish
 #display: SDL w=16,h=16
-display: MAX7219W csl=22,csr=18
+#display: MAX7219W csl=22,csr=18
+display: Hub75 w=32,h=16
 
 # Flip display 180 degrees
 #rotate180: true

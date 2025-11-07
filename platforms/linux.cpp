@@ -9,6 +9,7 @@
 #include "drivers/display/SDLPanel.hpp"
 #include "drivers/display/SDLSinglePanel.hpp"
 #include "drivers/display/SDLScreen.hpp"
+#include "drivers/display/Hub75Pi.hpp"
 #include "drivers/lights/SDLLights.hpp"
 #include "drivers/servo/TestServo.hpp"
 #include "drivers/sensor/SDLSensor.hpp"
@@ -60,6 +61,11 @@ void initPanel(const char *driver, const char *params) {
 
 	if(!strcasecmp(driver, "SDLScreen")) {
 		panel = new SDLScreen();
+		panel->init(params);
+	}
+
+	if(!strcasecmp(driver, "Hub75")) {
+		panel = new Hub75Pi();
 		panel->init(params);
 	}
 
@@ -309,6 +315,10 @@ void set_pin(int pin, bool state) {
 	if(pin != 29) { // No ACK pin spam
 		printf("Set GPIO pin %d to %d\n",pin,state);
 	}
+}
+
+void shift_out_msb(int pin, int clockpin, unsigned char value) {
+	printf("Write %02x to GPIO pin %d\n",value, pin);
 }
 
 void poll_keyboard() {

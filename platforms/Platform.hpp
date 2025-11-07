@@ -32,6 +32,7 @@ class Platform {
 		virtual void closeFile(FileIO *file);
 		virtual bool access(const char *filename, int mode);
 		virtual Timing *getTimer();
+		virtual void background(void *(*thread)(void *), void *parm);
 };
 
 #endif

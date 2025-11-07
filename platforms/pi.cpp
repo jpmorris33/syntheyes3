@@ -6,9 +6,11 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #include <wiringPiI2C.h>
+#include <wiringShift.h>
 #include "drivers/display/Unicorn.hpp"
 #include "drivers/display/MAX7219Panel.hpp"
 #include "drivers/display/MAX7219WPanel.hpp"
+#include "drivers/display/Hub75Pi.hpp"
 #include "drivers/display/SDLScreen.hpp"
 #include "drivers/lights/WS2811Lights.hpp"
 #include "drivers/servo/PiServo.hpp"
@@ -54,6 +56,11 @@ void initPanel(const char *driver, const char *params) {
 		panel = new MAX7219WPanel();
 		panel->init(params);
 	}
+	if(!strcasecmp(driver, "Hub75")) {
+		panel = new Hub75Pi();
+		panel->init(params);
+	}
+
 #ifdef SDL_SUPPORT
 	if(!strcasecmp(driver, "SDLScreen")) {
 		panel = new SDLScreen();
@@ -304,6 +311,11 @@ bool check_pin(int pin) {
 void set_pin(int pin, bool state) {
 	digitalWrite(pin, !state);
 }
+
+void shift_out_msb(int pin, int clockpin, unsigned char value) {
+	shiftOut(pin, mapPin(clockpin), MSBFIRST, value);
+}
+
 
 void poll_keyboard() {
 }

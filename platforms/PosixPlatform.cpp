@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 
 //
 //  Simple wrapper around fopen
@@ -155,3 +156,10 @@ bool PosixPlatform::access(const char *filename, int mode) {
 Timing *PosixPlatform::getTimer() {
 	return new PosixTiming();
 }
+
+void PosixPlatform::background(void *(*thread)(void *), void *parm) {
+	pthread_t handle;
+	int res = pthread_create(&handle, NULL, thread, parm);
+	printf("Create thread returned %d", res);
+}
+
